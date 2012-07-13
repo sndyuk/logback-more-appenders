@@ -12,8 +12,8 @@ Examples
 --------------------------------------
 You can find configuration files here:
  
-- [logback-appenders.xml](sample/logback-appenders.xml)
-- [logback.xml](sample/logback.xml)
+- [logback-appenders.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/sample/logback-appenders.xml)
+- [logback.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/sample/logback.xml)
 
 
 
