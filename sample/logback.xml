@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE logback>
+<configuration>
+
+	<include resource="logback-appenders.xml" />
+
+	<root>
+		<level value="info" />
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FLUENT" />
+		<appender-ref ref="DYNAMODB" />
+	</root>
+
+</configuration>
