@@ -11,16 +11,6 @@ Appenders
     - depend on [aws-java-sdk](http://aws.amazon.com/jp/sdkforjava/).
     - Create Amazon DynamoDB Table
 
-Creating Amazon DynamoDB Table
---------------------------------------    
-AWS Console -> DynamoDB -> Choose region -> Create Table -> 
-   
-    Table Name: [Table name described logback.xml]
-    Primary Key: Hash and Range
-	Hash Attribute Name: String - "instance"
-	Range Attribute Name: Number - "id"
-
-
 
 Installing
 --------------------------------------	
@@ -75,6 +65,16 @@ You can find configuration files here:
 - [logback.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback.xml)
 
 
+Creating Amazon DynamoDB Table
+--------------------------------------    
+If you use Amazon DynamoDB appender, You have to create table on DynamoDB:
+
+AWS Console -> DynamoDB -> Choose region -> Create Table -> 
+   
+    Table Name: [Table name described logback.xml]
+    Primary Key: Hash and Range
+	Hash Attribute Name: String - "instance"
+	Range Attribute Name: Number - "id"
 
 
 License
