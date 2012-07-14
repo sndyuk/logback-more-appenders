@@ -27,27 +27,33 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class DaemonAppender<E> implements Runnable {
-	private static final ExecutorService THREAD_POOL = Executors
-			.newCachedThreadPool();
+	private static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DaemonAppender.class);
 
+	private AtomicBoolean start = new AtomicBoolean(false);
 	private final BlockingQueue<E> queue;
 
 	DaemonAppender(int maxQueueSize) {
 		this.queue = new LinkedBlockingQueue<E>(maxQueueSize);
-		THREAD_POOL.execute(this);
 	}
 
+	protected void execute() {
+		THREAD_POOL.execute(this);
+	}
+	
 	void log(E eventObject) {
 		if (!queue.offer(eventObject)) {
 			LOG.warn("Message queue is full. Ignore the message.");
+		} else if (start.compareAndSet(false, true)) {
+			execute();
 		}
 	}
 

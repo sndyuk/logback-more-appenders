@@ -18,3 +18,4 @@ target/
 .factorypath
 logs/
 server.ec2*
+AwsCredentials.properties

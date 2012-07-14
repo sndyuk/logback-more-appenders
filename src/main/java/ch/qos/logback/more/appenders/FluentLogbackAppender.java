@@ -27,23 +27,39 @@ import java.util.Map;
 
 import org.fluentd.logger.FluentLogger;
 
+import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 
 public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 
+	private static final int MSG_SIZE_LIMIT = 65535;
+	
 	private static final class FluentDaemonAppender<E> extends
 			DaemonAppender<E> {
 
-		private final FluentLogger fluentLogger;
+		private FluentLogger fluentLogger;
+		private final String tag;
 		private final String label;
-
+		private final String remoteHost;
+		private final int port;
+		private final Layout<E> layout;
+		
 		FluentDaemonAppender(String tag, String label, String remoteHost,
-				int port, int maxQueueSize) {
+				int port, Layout<E> layout, int maxQueueSize) {
 			super(maxQueueSize);
-			this.fluentLogger = FluentLogger.getLogger(tag, remoteHost, port);
+			this.tag =tag;
 			this.label = label;
+			this.remoteHost = remoteHost;
+			this.port = port;
+			this.layout = layout;
 		}
 
+		@Override
+		public void execute() {
+			this.fluentLogger = FluentLogger.getLogger(tag, remoteHost, port);
+			super.execute();
+		}
+		
 		@Override
 		protected void close() {
 			try {
@@ -54,9 +70,18 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 		}
 
 		@Override
-		protected void append(Object rawData) {
+		protected void append(E rawData) {
+			String msg = null;
+			if (layout != null) {
+				msg = layout.doLayout(rawData);
+			} else {
+				msg = rawData.toString();
+			}
+			if (msg != null && msg.length() > MSG_SIZE_LIMIT) {
+				msg = msg.substring(0, MSG_SIZE_LIMIT);
+			}
 			Map<String, Object> data = new HashMap<String, Object>();
-			data.put("msg", rawData);
+			data.put("msg", msg);
 			fluentLogger.log(label, data);
 		}
 	}
@@ -69,7 +94,7 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 	@Override
 	public void start() {
 		super.start();
-		appender = new FluentDaemonAppender<E>(tag, label, remoteHost, port,maxQueueSize);
+		appender = new FluentDaemonAppender<E>(tag, label, remoteHost, port, layout, maxQueueSize);
 	}
 
 	@Override
@@ -90,7 +115,8 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 	private String label;
 	private String remoteHost;
 	private int port;
-
+	private Layout<E> layout;
+	
 	public String getTag() {
 		return tag;
 	}
@@ -129,5 +155,13 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+	
+	public Layout<E> getLayout() {
+		return layout;
+	}
+
+	public void setLayout(Layout<E> layout) {
+		this.layout = layout;
 	}
 }

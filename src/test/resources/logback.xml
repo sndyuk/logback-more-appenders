@@ -5,7 +5,7 @@
 	<include resource="logback-appenders.xml" />
 
 	<root>
-		<level value="info" />
+		<level value="debug" />
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FLUENT" />
 		<appender-ref ref="DYNAMODB" />

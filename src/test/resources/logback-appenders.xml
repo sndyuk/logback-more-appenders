@@ -5,29 +5,36 @@
 	<appender name="DYNAMODB"
 		class="ch.qos.logback.more.appenders.DynamoDBLogbackAppender">
 		<!-- Place AwsCredentials.properties in class path. -->
-		<dynamodbCredentialFilePath>AwsCredentials.properties</dynamodbCredentialFilePath>
+		<dynamodbCredentialFilePath>AwsCredentials.properties
+		</dynamodbCredentialFilePath>
 		<!-- Tokyo -->
-		<dynamodbEndpoint>dynamodb.ap-northeast-1.amazonaws.com</dynamodbEndpoint>
+		<dynamodbEndpoint>dynamodb.ap-northeast-1.amazonaws.com
+		</dynamodbEndpoint>
 		<!-- Table name of DynamoDB -->
-		<outputTableName>SampleAppLog</outputTableName>
+		<outputTableName>AppLog</outputTableName>
 		<!-- Unique instance name for this app server instance. -->
 		<instanceName>sample1</instanceName>
 		<maxQueueSize>20</maxQueueSize>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg</pattern>
+		</layout>
 	</appender>
 
 	<appender name="FLUENT"
 		class="ch.qos.logback.more.appenders.FluentLogbackAppender">
-		<tag>app</tag>
+		<tag>test</tag>
 		<label>nomal</label>
-		<remoteHost>example.com</remoteHost>
+		<remoteHost>localhost</remoteHost>
 		<port>24224</port>
 		<maxQueueSize>20</maxQueueSize>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg</pattern>
+		</layout>
 	</appender>
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line ---
-				%msg %n</pattern>
+			<pattern>%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg\n</pattern>
 		</encoder>
 	</appender>
 
