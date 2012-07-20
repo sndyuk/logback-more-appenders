@@ -1,12 +1,14 @@
 Logback more appenders
 ==================================================
 is appenders for [Logback](http://logback.qos.ch/).
+You can logging to DynamoDB, Fluentd and more with the logback appender.
 
 Appenders
 --------------------------------------
-- [fluentd](http://fluentd.org/)  
+- [fluentd](http://fluentd.org/) 
     - depend on [fluent-logger for Java](https://github.com/fluent/fluent-logger-java).   
      - Install fluentd before running logger.
+   
 - [Amazon DynamoDB](http://aws.amazon.com/jp/dynamodb/)  
     - depend on [aws-java-sdk](http://aws.amazon.com/jp/sdkforjava/).
     - Create Amazon DynamoDB Table
