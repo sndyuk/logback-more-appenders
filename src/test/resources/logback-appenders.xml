@@ -27,6 +27,15 @@
 		<remoteHost>localhost</remoteHost>
 		<port>24224</port>
 		<maxQueueSize>20</maxQueueSize>
+	</appender>
+
+	<appender name="FLUENT_TEXT"
+		class="ch.qos.logback.more.appenders.FluentLogbackAppender">
+		<tag>test</tag>
+		<label>normal</label>
+		<remoteHost>localhost</remoteHost>
+		<port>24224</port>
+		<maxQueueSize>20</maxQueueSize>
 		<layout class="ch.qos.logback.classic.PatternLayout">
 			<pattern>%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg</pattern>
 		</layout>
