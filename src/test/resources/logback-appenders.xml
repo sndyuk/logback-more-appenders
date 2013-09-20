@@ -21,7 +21,7 @@
 	</appender>
 
 	<appender name="FLUENT"
-		class="ch.qos.logback.more.appenders.FluentLogbackAppender">
+		class="ch.qos.logback.more.appenders.DataFluentAppender">
 		<tag>test</tag>
 		<label>normal</label>
 		<remoteHost>localhost</remoteHost>

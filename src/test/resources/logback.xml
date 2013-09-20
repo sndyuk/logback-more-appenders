@@ -8,7 +8,7 @@
 		<level value="debug" />
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FLUENT" />
-		<appender-ref ref="DYNAMODB" />
+<!-- 		<appender-ref ref="DYNAMODB" /> -->
 	</root>
 
 </configuration>
