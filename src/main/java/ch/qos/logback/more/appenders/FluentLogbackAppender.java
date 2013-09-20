@@ -65,7 +65,7 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 			try {
 				super.close();
 			} finally {
-				FluentLogger.close();
+				fluentLogger.close();
 			}
 		}
 
