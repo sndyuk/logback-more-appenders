@@ -119,7 +119,7 @@
 	<profiles>
 		<profile>
 			<!-- To deploy to soluvas, use:
-				mvn -Psoluvas -o -DskipTests clean install deploy -->
+				mvn -Psoluvas -DskipTests javadoc:jar source:jar deploy -->
 			<id>soluvas</id>
 			<distributionManagement>
 				<repository>
@@ -134,7 +134,7 @@
 		</profile>
 		<profile>
 			<!-- To deploy to bippo-gk, use:
-				mvn -Pbippo-gk -o -DskipTests clean install deploy -->
+				mvn -Pbippo-gk -DskipTests javadoc:jar source:jar deploy -->
 			<id>bippo-gk</id>
 			<distributionManagement>
 				<snapshotRepository>
