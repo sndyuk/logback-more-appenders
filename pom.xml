@@ -108,7 +108,6 @@
 
 	</dependencies>
 
-
 	<repositories>
 		<repository>
 			<id>fluentd.org</id>
@@ -116,5 +115,38 @@
 			<url>http://fluentd.org/maven2</url>
 		</repository>
 	</repositories>
+
+	<profiles>
+		<profile>
+			<!-- To deploy to soluvas, use:
+				mvn -Psoluvas -o -DskipTests clean install deploy -->
+			<id>soluvas</id>
+			<distributionManagement>
+				<repository>
+					<id>soluvas-public-releases</id>
+					<url>http://nexus.bippo.co.id/nexus/content/repositories/soluvas-public-releases/</url>
+				</repository>
+				<snapshotRepository>
+					<id>soluvas-public-snapshots</id>
+					<url>http://nexus.bippo.co.id/nexus/content/repositories/soluvas-public-snapshots/</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<!-- To deploy to bippo-gk, use:
+				mvn -Pbippo-gk -o -DskipTests clean install deploy -->
+			<id>bippo-gk</id>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>bippo-gk-snapshots</id>
+					<url>http://192.168.44.17:8080/nexus/content/repositories/snapshots/</url>
+				</snapshotRepository>
+				<repository>
+					<id>bippo-gk-releases</id>
+					<url>http://192.168.44.17:8080/nexus/content/repositories/releases/</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 
 </project>
