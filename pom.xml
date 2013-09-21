@@ -16,7 +16,7 @@
 	</licenses>
 
 	<properties>
-		<fluentd.logger.version>0.2.6</fluentd.logger.version>
+		<fluentd.logger.version>0.2.11</fluentd.logger.version>
 		<logback.version>1.0.13</logback.version>
 		<aws.version>1.5.7</aws.version>
 		<jdk.version>1.6</jdk.version>
@@ -107,14 +107,6 @@
 		</dependency>
 
 	</dependencies>
-
-	<repositories>
-		<repository>
-			<id>fluentd.org</id>
-			<name>Fluent Maven2 Repository</name>
-			<url>http://fluentd.org/maven2</url>
-		</repository>
-	</repositories>
 
 	<profiles>
 		<profile>
