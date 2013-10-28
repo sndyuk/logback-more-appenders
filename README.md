@@ -46,7 +46,7 @@ Configure your pom.xml:
   <dependency>
     <groupId>com.sndyuk</groupId>
     <artifactId>logback-more-appenders</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
   </dependency>
 
 </dependencies>
