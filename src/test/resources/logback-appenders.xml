@@ -21,9 +21,18 @@
 	</appender>
 
 	<appender name="FLUENT"
+		class="ch.qos.logback.more.appenders.DataFluentAppender">
+		<tag>test</tag>
+		<label>normal</label>
+		<remoteHost>localhost</remoteHost>
+		<port>24224</port>
+		<maxQueueSize>20</maxQueueSize>
+	</appender>
+
+	<appender name="FLUENT_TEXT"
 		class="ch.qos.logback.more.appenders.FluentLogbackAppender">
 		<tag>test</tag>
-		<label>nomal</label>
+		<label>normal</label>
 		<remoteHost>localhost</remoteHost>
 		<port>24224</port>
 		<maxQueueSize>20</maxQueueSize>

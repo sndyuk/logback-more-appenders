@@ -24,28 +24,32 @@ package ch.qos.logback.more.appenders;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.fluentd.logger.FluentLogger;
 
+import ch.qos.logback.classic.pattern.CallerDataConverter;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 
-public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
+public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
 	private static final int MSG_SIZE_LIMIT = 65535;
 	
-	private static final class FluentDaemonAppender<E> extends
-			DaemonAppender<E> {
+	private static final class FluentDaemonAppender extends
+			DaemonAppender<ILoggingEvent> {
 
 		private FluentLogger fluentLogger;
 		private final String tag;
 		private final String label;
 		private final String remoteHost;
 		private final int port;
-		private final Layout<E> layout;
+		private final Layout<ILoggingEvent> layout;
 		
 		FluentDaemonAppender(String tag, String label, String remoteHost,
-				int port, Layout<E> layout, int maxQueueSize) {
+				int port, Layout<ILoggingEvent> layout, int maxQueueSize) {
 			super(maxQueueSize);
 			this.tag =tag;
 			this.label = label;
@@ -70,23 +74,29 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 		}
 
 		@Override
-		protected void append(E rawData) {
-			String msg = null;
-			if (layout != null) {
-				msg = layout.doLayout(rawData);
-			} else {
-				msg = rawData.toString();
+		protected void append(ILoggingEvent rawData) {
+			final Map<String, Object> data = new HashMap<String, Object>();
+			data.put("message", rawData.getFormattedMessage());
+			data.put("logger", rawData.getLoggerName());
+			data.put("thread", rawData.getThreadName());
+			data.put("level", rawData.getLevel());
+			if (rawData.getMarker() != null) {
+				data.put("marker", rawData.getMarker());
 			}
-			if (msg != null && msg.length() > MSG_SIZE_LIMIT) {
-				msg = msg.substring(0, MSG_SIZE_LIMIT);
+			if (rawData.hasCallerData()) {
+				data.put("caller", new CallerDataConverter().convert(rawData));
 			}
-			Map<String, Object> data = new HashMap<String, Object>();
-			data.put("msg", msg);
-			fluentLogger.log(label, data);
+			if (rawData.getThrowableProxy() != null) {
+				data.put("throwable", ThrowableProxyUtil.asString(rawData.getThrowableProxy()));
+			}
+			for (Entry<String, String> entry : rawData.getMDCPropertyMap().entrySet()) {
+				data.put(entry.getKey(), entry.getValue());
+			}
+			fluentLogger.log(label, data, rawData.getTimeStamp() / 1000);
 		}
 	}
 
-	private DaemonAppender<E> appender;
+	private DaemonAppender<ILoggingEvent> appender;
 
 	// リモートホストに接続できないときに何件までログを保持するか（件数制限に達している時にきたログは破棄する）
 	private int maxQueueSize;
@@ -94,11 +104,13 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 	@Override
 	public void start() {
 		super.start();
-		appender = new FluentDaemonAppender<E>(tag, label, remoteHost, port, layout, maxQueueSize);
+		appender = new FluentDaemonAppender(tag, label, remoteHost, port, layout, maxQueueSize);
 	}
 
 	@Override
-	protected void append(E eventObject) {
+	protected void append(ILoggingEvent eventObject) {
+		if (!isStarted())
+			return;
 		appender.log(eventObject);
 	}
 
@@ -115,7 +127,7 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 	private String label;
 	private String remoteHost;
 	private int port;
-	private Layout<E> layout;
+	private Layout<ILoggingEvent> layout;
 	
 	public String getTag() {
 		return tag;
@@ -157,11 +169,11 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 		this.port = port;
 	}
 	
-	public Layout<E> getLayout() {
+	public Layout<ILoggingEvent> getLayout() {
 		return layout;
 	}
 
-	public void setLayout(Layout<E> layout) {
+	public void setLayout(Layout<ILoggingEvent> layout) {
 		this.layout = layout;
 	}
 }
