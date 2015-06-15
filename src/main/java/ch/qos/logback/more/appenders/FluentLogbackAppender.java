@@ -33,9 +33,8 @@ import ch.qos.logback.core.UnsynchronizedAppenderBase;
 public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 
 	private static final int MSG_SIZE_LIMIT = 65535;
-	
-	private static final class FluentDaemonAppender<E> extends
-			DaemonAppender<E> {
+
+	private static final class FluentDaemonAppender<E> extends DaemonAppender<E> {
 
 		private FluentLogger fluentLogger;
 		private final String tag;
@@ -43,11 +42,10 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 		private final String remoteHost;
 		private final int port;
 		private final Layout<E> layout;
-		
-		FluentDaemonAppender(String tag, String label, String remoteHost,
-				int port, Layout<E> layout, int maxQueueSize) {
+
+		FluentDaemonAppender(String tag, String label, String remoteHost, int port, Layout<E> layout, int maxQueueSize) {
 			super(maxQueueSize);
-			this.tag =tag;
+			this.tag = tag;
 			this.label = label;
 			this.remoteHost = remoteHost;
 			this.port = port;
@@ -59,13 +57,15 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 			this.fluentLogger = FluentLogger.getLogger(tag, remoteHost, port);
 			super.execute();
 		}
-		
+
 		@Override
 		protected void close() {
 			try {
 				super.close();
 			} finally {
-				fluentLogger.close();
+				if (fluentLogger != null) {
+					fluentLogger.close();
+				}
 			}
 		}
 
@@ -107,16 +107,18 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 		try {
 			super.stop();
 		} finally {
-			appender.close();
+			if (appender != null) {
+				appender.close();
+			}
 		}
 	}
-	
+
 	private String tag;
 	private String label;
 	private String remoteHost;
 	private int port;
 	private Layout<E> layout;
-	
+
 	public String getTag() {
 		return tag;
 	}
@@ -156,7 +158,7 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 	public void setPort(int port) {
 		this.port = port;
 	}
-	
+
 	public Layout<E> getLayout() {
 		return layout;
 	}
