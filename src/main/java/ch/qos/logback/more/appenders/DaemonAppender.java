@@ -33,10 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class DaemonAppender<E> implements Runnable {
-	private static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
+	private static ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(DaemonAppender.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DaemonAppender.class);
 
 	private AtomicBoolean start = new AtomicBoolean(false);
 	private final BlockingQueue<E> queue;
@@ -46,9 +45,12 @@ public abstract class DaemonAppender<E> implements Runnable {
 	}
 
 	protected void execute() {
+		if (THREAD_POOL.isShutdown()) {
+			THREAD_POOL = Executors.newCachedThreadPool();
+		}
 		THREAD_POOL.execute(this);
 	}
-	
+
 	void log(E eventObject) {
 		if (!queue.offer(eventObject)) {
 			LOG.warn("Message queue is full. Ignore the message.");
