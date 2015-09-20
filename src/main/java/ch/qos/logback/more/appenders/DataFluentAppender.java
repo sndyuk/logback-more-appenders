@@ -37,9 +37,8 @@ import ch.qos.logback.core.UnsynchronizedAppenderBase;
 public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
 	private static final int MSG_SIZE_LIMIT = 65535;
-	
-	private static final class FluentDaemonAppender extends
-			DaemonAppender<ILoggingEvent> {
+
+	private static final class FluentDaemonAppender extends DaemonAppender<ILoggingEvent> {
 
 		private FluentLogger fluentLogger;
 		private final String tag;
@@ -47,11 +46,10 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 		private final String remoteHost;
 		private final int port;
 		private final Layout<ILoggingEvent> layout;
-		
-		FluentDaemonAppender(String tag, String label, String remoteHost,
-				int port, Layout<ILoggingEvent> layout, int maxQueueSize) {
+
+		FluentDaemonAppender(String tag, String label, String remoteHost, int port, Layout<ILoggingEvent> layout, int maxQueueSize) {
 			super(maxQueueSize);
-			this.tag =tag;
+			this.tag = tag;
 			this.label = label;
 			this.remoteHost = remoteHost;
 			this.port = port;
@@ -63,13 +61,15 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 			this.fluentLogger = FluentLogger.getLogger(tag, remoteHost, port);
 			super.execute();
 		}
-		
+
 		@Override
 		protected void close() {
 			try {
 				super.close();
 			} finally {
-				fluentLogger.close();
+				if (fluentLogger != null) {
+					fluentLogger.close();
+				}
 			}
 		}
 
@@ -122,13 +122,13 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 			appender.close();
 		}
 	}
-	
+
 	private String tag;
 	private String label;
 	private String remoteHost;
 	private int port;
 	private Layout<ILoggingEvent> layout;
-	
+
 	public String getTag() {
 		return tag;
 	}
@@ -168,7 +168,7 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 	public void setPort(int port) {
 		this.port = port;
 	}
-	
+
 	public Layout<ILoggingEvent> getLayout() {
 		return layout;
 	}
