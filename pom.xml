@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sndyuk</groupId>
 	<artifactId>logback-more-appenders</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>1.1.1</version>
 	<name>logback-more-appenders</name>
 	<description>logback appenders.</description>
 
@@ -16,8 +16,8 @@
 	</licenses>
 
 	<properties>
-		<fluentd.logger.version>0.2.11</fluentd.logger.version>
-		<logback.version>1.0.13</logback.version>
+		<fluentd.logger.version>0.3.2</fluentd.logger.version>
+		<logback.version>1.1.1</logback.version>
 		<aws.version>1.5.7</aws.version>
 		<jdk.version>1.6</jdk.version>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>

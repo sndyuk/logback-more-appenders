@@ -31,12 +31,9 @@ import org.fluentd.logger.FluentLogger;
 import ch.qos.logback.classic.pattern.CallerDataConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
-import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 
 public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
-
-	private static final int MSG_SIZE_LIMIT = 65535;
 
 	private static final class FluentDaemonAppender extends DaemonAppender<ILoggingEvent> {
 
@@ -45,15 +42,13 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 		private final String label;
 		private final String remoteHost;
 		private final int port;
-		private final Layout<ILoggingEvent> layout;
 
-		FluentDaemonAppender(String tag, String label, String remoteHost, int port, Layout<ILoggingEvent> layout, int maxQueueSize) {
+		FluentDaemonAppender(String tag, String label, String remoteHost, int port, int maxQueueSize) {
 			super(maxQueueSize);
 			this.tag = tag;
 			this.label = label;
 			this.remoteHost = remoteHost;
 			this.port = port;
-			this.layout = layout;
 		}
 
 		@Override
@@ -104,7 +99,7 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 	@Override
 	public void start() {
 		super.start();
-		appender = new FluentDaemonAppender(tag, label, remoteHost, port, layout, maxQueueSize);
+		appender = new FluentDaemonAppender(tag, label, remoteHost, port, maxQueueSize);
 	}
 
 	@Override
@@ -127,7 +122,6 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 	private String label;
 	private String remoteHost;
 	private int port;
-	private Layout<ILoggingEvent> layout;
 
 	public String getTag() {
 		return tag;
@@ -167,13 +161,5 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 
 	public void setPort(int port) {
 		this.port = port;
-	}
-
-	public Layout<ILoggingEvent> getLayout() {
-		return layout;
-	}
-
-	public void setLayout(Layout<ILoggingEvent> layout) {
-		this.layout = layout;
 	}
 }
