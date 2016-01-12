@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2012 sndyuk <sanada@sndyuk.com>
  *
- *  Permission is hereby granted, free of charge, to any person obtaining
+ * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
  * without limitation the rights to use, copy, modify, merge, publish,
@@ -26,12 +26,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.fluentd.logger.FluentLogger;
-
 import ch.qos.logback.classic.pattern.CallerDataConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
+import org.fluentd.logger.FluentLogger;
 
 public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
@@ -42,13 +41,21 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 		private final String label;
 		private final String remoteHost;
 		private final int port;
+		private final Map<String, String> additionalFields;
 
-		FluentDaemonAppender(String tag, String label, String remoteHost, int port, int maxQueueSize) {
+		FluentDaemonAppender(String tag,
+				String label,
+				String remoteHost,
+				int port,
+				int maxQueueSize,
+				Map<String, String> additionalFields)
+		{
 			super(maxQueueSize);
 			this.tag = tag;
 			this.label = label;
 			this.remoteHost = remoteHost;
 			this.port = port;
+			this.additionalFields = additionalFields;
 		}
 
 		@Override
@@ -84,6 +91,9 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 			if (rawData.getThrowableProxy() != null) {
 				data.put("throwable", ThrowableProxyUtil.asString(rawData.getThrowableProxy()));
 			}
+			if (additionalFields != null) {
+				data.putAll(additionalFields);
+			}
 			for (Entry<String, String> entry : rawData.getMDCPropertyMap().entrySet()) {
 				data.put(entry.getKey(), entry.getValue());
 			}
@@ -99,13 +109,14 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 	@Override
 	public void start() {
 		super.start();
-		appender = new FluentDaemonAppender(tag, label, remoteHost, port, maxQueueSize);
+		appender = new FluentDaemonAppender(tag, label, remoteHost, port, maxQueueSize, additionalFields);
 	}
 
 	@Override
 	protected void append(ILoggingEvent eventObject) {
-		if (!isStarted())
+		if (!isStarted()) {
 			return;
+		}
 		appender.log(eventObject);
 	}
 
@@ -122,6 +133,7 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 	private String label;
 	private String remoteHost;
 	private int port;
+	private Map<String, String> additionalFields;
 
 	public String getTag() {
 		return tag;
@@ -161,5 +173,33 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	public void addAdditionalField(Field field) {
+		if (additionalFields == null) {
+			additionalFields = new HashMap<String, String>();
+		}
+		additionalFields.put(field.getKey(), field.getValue());
+	}
+
+	public static class Field {
+		private String key;
+		private String value;
+
+		public String getKey() {
+			return key;
+		}
+
+		public void setKey(String key) {
+			this.key = key;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public void setValue(String value) {
+			this.value = value;
+		}
 	}
 }

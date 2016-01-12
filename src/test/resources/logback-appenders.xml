@@ -27,6 +27,14 @@
 		<remoteHost>localhost</remoteHost>
 		<port>24224</port>
 		<maxQueueSize>20</maxQueueSize>
+		<additionalField>
+			<key>foo</key>
+			<value>bar</value>
+		</additionalField>
+		<additionalField>
+			<key>foo2</key>
+			<value>bar2</value>
+		</additionalField>
 	</appender>
 
 	<appender name="FLUENT_TEXT"
