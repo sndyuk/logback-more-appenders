@@ -26,12 +26,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.fluentd.logger.FluentLogger;
-
 import ch.qos.logback.classic.pattern.CallerDataConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.LoggingEventVO;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
+import org.fluentd.logger.FluentLogger;
 
 public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
@@ -104,9 +104,12 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
 
 	@Override
 	protected void append(ILoggingEvent eventObject) {
-		if (!isStarted())
+		if (!isStarted()) {
 			return;
-		appender.log(eventObject);
+		}
+		// store the whole LogEvent, b/c the MDC will be only available here. (MDC is a ThreadLocal and cannot be
+		// retrieved from a daemon appender)
+		appender.log(LoggingEventVO.build(eventObject));
 	}
 
 	@Override
