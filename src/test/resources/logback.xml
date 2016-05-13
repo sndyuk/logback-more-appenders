@@ -2,14 +2,14 @@
 <!DOCTYPE logback>
 <configuration>
 
-	<include resource="logback-appenders.xml" />
+  <include resource="logback-appenders.xml" />
 
-	<root>
-		<level value="debug" />
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FLUENT" />
-<!-- 		<appender-ref ref="FLUENT_TEXT" /> -->
-<!-- 		<appender-ref ref="DYNAMODB" /> -->
-	</root>
+  <root>
+    <level value="debug" />
+    <appender-ref ref="STDOUT" />
+  <!-- <appender-ref ref="FLUENT" /> -->
+    <!-- <appender-ref ref="FLUENT_TEXT" /> -->
+    <!-- <appender-ref ref="DYNAMODB" /> -->
+  </root>
 
 </configuration>

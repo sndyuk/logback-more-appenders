@@ -6,16 +6,16 @@ You can logging to DynamoDB, Fluentd and more with the logback appender.
 Appenders
 --------------------------------------
 - [fluentd](http://fluentd.org/) 
-    - depend on [fluent-logger for Java](https://github.com/fluent/fluent-logger-java).   
+    - depend on [fluent-logger for Java](https://github.com/fluent/fluent-logger-java).
      - Install fluentd before running logger.
-   
+
 - [Amazon DynamoDB](http://aws.amazon.com/jp/dynamodb/)  
     - depend on [aws-java-sdk](http://aws.amazon.com/jp/sdkforjava/).
     - Create Amazon DynamoDB Table
 
 
 Installing
---------------------------------------	
+--------------------------------------
 
 ###Install jars from Maven2 repository
 Configure your pom.xml:
@@ -46,7 +46,7 @@ Configure your pom.xml:
   <dependency>
     <groupId>com.sndyuk</groupId>
     <artifactId>logback-more-appenders</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.3</version>
   </dependency>
 
 </dependencies>
@@ -62,21 +62,20 @@ Configure your pom.xml:
 
 ### Configure your logback.xml
 You can find configuration files here:
- 
+
 - [logback-appenders.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders.xml)
 - [logback.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback.xml)
 
 
 Creating Amazon DynamoDB Table
---------------------------------------    
-If you use Amazon DynamoDB appender, You have to create table on DynamoDB:
+--------------------------------------
+Before you use The Amazon DynamoDB appender, You need to create a table on DynamoDB:
 
 AWS Console -> DynamoDB -> Choose region -> Create Table -> 
-   
+
     Table Name: [Table name described logback.xml]
-    Primary Key: Hash and Range
-	Hash Attribute Name: String - "instance"
-	Range Attribute Name: Number - "id"
+    Partition key: "instance" as String / (Hash Attribute)
+    Add sort key: "id" as Number / (Range Attribute)
 
 
 License
