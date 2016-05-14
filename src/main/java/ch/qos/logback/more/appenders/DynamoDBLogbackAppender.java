@@ -1,28 +1,20 @@
 /**
  * Copyright (c) 2012 sndyuk <sanada@sndyuk.com>
  *
- *  Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package ch.qos.logback.more.appenders;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +65,7 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
                 msg = msg.substring(0, MSG_SIZE_LIMIT);
             }
 
-            Map<String, AttributeValue> data = new HashMap<String, AttributeValue>();
+            Map<String, AttributeValue> data = new HashMap<String, AttributeValue>(4);
             data.put("instance", new AttributeValue().withS(instanceName));
             data.put("id", new AttributeValue().withN(String.valueOf(++id)));
             data.put("msg", new AttributeValue().withS(msg));
@@ -95,9 +87,7 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 
     private DaemonAppender<E> appender;
 
-    @Override
-    public void start() {
-        super.start();
+    private boolean initializeAppender() {
         try {
             PropertiesCredentials credentials = new PropertiesCredentials(
                     getClass().getClassLoader().getResourceAsStream(dynamodbCredentialFilePath));
@@ -106,9 +96,10 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
             appender = new DynamoDBDaemonAppender<E>(outputTableName, instanceName,
                     getLastId(outputTableName, instanceName, dynamoClient),
                     dynamoClient, layout, maxQueueSize);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            return true;
+        } catch (Exception e) {
+            System.err.println("Could not initialize the dynamo db appender( will try to initialize again later ): " + e);
+            return false;
         }
     }
 
@@ -129,6 +120,16 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 
     @Override
     protected void append(E eventObject) {
+        if (appender == null) {
+            synchronized (this) {
+                if (!initializeAppender()) {
+                    System.err.println("The log which supposed to be added to DynamoDB was not added because the dynamo db appender could not be initialized. / " + eventObject.toString());
+                    return;
+                }
+            }
+            this.append(eventObject);
+            return;
+        }
         appender.log(eventObject);
     }
 
@@ -137,7 +138,11 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
         try {
             super.stop();
         } finally {
-            appender.close();
+            synchronized (this) {
+                if (appender != null) {
+                    appender.close();
+                }
+            }
         }
     }
 

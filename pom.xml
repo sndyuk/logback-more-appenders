@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.sndyuk</groupId>
   <artifactId>logback-more-appenders</artifactId>
-  <version>1.1.3</version>
+  <version>1.2.0</version>
   <name>logback-more-appenders</name>
   <description>logback appenders.</description>
 
@@ -11,7 +11,7 @@
     <license>
       <name>Apache License, Version 2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>manual</distribution>
+      <distribution>repo</distribution>
     </license>
   </licenses>
 
@@ -25,30 +25,12 @@
 
   <packaging>jar</packaging>
 
-  <distributionManagement>
-    <!-- 
-      $ mvn -DaltDeploymentRepository=snapshot-repo::default::file:../maven clean deploy
-      $ cd ../maven
-      $ git add -A
-      $ git commit -m "..."
-      $ git push origin gh-pages
-    -->
-    <repository>
-      <id>repo</id>
-      <url>http://github.com/sndyuk/maven/logback-more-appenders/release</url>
-    </repository>
-    <snapshotRepository>
-      <id>snapshot-repo</id>
-      <url>http://github.com/sndyuk/maven/logback-more-appenders/snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <build>
     <plugins>
       <plugin>
-        <groupId>com.mycila.maven-license-plugin</groupId>
-        <artifactId>maven-license-plugin</artifactId>
-        <version>1.9.0</version>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           <aggregate>true</aggregate>
           <strictCheck>true</strictCheck>
@@ -112,4 +94,80 @@
 
   </dependencies>
 
+  <developers>
+    <developer>
+      <name>Yuki Sanada</name>
+      <email>sanada@sndyuk.com</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git@github.com:sndyuk/logback-more-appenders.git</connection>
+    <developerConnection>scm:git:git@github.com:sndyuk/logback-more-appenders.git</developerConnection>
+    <url>git@github.com:sndyuk/logback-more-appenders.git</url>
+  </scm>
+
+  <profiles>
+    <profile>
+      <id>local</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <distributionManagement>
+        <!--
+          $ mvn -DaltDeploymentRepository=snapshot-repo::default::file:../maven clean deploy
+          $ cd ../maven
+          $ git add -A
+          $ git commit -m "..."
+          $ git push origin gh-pages
+        -->
+        <repository>
+          <id>repo</id>
+          <url>http://github.com/sndyuk/maven/logback-more-appenders/release</url>
+        </repository>
+        <snapshotRepository>
+          <id>snapshot-repo</id>
+          <url>http://github.com/sndyuk/maven/logback-more-appenders/snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+
+    <profile>
+      <id>release</id>
+      <!-- for release -->
+      <!-- mvn -DperformRelease=true deploy -->
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <!-- generate PGP Signature -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+      <distributionManagement>
+        <repository>
+          <id>sonatype-nexus-staging</id>
+          <name>Nexus Release Repository</name>
+          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+      </distributionManagement>
+    </profile>
+  </profiles>
 </project>
