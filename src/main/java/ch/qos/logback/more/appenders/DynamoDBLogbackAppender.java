@@ -98,7 +98,7 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
                     dynamoClient, layout, maxQueueSize);
             return true;
         } catch (Exception e) {
-            System.err.println("Could not initialize the dynamo db appender( will try to initialize again later ): " + e);
+            System.err.println("Could not initialize " + DynamoDBLogbackAppender.class.getCanonicalName() + " ( will try to initialize again later ): " + e);
             return false;
         }
     }
@@ -123,7 +123,7 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
         if (appender == null) {
             synchronized (this) {
                 if (!initializeAppender()) {
-                    System.err.println("The log which supposed to be added to DynamoDB was not added because the dynamo db appender could not be initialized. / " + eventObject.toString());
+                    System.err.println("The log which supposed to be added to DynamoDB was not added because the dynamo db appender could not be initialized. Ignored the message: " + System.lineSeparator() + eventObject.toString());
                     return;
                 }
             }

@@ -4,12 +4,15 @@
 
   <include resource="logback-appenders.xml" />
 
-  <root>
-    <level value="debug" />
-    <appender-ref ref="STDOUT" />
+  <logger name="ch.qos.logback.more.appenders.LogbackAppenderTest" level="TRACE">
     <appender-ref ref="FLUENT" />
-    <!-- <appender-ref ref="FLUENT_TEXT" /> -->
-    <!-- <appender-ref ref="DYNAMODB" /> -->
+    <appender-ref ref="FLUENT_TEXT" />
+    <appender-ref ref="DYNAMODB" />
+  </logger>
+
+  <root>
+    <level value="DEBUG" />
+    <appender-ref ref="STDOUT" />
   </root>
 
 </configuration>

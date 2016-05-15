@@ -89,13 +89,12 @@ public class FluentLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
     private int maxQueueSize;
 
     @Override
-    public void start() {
-        super.start();
-        appender = new FluentDaemonAppender<E>(tag, label, remoteHost, port, layout, maxQueueSize);
-    }
-
-    @Override
     protected void append(E eventObject) {
+        if (appender == null) {
+            synchronized (this) {
+                appender = new FluentDaemonAppender<E>(tag, label, remoteHost, port, layout, maxQueueSize);
+            }
+        }
         appender.log(eventObject);
     }
 

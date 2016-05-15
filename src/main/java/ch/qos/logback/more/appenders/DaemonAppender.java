@@ -46,7 +46,7 @@ public abstract class DaemonAppender<E> implements Runnable {
 
     void log(E eventObject) {
         if (!queue.offer(eventObject)) {
-            LOG.warn("Message queue is full. Ignore the message.");
+            LOG.warn("Message queue is full. Ignored the message:" + System.lineSeparator() + eventObject.toString());
         } else if (start.compareAndSet(false, true)) {
             execute();
         }

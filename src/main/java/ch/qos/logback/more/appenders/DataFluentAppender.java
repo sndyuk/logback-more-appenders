@@ -19,11 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.fluentd.logger.FluentLogger;
+
 import ch.qos.logback.classic.pattern.CallerDataConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
-import org.fluentd.logger.FluentLogger;
 
 public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
@@ -100,15 +101,11 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
     private int maxQueueSize;
 
     @Override
-    public void start() {
-        super.start();
-        appender = new FluentDaemonAppender(tag, label, remoteHost, port, maxQueueSize, additionalFields);
-    }
-
-    @Override
     protected void append(ILoggingEvent eventObject) {
-        if (!isStarted()) {
-            return;
+        if (appender == null) {
+            synchronized (this) {
+                appender = new FluentDaemonAppender(tag, label, remoteHost, port, maxQueueSize, additionalFields);
+            }
         }
         appender.log(eventObject);
     }
