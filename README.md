@@ -3,21 +3,19 @@ Logback more appenders
 is appenders for [Logback](http://logback.qos.ch/).
 You can logging to DynamoDB, Fluentd and more with the logback appender.
 
-Appenders
---------------------------------------
+## Appenders
 - [fluentd](http://fluentd.org/)
     - depend on [fluent-logger for Java](https://github.com/fluent/fluent-logger-java).
      - Install fluentd before running logger.
 
 - [Amazon DynamoDB](http://aws.amazon.com/jp/dynamodb/)
     - depend on [aws-java-sdk](http://aws.amazon.com/jp/sdkforjava/).
-    - Create Amazon DynamoDB Table
+    - [Create Amazon DynamoDB Table](#Creating-Amazon-DynamoDB-Table)
 
 
-Installing
---------------------------------------
+## Installing
 
-###Install jars from Maven2 repository
+### Install jars from Maven2 repository
 Configure your pom.xml:
 
 ```
@@ -59,8 +57,7 @@ You can find configuration files example here:
 - [logback.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback.xml)
 
 
-Creating Amazon DynamoDB Table
---------------------------------------
+### <a name="Creating-Amazon-DynamoDB-Table"></a>Creating Amazon DynamoDB Table
 Before you use The Amazon DynamoDB appender, you need to create the table on DynamoDB:
 
 AWS Console -> DynamoDB -> Choose region -> Create Table -> 
@@ -70,6 +67,5 @@ AWS Console -> DynamoDB -> Choose region -> Create Table ->
     Add sort key: "id" as Number / (Range Attribute)
 
 
-License
---------------------------------------
+### License
 [Apache License, Version 2.0](LICENSE)
