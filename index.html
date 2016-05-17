@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Logback-more-appenders by sndyuk</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Logback-more-appenders</h1>
+      <h2 class="project-tagline">Extra appenders for Logback.</h2>
+      <a href="https://github.com/sndyuk/logback-more-appenders" class="btn">View on GitHub</a>
+      <a href="https://github.com/sndyuk/logback-more-appenders/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/sndyuk/logback-more-appenders/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="logback-more-appenders" class="anchor" href="#logback-more-appenders" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Logback more appenders</h1>
+
+<p>is appenders for <a href="http://logback.qos.ch/">Logback</a>.
+You can logging to DynamoDB, Fluentd and more with the logback appender.</p>
+
+<h2>
+<a id="appenders" class="anchor" href="#appenders" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Appenders</h2>
+
+<ul>
+<li>
+<p><a href="http://fluentd.org/">fluentd</a></p>
+
+<ul>
+<li>depend on <a href="https://github.com/fluent/fluent-logger-java">fluent-logger for Java</a>.
+
+<ul>
+<li>Install fluentd before running logger.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="http://aws.amazon.com/jp/dynamodb/">Amazon DynamoDB</a></p>
+
+<ul>
+<li>depend on <a href="http://aws.amazon.com/jp/sdkforjava/">aws-java-sdk</a>.</li>
+<li><a href="#Creating-Amazon-DynamoDB-Table">Create Amazon DynamoDB Table</a></li>
+</ul>
+</li>
+</ul>
+
+<h2>
+<a id="installing" class="anchor" href="#installing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing</h2>
+
+<h3>
+<a id="install-jars-from-maven2-repository" class="anchor" href="#install-jars-from-maven2-repository" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install jars from Maven2 repository</h3>
+
+<p>Configure your pom.xml:</p>
+
+<pre><code>&lt;dependencies&gt;
+
+  &lt;dependency&gt;
+    &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;
+    &lt;artifactId&gt;logback-classic&lt;/artifactId&gt;
+    &lt;version&gt;${logback.version}&lt;/version&gt;
+  &lt;/dependency&gt;
+
+  &lt;dependency&gt;
+    &lt;groupId&gt;com.sndyuk&lt;/groupId&gt;
+    &lt;artifactId&gt;logback-more-appenders&lt;/artifactId&gt;
+    &lt;version&gt;1.2.0&lt;/version&gt;
+  &lt;/dependency&gt;
+
+  &lt;!-- [Optional] If you use The Fluentd appender, You need to add the dependency(fluent-logger). --&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.fluentd&lt;/groupId&gt;
+    &lt;artifactId&gt;fluent-logger&lt;/artifactId&gt;
+    &lt;version&gt;${fluentd.logger.version}&lt;/version&gt;
+  &lt;/dependency&gt;
+
+  &lt;!-- [Optional] If you use The Amazon DynamoDB appender, You need to add the dependency(aws-java-sdk). --&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;com.amazonaws&lt;/groupId&gt;
+    &lt;artifactId&gt;aws-java-sdk&lt;/artifactId&gt;
+    &lt;version&gt;${aws.version}&lt;/version&gt;
+  &lt;/dependency&gt;
+
+&lt;/dependencies&gt;
+</code></pre>
+
+<h3>
+<a id="configure-your-logbackxml" class="anchor" href="#configure-your-logbackxml" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configure your logback.xml</h3>
+
+<p>You can find configuration files example here:</p>
+
+<ul>
+<li><a href="https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders.xml">logback-appenders.xml</a></li>
+<li><a href="https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback.xml">logback.xml</a></li>
+</ul>
+
+<h3>
+<a id="creating-amazon-dynamodb-table" class="anchor" href="#creating-amazon-dynamodb-table" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Creating-Amazon-DynamoDB-Table"></a>Creating Amazon DynamoDB Table</h3>
+
+<p>Before you use The Amazon DynamoDB appender, you need to create the table on DynamoDB:</p>
+
+<p>AWS Console -&gt; DynamoDB -&gt; Choose region -&gt; Create Table -&gt; </p>
+
+<pre><code>Table Name: [Table name described in logback.xml]
+Partition key: "instance" as String / (Hash Attribute)
+Add sort key: "id" as Number / (Range Attribute)
+</code></pre>
+
+<h3>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h3>
+
+<p><a href="LICENSE">Apache License, Version 2.0</a></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/sndyuk/logback-more-appenders">Logback-more-appenders</a> is maintained by <a href="https://github.com/sndyuk">sndyuk</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
