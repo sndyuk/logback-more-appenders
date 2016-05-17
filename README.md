@@ -18,37 +18,35 @@ You can logging to DynamoDB, Fluentd and more with the logback appender.
 ### Install jars from Maven2 repository
 Configure your pom.xml:
 
-```
-<dependencies>
-
-  <dependency>
-	<groupId>ch.qos.logback</groupId>
-	<artifactId>logback-classic</artifactId>
-	<version>${logback.version}</version>
-  </dependency>
-
-  <dependency>
-    <groupId>com.sndyuk</groupId>
-    <artifactId>logback-more-appenders</artifactId>
-    <version>1.2.0</version>
-  </dependency>
-
-  <!-- If you use The Fluentd appender, You need to add the dependency(fluent-logger). -->
-  <dependency>
-	<groupId>org.fluentd</groupId>
-	<artifactId>fluent-logger</artifactId>
-	<version>${fluentd.logger.version}</version>
-  </dependency>
-
-  <!-- If you use The Amazon DynamoDB appender, You need to add the dependency(aws-java-sdk). -->
-  <dependency>
-	<groupId>com.amazonaws</groupId>
-	<artifactId>aws-java-sdk</artifactId>
-	<version>${aws.version}</version>
-  </dependency>
-
-</dependencies>
-```
+    <dependencies>
+    
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>com.sndyuk</groupId>
+        <artifactId>logback-more-appenders</artifactId>
+        <version>1.2.0</version>
+      </dependency>
+    
+      <!-- [Optional] If you use The Fluentd appender, You need to add the dependency(fluent-logger). -->
+      <dependency>
+        <groupId>org.fluentd</groupId>
+        <artifactId>fluent-logger</artifactId>
+        <version>${fluentd.logger.version}</version>
+      </dependency>
+    
+      <!-- [Optional] If you use The Amazon DynamoDB appender, You need to add the dependency(aws-java-sdk). -->
+      <dependency>
+        <groupId>com.amazonaws</groupId>
+        <artifactId>aws-java-sdk</artifactId>
+        <version>${aws.version}</version>
+      </dependency>
+    
+    </dependencies>
 
 ### Configure your logback.xml
 You can find configuration files example here:
