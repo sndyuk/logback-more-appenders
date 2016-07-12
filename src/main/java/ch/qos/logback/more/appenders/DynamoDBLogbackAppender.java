@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 
@@ -29,22 +30,22 @@ import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
 import com.amazonaws.services.dynamodbv2.model.QueryRequest;
 import com.amazonaws.services.dynamodbv2.model.QueryResult;
 
-public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
+public class DynamoDBLogbackAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
     private static final int MSG_SIZE_LIMIT = 65535;
 
-    private static final class DynamoDBDaemonAppender<E> extends
-            DaemonAppender<E> {
+    private static final class DynamoDBDaemonAppender extends
+            DaemonAppender<ILoggingEvent> {
 
         private final String tableName;
         private final String instanceName;
         private long id;
         private final AmazonDynamoDBClient dynamoClient;
-        private final Layout<E> layout;
+        private final Layout<ILoggingEvent> layout;
 
         DynamoDBDaemonAppender(String tableName, String instanceName,
                 long lastId, AmazonDynamoDBClient dynamoClient,
-                Layout<E> layout, int maxQueueSize) {
+                Layout<ILoggingEvent> layout, int maxQueueSize) {
             super(maxQueueSize);
             this.tableName = tableName;
             this.instanceName = instanceName;
@@ -54,7 +55,7 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
         }
 
         @Override
-        protected void append(E rawData) {
+        protected void append(ILoggingEvent rawData) {
             String msg = null;
             if (layout != null) {
                 msg = layout.doLayout(rawData);
@@ -85,7 +86,7 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
         }
     }
 
-    private DaemonAppender<E> appender;
+    private DaemonAppender<ILoggingEvent> appender;
 
     private boolean initializeAppender() {
         try {
@@ -93,7 +94,7 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
                     getClass().getClassLoader().getResourceAsStream(dynamodbCredentialFilePath));
             AmazonDynamoDBClient dynamoClient = new AmazonDynamoDBClient(credentials);
             dynamoClient.setEndpoint(dynamodbEndpoint);
-            appender = new DynamoDBDaemonAppender<E>(outputTableName, instanceName,
+            appender = new DynamoDBDaemonAppender(outputTableName, instanceName,
                     getLastId(outputTableName, instanceName, dynamoClient),
                     dynamoClient, layout, maxQueueSize);
             return true;
@@ -119,7 +120,7 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
     }
 
     @Override
-    protected void append(E eventObject) {
+    protected void append(ILoggingEvent eventObject) {
         if (appender == null) {
             synchronized (this) {
                 if (!initializeAppender()) {
@@ -130,6 +131,7 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
             this.append(eventObject);
             return;
         }
+        eventObject.prepareForDeferredProcessing();
         appender.log(eventObject);
     }
 
@@ -153,7 +155,7 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
     private String instanceName;
     // Max queue size of logs which is waiting to be sent (When it reach to the max size, the log will be disappeared).
     private int maxQueueSize;
-    private Layout<E> layout;
+    private Layout<ILoggingEvent> layout;
 
     public String getDynamodbCredentialFilePath() {
         return dynamodbCredentialFilePath;
@@ -195,11 +197,11 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
         this.maxQueueSize = maxQueueSize;
     }
 
-    public Layout<E> getLayout() {
+    public Layout<ILoggingEvent> getLayout() {
         return layout;
     }
 
-    public void setLayout(Layout<E> layout) {
+    public void setLayout(Layout<ILoggingEvent> layout) {
         this.layout = layout;
     }
 }
