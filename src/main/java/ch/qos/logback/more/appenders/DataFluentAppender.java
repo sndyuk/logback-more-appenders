@@ -107,6 +107,7 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
                 appender = new FluentDaemonAppender(tag, label, remoteHost, port, maxQueueSize, additionalFields);
             }
         }
+        eventObject.prepareForDeferredProcessing();
         appender.log(eventObject);
     }
 
