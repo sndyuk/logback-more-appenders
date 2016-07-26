@@ -116,7 +116,9 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
         try {
             super.stop();
         } finally {
-            appender.close();
+            if (appender != null) {
+                appender.close();
+            }
         }
     }
 
