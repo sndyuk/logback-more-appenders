@@ -29,7 +29,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.3.0</version>
+        <version>1.3.1</version>
       </dependency>
     
       <!-- [Optional] If you use The Fluentd appender, You need to add the dependency(fluent-logger). -->
