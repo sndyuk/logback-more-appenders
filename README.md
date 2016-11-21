@@ -13,6 +13,16 @@ You can logging to DynamoDB, Fluentd and more with the logback appender.
     - [Create Amazon DynamoDB Table](#Creating-Amazon-DynamoDB-Table)
 
 
+### Latest changes
+
+##### Version 1.4.0
+
+* If you use same logback.xml as before, the appenders work synchronously. Now you can choose sync or async fluent appenders on config file.  
+  See (FLUENT_SYNC | FLUENT) appenders on [logback-appenders.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders.xml).  
+  https://github.com/sndyuk/logback-more-appenders/pull/13
+
+
+
 ## Installing
 
 ### Install jars from Maven2 repository
@@ -29,7 +39,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.3.1</version>
+        <version>1.4.0</version>
       </dependency>
     
       <!-- [Optional] If you use The Fluentd appender, You need to add the dependency(fluent-logger). -->
@@ -54,7 +64,6 @@ You can find configuration files example here:
 - [logback-appenders.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders.xml)
 - [logback.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback.xml)
 
-
 ### <a name="Creating-Amazon-DynamoDB-Table"></a>Creating Amazon DynamoDB Table
 Before you use The Amazon DynamoDB appender, you need to create the table on DynamoDB:
 
@@ -63,7 +72,6 @@ AWS Console -> DynamoDB -> Choose region -> Create Table ->
     Table Name: [Table name described in logback.xml]
     Partition key: "instance" as String / (Hash Attribute)
     Add sort key: "id" as Number / (Range Attribute)
-
 
 ### License
 [Apache License, Version 2.0](LICENSE)
