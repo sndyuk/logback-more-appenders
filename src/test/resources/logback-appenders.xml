@@ -70,6 +70,42 @@
     <appender-ref ref="FLUENT_TEXT_SYNC" />
   </appender>
 
+  <appender name="FLUENCY" class="ch.qos.logback.more.appenders.FluencyLogbackAppender">
+    <!-- Tag for Fluentd. Farther information: http://docs.fluentd.org/articles/config-file -->
+    <tag>debug</tag>
+
+    <!-- Host name/address and port number which Flentd placed -->
+    <remoteHost>localhost</remoteHost>
+    <port>24224</port>
+
+    <!-- [Optional] Multiple name/addresses and port numbers which Flentd placed -->
+    <remoteServers>
+      <remoteServer>
+        <host>primary</host>
+        <port>24224</port>
+      </remoteServer>
+      <remoteServer>
+        <host>secondary</host>
+        <port>24224</port>
+      </remoteServer>
+    </remoteServers>
+
+    <!-- [Optional] Configurations to customize Fluency's behavior: https://github.com/komamitsu/fluency#usage  -->
+    <ackResponseMode>true</ackResponseMode>
+    <fileBackupDir>/tmp</fileBackupDir>
+    <bufferChunkInitialSize>2097152</bufferChunkInitialSize>
+    <bufferChunkRetentionSize>16777216</bufferChunkRetentionSize>
+    <maxBufferSize>268435456</maxBufferSize>
+    <waitUntilBufferFlushed>30</waitUntilBufferFlushed>
+    <waitUntilFlusherTerminated>40</waitUntilFlusherTerminated>
+    <flushIntervalMillis>200</flushIntervalMillis>
+    <senderMaxRetryCount>12</senderMaxRetryCount>
+
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg]]></pattern>
+    </layout>
+  </appender>
+
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>

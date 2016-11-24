@@ -18,6 +18,7 @@
 
   <properties>
     <fluentd.logger.version>0.3.2</fluentd.logger.version>
+    <fluency.version>1.0.0</fluency.version>
     <logback.version>1.1.7</logback.version>
     <aws.version>1.10.77</aws.version>
     <jdk.version>1.6</jdk.version>
@@ -110,6 +111,13 @@
       <groupId>org.fluentd</groupId>
       <artifactId>fluent-logger</artifactId>
       <version>${fluentd.logger.version}</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.komamitsu</groupId>
+      <artifactId>fluency</artifactId>
+      <version>${fluency.version}</version>
       <optional>true</optional>
     </dependency>
 
