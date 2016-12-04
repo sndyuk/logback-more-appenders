@@ -8,12 +8,23 @@ You can logging to DynamoDB, Fluentd and more with the logback appender.
     - depend on [fluent-logger for Java](https://github.com/fluent/fluent-logger-java).
      - Install fluentd before running logger.
 
+- [fluency](https://github.com/komamitsu/fluency)
+    - depend on [fluency](https://github.com/komamitsu/fluency).
+    - Install fluentd before running logger.
+
 - [Amazon DynamoDB](http://aws.amazon.com/jp/dynamodb/)
     - depend on [aws-java-sdk](http://aws.amazon.com/jp/sdkforjava/).
     - [Create Amazon DynamoDB Table](#Creating-Amazon-DynamoDB-Table)
 
 
 ### Latest changes
+
+##### Version 1.4.1
+
+* Added the new appender for [Fluency](https://github.com/komamitsu/fluency).  
+  See (FLUENCY) appender on [logback-appenders.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders.xml#L73).  
+  https://github.com/sndyuk/logback-more-appenders/pull/14
+
 
 ##### Version 1.4.0
 
@@ -39,7 +50,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.4.0</version>
+        <version>1.4.1</version>
       </dependency>
     
       <!-- [Optional] If you use The Fluentd appender, You need to add the dependency(fluent-logger). -->
@@ -47,6 +58,13 @@ Configure your pom.xml:
         <groupId>org.fluentd</groupId>
         <artifactId>fluent-logger</artifactId>
         <version>${fluentd.logger.version}</version>
+      </dependency>
+    
+      <!-- [Optional] If you use The Fluency appender, You need to add the dependency(fluency). -->
+      <dependency>
+        <groupId>org.komamitsu</groupId>
+        <artifactId>fluency</artifactId>
+        <version>${fluency.version}</version>
       </dependency>
     
       <!-- [Optional] If you use The Amazon DynamoDB appender, You need to add the dependency(aws-java-sdk). -->
