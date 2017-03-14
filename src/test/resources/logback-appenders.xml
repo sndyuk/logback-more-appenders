@@ -90,6 +90,16 @@
       </remoteServer>
     </remoteServers>
 
+    <!-- [Optional] Additional fields(Pairs of key: value) -->
+    <additionalField>
+      <key>foo</key>
+      <value>bar</value>
+    </additionalField>
+    <additionalField>
+      <key>foo2</key>
+      <value>bar2</value>
+    </additionalField>
+
     <!-- [Optional] Configurations to customize Fluency's behavior: https://github.com/komamitsu/fluency#usage  -->
     <ackResponseMode>true</ackResponseMode>
     <fileBackupDir>/tmp</fileBackupDir>
