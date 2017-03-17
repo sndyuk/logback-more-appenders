@@ -19,6 +19,11 @@ You can logging to DynamoDB, Fluentd and more with the logback appender.
 
 ### Latest changes
 
+##### Version 1.4.2
+
+* Added new fluentds fields to FLUENCY appender.  
+  See details: https://github.com/sndyuk/logback-more-appenders/issues/17
+
 ##### Version 1.4.1
 
 * Added the new appender for [Fluency](https://github.com/komamitsu/fluency).  
@@ -50,7 +55,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.4.1</version>
+        <version>1.4.2</version>
       </dependency>
     
       <!-- [Optional] If you use The Fluentd appender, You need to add the dependency(fluent-logger). -->

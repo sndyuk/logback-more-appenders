@@ -15,8 +15,9 @@
  */
 package ch.qos.logback.more.appenders;
 
-
+import ch.qos.logback.classic.pattern.CallerDataConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import org.komamitsu.fluency.Fluency;
@@ -24,7 +25,10 @@ import org.komamitsu.fluency.Fluency;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
@@ -54,8 +58,27 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
         if (msg != null && msg.length() > MSG_SIZE_LIMIT) {
             msg = msg.substring(0, MSG_SIZE_LIMIT);
         }
-        Map<String, Object> data = new HashMap<String, Object>(1);
+        Map<String, Object> data = new HashMap<String, Object>();
         data.put("msg", msg);
+        data.put("message", rawData.getFormattedMessage());
+        data.put("logger", rawData.getLoggerName());
+        data.put("thread", rawData.getThreadName());
+        data.put("level", rawData.getLevel().levelStr);
+        if (rawData.getMarker() != null) {
+            data.put("marker", rawData.getMarker().toString());
+        }
+        if (rawData.hasCallerData()) {
+            data.put("caller", new CallerDataConverter().convert(rawData));
+        }
+        if (rawData.getThrowableProxy() != null) {
+            data.put("throwable", ThrowableProxyUtil.asString(rawData.getThrowableProxy()));
+        }
+        if (additionalFields != null) {
+            data.putAll(additionalFields);
+        }
+        for (Map.Entry<String, String> entry : rawData.getMDCPropertyMap().entrySet()) {
+            data.put(entry.getKey(), entry.getValue());
+        }
         try {
             fluency.emit(tag == null ? "" : tag, data);
         } catch (IOException e) {
@@ -81,6 +104,7 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
     private String tag;
     private String remoteHost;
     private int port;
+    private Map<String, String> additionalFields;
     private RemoteServers remoteServers;
     private Layout<ILoggingEvent> layout;
     private boolean ackResponseMode;
@@ -123,6 +147,13 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public void addAdditionalField(Field field) {
+        if (additionalFields == null) {
+            additionalFields = new HashMap<String, String>();
+        }
+        additionalFields.put(field.getKey(), field.getValue());
     }
 
     public Layout<ILoggingEvent> getLayout() {
@@ -270,4 +301,24 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
         }
     }
 
+    public static class Field {
+        private String key;
+        private String value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+    }
 }
