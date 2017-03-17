@@ -1,19 +1,18 @@
 Logback more appenders
 ==================================================
-is appenders for [Logback](http://logback.qos.ch/).
-You can logging to DynamoDB, Fluentd and more with the logback appender.
+is additional appenders for [Logback](http://logback.qos.ch/).
 
 ## Appenders
 - [fluentd](http://fluentd.org/)
-    - depend on [fluent-logger for Java](https://github.com/fluent/fluent-logger-java).
+    - depends on [fluent-logger for Java](https://github.com/fluent/fluent-logger-java).
      - Install fluentd before running logger.
 
 - [fluency](https://github.com/komamitsu/fluency)
-    - depend on [fluency](https://github.com/komamitsu/fluency).
+    - depends on [fluency](https://github.com/komamitsu/fluency).
     - Install fluentd before running logger.
 
 - [Amazon DynamoDB](http://aws.amazon.com/jp/dynamodb/)
-    - depend on [aws-java-sdk](http://aws.amazon.com/jp/sdkforjava/).
+    - depends on [aws-java-sdk](http://aws.amazon.com/jp/sdkforjava/).
     - [Create Amazon DynamoDB Table](#Creating-Amazon-DynamoDB-Table)
 
 
@@ -82,13 +81,13 @@ Configure your pom.xml:
     </dependencies>
 
 ### Configure your logback.xml
-You can find configuration files example here:
+You can find the sample configuration files here:
 
 - [logback-appenders.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders.xml)
 - [logback.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback.xml)
 
 ### <a name="Creating-Amazon-DynamoDB-Table"></a>Creating Amazon DynamoDB Table
-Before you use The Amazon DynamoDB appender, you need to create the table on DynamoDB:
+Before you use Amazon DynamoDB appender, you need to create the table on DynamoDB:
 
 AWS Console -> DynamoDB -> Choose region -> Create Table -> 
 
