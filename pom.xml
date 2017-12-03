@@ -1,9 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.sndyuk</groupId>
   <artifactId>logback-more-appenders</artifactId>
-  <version>1.4.2</version>
+  <version>1.4.3-SNAPSHOT</version>
   <name>logback-more-appenders</name>
   <description>logback appenders.</description>
   <url>https://github.com/sndyuk/logback-more-appenders</url>
@@ -17,10 +16,10 @@
   </licenses>
 
   <properties>
-    <fluentd.logger.version>0.3.2</fluentd.logger.version>
+    <fluentd.logger.version>0.3.3</fluentd.logger.version>
     <fluency.version>1.6.0</fluency.version>
-    <logback.version>1.1.7</logback.version>
-    <aws.version>1.10.77</aws.version>
+    <logback.version>1.2.3</logback.version>
+    <aws.version>1.11.241</aws.version>
     <jdk.version>1.6</jdk.version>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
   </properties>
@@ -32,7 +31,7 @@
       <plugin>
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
-        <version>2.3</version>
+        <version>2.11</version>
         <configuration>
           <aggregate>true</aggregate>
           <strictCheck>true</strictCheck>
@@ -46,7 +45,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
+        <version>2.7</version>
         <configuration>
           <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
@@ -54,7 +53,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.7.0</version>
         <configuration>
           <fork>true</fork>
           <encoding>${project.build.sourceEncoding}</encoding>
@@ -65,7 +64,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -78,7 +77,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.3</version>
+        <version>2.10.4</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -94,7 +93,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.10</version>
+        <version>3.0.2</version>
       </plugin>
     </plugins>
   </build>
@@ -148,6 +147,7 @@
     <connection>scm:git:git@github.com:sndyuk/logback-more-appenders.git</connection>
     <developerConnection>scm:git:git@github.com:sndyuk/logback-more-appenders.git</developerConnection>
     <url>git@github.com:sndyuk/logback-more-appenders.git</url>
+    <tag>HEAD</tag>
   </scm>
 
   <profiles>
@@ -196,7 +196,7 @@
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.7</version>
+            <version>1.6.8</version>
             <extensions>true</extensions>
             <configuration>
               <nexusUrl>https://oss.sonatype.org</nexusUrl>
