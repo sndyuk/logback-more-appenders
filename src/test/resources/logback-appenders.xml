@@ -79,7 +79,7 @@
     <port>24224</port>
 
     <!-- [Optional] Multiple name/addresses and port numbers which Flentd placed -->
-    <remoteServers>
+   <remoteServers>
       <remoteServer>
         <host>primary</host>
         <port>24224</port>
@@ -110,6 +110,8 @@
     <waitUntilFlusherTerminated>40</waitUntilFlusherTerminated>
     <flushIntervalMillis>200</flushIntervalMillis>
     <senderMaxRetryCount>12</senderMaxRetryCount>
+    <!-- [Optional] Enable/Disable use of EventTime to get sub second resolution of log event date-time -->
+    <useEventTime>true</useEventTime>
 
     <layout class="ch.qos.logback.classic.PatternLayout">
       <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg]]></pattern>

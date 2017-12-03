@@ -20,6 +20,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
+import org.komamitsu.fluency.EventTime;
 import org.komamitsu.fluency.Fluency;
 
 import java.io.IOException;
@@ -80,7 +81,12 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
             data.put(entry.getKey(), entry.getValue());
         }
         try {
-            fluency.emit(tag == null ? "" : tag, data);
+            if (this.isUseEventTime()){
+                EventTime eventTime = EventTime.fromEpochMilli(System.currentTimeMillis());
+                fluency.emit(tag == null ? "" : tag, eventTime, data);
+            }else {
+                fluency.emit(tag == null ? "" : tag, data);
+            }
         } catch (IOException e) {
             // pass
         }
@@ -116,6 +122,7 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
     private Integer waitUntilFlusherTerminated;
     private Integer flushIntervalMillis;
     private Integer senderMaxRetryCount;
+    private boolean useEventTime; // Flag to enable/disable usage of eventtime
 
     public RemoteServers getRemoteServers() {
         return remoteServers;
@@ -235,6 +242,18 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
     public void setSenderMaxRetryCount(Integer senderMaxRetryCount) {
         this.senderMaxRetryCount = senderMaxRetryCount;
     }
+
+    /**
+     * get the value for EventTime usage
+     * @return true if EventTime is used, false otherwise
+     */
+    public boolean isUseEventTime(){ return this.useEventTime; }
+
+    /**
+     * Set the value for EventTime usage
+     * @param useEventTime the new value
+     */
+    public void setUseEventTime(boolean useEventTime){ this.useEventTime = useEventTime; }
 
     protected Fluency.Config configureFluency() {
         Fluency.Config config = new Fluency.Config().setAckResponseMode(ackResponseMode);

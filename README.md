@@ -18,6 +18,14 @@ is additional appenders for [Logback](http://logback.qos.ch/).
 
 ### Latest changes
 
+##### Version 1.4.3
+
+* Added new parameter to FLUENCY appender: 
+  useEventTime, set to true to use EventTime instead of standard timestamp and gain millisecond precision
+  use fluentd option time_format to change time resolution in messages
+  
+* Update FLUENCY dependency version to 1.6.0
+
 ##### Version 1.4.2
 
 * Added new fluentds fields to FLUENCY appender.  
