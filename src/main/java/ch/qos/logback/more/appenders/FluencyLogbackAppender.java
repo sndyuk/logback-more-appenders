@@ -25,7 +25,6 @@ import org.komamitsu.fluency.Fluency;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +32,15 @@ import java.util.Map;
 
 public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
-    private static final int MSG_SIZE_LIMIT = 65535;
+    private static final String DATA_MSG = "msg";
+    private static final String DATA_MESSAGE = "message";
+    private static final String DATA_LOGGER = "logger";
+    private static final String DATA_THREAD = "thread";
+    private static final String DATA_LEVEL = "level";
+    private static final String DATA_MARKER = "marker";
+    private static final String DATA_CALLER = "caller";
+    private static final String DATA_THROWABLE = "throwable";
+    private static final String EMPTY_STRING = "";
 
     private Fluency fluency;
 
@@ -56,23 +63,20 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
         } else {
             msg = rawData.toString();
         }
-        if (msg != null && msg.length() > MSG_SIZE_LIMIT) {
-            msg = msg.substring(0, MSG_SIZE_LIMIT);
-        }
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("msg", msg);
-        data.put("message", rawData.getFormattedMessage());
-        data.put("logger", rawData.getLoggerName());
-        data.put("thread", rawData.getThreadName());
-        data.put("level", rawData.getLevel().levelStr);
+        data.put(DATA_MSG, msg);
+        data.put(DATA_MESSAGE, rawData.getFormattedMessage());
+        data.put(DATA_LOGGER, rawData.getLoggerName());
+        data.put(DATA_THREAD, rawData.getThreadName());
+        data.put(DATA_LEVEL, rawData.getLevel().levelStr);
         if (rawData.getMarker() != null) {
-            data.put("marker", rawData.getMarker().toString());
+            data.put(DATA_MARKER, rawData.getMarker().toString());
         }
         if (rawData.hasCallerData()) {
-            data.put("caller", new CallerDataConverter().convert(rawData));
+            data.put(DATA_CALLER, new CallerDataConverter().convert(rawData));
         }
         if (rawData.getThrowableProxy() != null) {
-            data.put("throwable", ThrowableProxyUtil.asString(rawData.getThrowableProxy()));
+            data.put(DATA_THROWABLE, ThrowableProxyUtil.asString(rawData.getThrowableProxy()));
         }
         if (additionalFields != null) {
             data.putAll(additionalFields);
@@ -81,11 +85,11 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
             data.put(entry.getKey(), entry.getValue());
         }
         try {
-            if (this.isUseEventTime()){
+            if (this.isUseEventTime()) {
                 EventTime eventTime = EventTime.fromEpochMilli(System.currentTimeMillis());
-                fluency.emit(tag == null ? "" : tag, eventTime, data);
-            }else {
-                fluency.emit(tag == null ? "" : tag, data);
+                fluency.emit(tag == null ? EMPTY_STRING : tag, eventTime, data);
+            } else {
+                fluency.emit(tag == null ? EMPTY_STRING : tag, data);
             }
         } catch (IOException e) {
             // pass
@@ -245,30 +249,32 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
 
     /**
      * get the value for EventTime usage
+     *
      * @return true if EventTime is used, false otherwise
      */
-    public boolean isUseEventTime(){ return this.useEventTime; }
+    public boolean isUseEventTime() { return this.useEventTime; }
 
     /**
      * Set the value for EventTime usage
+     *
      * @param useEventTime the new value
      */
-    public void setUseEventTime(boolean useEventTime){ this.useEventTime = useEventTime; }
+    public void setUseEventTime(boolean useEventTime) { this.useEventTime = useEventTime; }
 
     protected Fluency.Config configureFluency() {
         Fluency.Config config = new Fluency.Config().setAckResponseMode(ackResponseMode);
-        if (fileBackupDir != null) config.setFileBackupDir(fileBackupDir);
-        if (bufferChunkInitialSize != null) config.setBufferChunkInitialSize(bufferChunkInitialSize);
-        if (bufferChunkRetentionSize != null) config.setBufferChunkRetentionSize(bufferChunkRetentionSize);
-        if (maxBufferSize != null) config.setMaxBufferSize(maxBufferSize);
-        if (waitUntilBufferFlushed != null) config.setWaitUntilBufferFlushed(waitUntilBufferFlushed);
-        if (waitUntilFlusherTerminated != null) config.setWaitUntilFlusherTerminated(waitUntilFlusherTerminated);
-        if (flushIntervalMillis != null) config.setFlushIntervalMillis(flushIntervalMillis);
-        if (senderMaxRetryCount != null) config.setSenderMaxRetryCount(senderMaxRetryCount);
+        if (fileBackupDir != null) { config.setFileBackupDir(fileBackupDir); }
+        if (bufferChunkInitialSize != null) { config.setBufferChunkInitialSize(bufferChunkInitialSize); }
+        if (bufferChunkRetentionSize != null) { config.setBufferChunkRetentionSize(bufferChunkRetentionSize); }
+        if (maxBufferSize != null) { config.setMaxBufferSize(maxBufferSize); }
+        if (waitUntilBufferFlushed != null) { config.setWaitUntilBufferFlushed(waitUntilBufferFlushed); }
+        if (waitUntilFlusherTerminated != null) { config.setWaitUntilFlusherTerminated(waitUntilFlusherTerminated); }
+        if (flushIntervalMillis != null) { config.setFlushIntervalMillis(flushIntervalMillis); }
+        if (senderMaxRetryCount != null) { config.setSenderMaxRetryCount(senderMaxRetryCount); }
         return config;
     }
 
-    protected List<InetSocketAddress> configureServers() throws URISyntaxException {
+    protected List<InetSocketAddress> configureServers() {
         List<InetSocketAddress> dest = new ArrayList<InetSocketAddress>();
         if (remoteHost != null && port > 0) {
             dest.add(new InetSocketAddress(remoteHost, port));
