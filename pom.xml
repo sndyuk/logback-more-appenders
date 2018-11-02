@@ -17,9 +17,9 @@
 
   <properties>
     <fluentd.logger.version>0.3.3</fluentd.logger.version>
-    <fluency.version>1.6.0</fluency.version>
+    <fluency.version>1.8.1</fluency.version>
     <logback.version>1.2.3</logback.version>
-    <aws.version>1.11.241</aws.version>
+    <aws.version>1.11.441</aws.version>
     <jdk.version>1.6</jdk.version>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
   </properties>
@@ -122,7 +122,7 @@
 
     <dependency>
       <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk</artifactId>
+      <artifactId>aws-java-sdk-dynamodb</artifactId>
       <version>${aws.version}</version>
       <optional>true</optional>
     </dependency>
