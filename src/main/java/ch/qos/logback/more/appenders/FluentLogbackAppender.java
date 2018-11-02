@@ -26,7 +26,7 @@ import ch.qos.logback.core.UnsynchronizedAppenderBase;
 
 public class FluentLogbackAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
-    private static final int MSG_SIZE_LIMIT = 65535;
+    private static final String DATA_MESSAGE = "msg";
 
     private FluentLogger fluentLogger;
 
@@ -45,11 +45,9 @@ public class FluentLogbackAppender extends UnsynchronizedAppenderBase<ILoggingEv
         } else {
             msg = rawData.toString();
         }
-        if (msg != null && msg.length() > MSG_SIZE_LIMIT) {
-            msg = msg.substring(0, MSG_SIZE_LIMIT);
-        }
+
         Map<String, Object> data = new HashMap<String, Object>(1);
-        data.put("msg", msg);
+        data.put(DATA_MESSAGE, msg);
         if (label == null) {
             fluentLogger.log(tag, data);
         } else {
