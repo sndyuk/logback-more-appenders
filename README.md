@@ -18,6 +18,10 @@ is additional appenders for [Logback](http://logback.qos.ch/).
 
 ### Latest changes
 
+##### Version 1.4.4
+
+* Remove unnecessary log message size limit. https://github.com/sndyuk/logback-more-appenders/pull/26
+
 ##### Version 1.4.3
 
 * Added new parameter to FLUENCY appender: 
@@ -62,7 +66,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.4.2</version>
+        <version>1.4.4</version>
       </dependency>
     
       <!-- [Optional] If you use The Fluentd appender, You need to add the dependency(fluent-logger). -->
@@ -79,10 +83,10 @@ Configure your pom.xml:
         <version>${fluency.version}</version>
       </dependency>
     
-      <!-- [Optional] If you use The Amazon DynamoDB appender, You need to add the dependency(aws-java-sdk). -->
+      <!-- [Optional] If you use The Amazon DynamoDB appender, You need to add the dependency(aws-java-sdk-dynamodb). -->
       <dependency>
         <groupId>com.amazonaws</groupId>
-        <artifactId>aws-java-sdk</artifactId>
+        <artifactId>aws-java-sdk-dynamodb</artifactId>
         <version>${aws.version}</version>
       </dependency>
     
