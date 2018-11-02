@@ -18,21 +18,21 @@ package ch.qos.logback.more.appenders;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.Layout;
-import ch.qos.logback.core.UnsynchronizedAppenderBase;
-
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.PropertiesCredentials;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
 import com.amazonaws.services.dynamodbv2.model.QueryRequest;
 import com.amazonaws.services.dynamodbv2.model.QueryResult;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Layout;
+import ch.qos.logback.core.UnsynchronizedAppenderBase;
 
 public class DynamoDBLogbackAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
-
-    private static final int MSG_SIZE_LIMIT = 65535;
 
     private static final class DynamoDBDaemonAppender extends
             DaemonAppender<ILoggingEvent> {
@@ -40,11 +40,11 @@ public class DynamoDBLogbackAppender extends UnsynchronizedAppenderBase<ILogging
         private final String tableName;
         private final String instanceName;
         private long id;
-        private final AmazonDynamoDBClient dynamoClient;
+        private final AmazonDynamoDB dynamoClient;
         private final Layout<ILoggingEvent> layout;
 
         DynamoDBDaemonAppender(String tableName, String instanceName,
-                long lastId, AmazonDynamoDBClient dynamoClient,
+                long lastId, AmazonDynamoDB dynamoClient,
                 Layout<ILoggingEvent> layout, int maxQueueSize) {
             super(maxQueueSize);
             this.tableName = tableName;
@@ -61,9 +61,6 @@ public class DynamoDBLogbackAppender extends UnsynchronizedAppenderBase<ILogging
                 msg = layout.doLayout(rawData);
             } else {
                 msg = rawData.toString();
-            }
-            if (msg != null && msg.length() > MSG_SIZE_LIMIT) {
-                msg = msg.substring(0, MSG_SIZE_LIMIT);
             }
 
             Map<String, AttributeValue> data = new HashMap<String, AttributeValue>(4);
@@ -92,8 +89,8 @@ public class DynamoDBLogbackAppender extends UnsynchronizedAppenderBase<ILogging
         try {
             PropertiesCredentials credentials = new PropertiesCredentials(
                     getClass().getClassLoader().getResourceAsStream(dynamodbCredentialFilePath));
-            AmazonDynamoDBClient dynamoClient = new AmazonDynamoDBClient(credentials);
-            dynamoClient.setEndpoint(dynamodbEndpoint);
+            AmazonDynamoDB dynamoClient = AmazonDynamoDBClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(dynamodbEndpoint, dynamodbRegion)).build();
             appender = new DynamoDBDaemonAppender(outputTableName, instanceName,
                     getLastId(outputTableName, instanceName, dynamoClient),
                     dynamoClient, layout, maxQueueSize);
@@ -105,7 +102,7 @@ public class DynamoDBLogbackAppender extends UnsynchronizedAppenderBase<ILogging
     }
 
     private static long getLastId(String tableName, String instanceName,
-            AmazonDynamoDBClient dynamoClient) {
+        AmazonDynamoDB dynamoClient) {
         QueryRequest queryRequest = new QueryRequest().withTableName(tableName)
                 .withKeyConditionExpression("instance = :pk")
                 .addExpressionAttributeValuesEntry(":pk", new AttributeValue().withS(instanceName))
@@ -150,6 +147,7 @@ public class DynamoDBLogbackAppender extends UnsynchronizedAppenderBase<ILogging
 
     private String dynamodbCredentialFilePath;
     private String dynamodbEndpoint;
+    private String dynamodbRegion;
     private String outputTableName;
     // An quque name for preventing conflict with other instances.
     private String instanceName;
@@ -171,6 +169,14 @@ public class DynamoDBLogbackAppender extends UnsynchronizedAppenderBase<ILogging
 
     public void setDynamodbEndpoint(String dynamodbEndpoint) {
         this.dynamodbEndpoint = dynamodbEndpoint;
+    }
+
+    public String getDynamodbRegion() {
+        return dynamodbRegion;
+    }
+
+    public void setDynamodbRegion(String dynamodbRegion) {
+        this.dynamodbRegion = dynamodbRegion;
     }
 
     public String getOutputTableName() {

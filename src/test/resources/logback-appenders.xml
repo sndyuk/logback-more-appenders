@@ -7,8 +7,9 @@
 
     <!-- Place AwsCredentials.properties in class path. -->
     <dynamodbCredentialFilePath>AwsCredentials.properties</dynamodbCredentialFilePath>
-    <!-- Tokyo -->
+    <!-- Endpoint and Region. Farther information: https://docs.aws.amazon.com/general/latest/gr/rande.html#ddb_region -->
     <dynamodbEndpoint>dynamodb.ap-northeast-1.amazonaws.com</dynamodbEndpoint>
+    <dynamodbRegion>ap-northeast-1</dynamodbRegion>
     <!-- Table name of DynamoDB -->
     <outputTableName>AppLog</outputTableName>
     <!-- Unique instance name for this app server instance.
