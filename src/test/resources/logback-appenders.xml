@@ -113,6 +113,7 @@
     <senderMaxRetryCount>12</senderMaxRetryCount>
     <!-- [Optional] Enable/Disable use of EventTime to get sub second resolution of log event date-time -->
     <useEventTime>true</useEventTime>
+    <sslEnabled>false</sslEnabled>
 
     <layout class="ch.qos.logback.classic.PatternLayout">
       <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg]]></pattern>
