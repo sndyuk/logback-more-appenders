@@ -114,9 +114,9 @@
     <!-- [Optional] Enable/Disable use of EventTime to get sub second resolution of log event date-time -->
     <useEventTime>true</useEventTime>
 
-    <layout class="ch.qos.logback.classic.PatternLayout">
+    <encoder>
       <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg]]></pattern>
-    </layout>
+    </encoder>
   </appender>
 
 

@@ -20,6 +20,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
+import ch.qos.logback.core.encoder.EchoEncoder;
+import ch.qos.logback.core.encoder.Encoder;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import org.komamitsu.fluency.EventTime;
 import org.komamitsu.fluency.Fluency;
 
@@ -30,7 +33,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
+import static ch.qos.logback.core.CoreConstants.CODES_URL;
+
+public class FluencyLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 
     private static final String DATA_MSG = "msg";
     private static final String DATA_MESSAGE = "message";
@@ -42,6 +47,7 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
     private static final String DATA_THROWABLE = "throwable";
     private static final String EMPTY_STRING = "";
 
+    private Encoder<E> encoder = new EchoEncoder<E>();
     private Fluency fluency;
 
     @Override
@@ -56,40 +62,41 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
     }
 
     @Override
-    protected void append(ILoggingEvent rawData) {
-        String msg;
-        if (layout != null) {
-            msg = layout.doLayout(rawData);
-        } else {
-            msg = rawData.toString();
-        }
+    protected void append(E event) {
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put(DATA_MSG, msg);
-        data.put(DATA_MESSAGE, rawData.getFormattedMessage());
-        data.put(DATA_LOGGER, rawData.getLoggerName());
-        data.put(DATA_THREAD, rawData.getThreadName());
-        data.put(DATA_LEVEL, rawData.getLevel().levelStr);
-        if (rawData.getMarker() != null) {
-            data.put(DATA_MARKER, rawData.getMarker().toString());
+        data.put(DATA_MSG, encoder.encode(event));
+
+        if (event instanceof ILoggingEvent) {
+            ILoggingEvent loggingEvent = (ILoggingEvent) event;
+            data.put(DATA_MESSAGE, loggingEvent.getFormattedMessage());
+            data.put(DATA_LOGGER, loggingEvent.getLoggerName());
+            data.put(DATA_THREAD, loggingEvent.getThreadName());
+            data.put(DATA_LEVEL, loggingEvent.getLevel().levelStr);
+            if (loggingEvent.getMarker() != null) {
+                data.put(DATA_MARKER, loggingEvent.getMarker().toString());
+            }
+            if (loggingEvent.hasCallerData()) {
+                data.put(DATA_CALLER, new CallerDataConverter().convert(loggingEvent));
+            }
+            if (loggingEvent.getThrowableProxy() != null) {
+                data.put(DATA_THROWABLE, ThrowableProxyUtil.asString(loggingEvent.getThrowableProxy()));
+            }
+            for (Map.Entry<String, String> entry : loggingEvent.getMDCPropertyMap().entrySet()) {
+                data.put(entry.getKey(), entry.getValue());
+            }
         }
-        if (rawData.hasCallerData()) {
-            data.put(DATA_CALLER, new CallerDataConverter().convert(rawData));
-        }
-        if (rawData.getThrowableProxy() != null) {
-            data.put(DATA_THROWABLE, ThrowableProxyUtil.asString(rawData.getThrowableProxy()));
-        }
+
         if (additionalFields != null) {
             data.putAll(additionalFields);
         }
-        for (Map.Entry<String, String> entry : rawData.getMDCPropertyMap().entrySet()) {
-            data.put(entry.getKey(), entry.getValue());
-        }
+
         try {
+            String tag = this.tag == null ? EMPTY_STRING : this.tag;
             if (this.isUseEventTime()) {
                 EventTime eventTime = EventTime.fromEpochMilli(System.currentTimeMillis());
-                fluency.emit(tag == null ? EMPTY_STRING : tag, eventTime, data);
+                fluency.emit(tag, eventTime, data);
             } else {
-                fluency.emit(tag == null ? EMPTY_STRING : tag, data);
+                fluency.emit(tag, data);
             }
         } catch (IOException e) {
             // pass
@@ -116,7 +123,6 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
     private int port;
     private Map<String, String> additionalFields;
     private RemoteServers remoteServers;
-    private Layout<ILoggingEvent> layout;
     private boolean ackResponseMode;
     private String fileBackupDir;
     private Integer bufferChunkInitialSize;
@@ -167,12 +173,19 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
         additionalFields.put(field.getKey(), field.getValue());
     }
 
-    public Layout<ILoggingEvent> getLayout() {
-        return layout;
+    @Deprecated
+    public void setLayout(Layout<E> layout) {
+        addWarn("This appender no longer admits a layout as a sub-component, set an encoder instead.");
+        addWarn("To ensure compatibility, wrapping your layout in LayoutWrappingEncoder.");
+        addWarn("See also " + CODES_URL + "#layoutInsteadOfEncoder for details");
+        LayoutWrappingEncoder<E> lwe = new LayoutWrappingEncoder<E>();
+        lwe.setLayout(layout);
+        lwe.setContext(context);
+        this.encoder = lwe;
     }
 
-    public void setLayout(Layout<ILoggingEvent> layout) {
-        this.layout = layout;
+    public void setEncoder(Encoder<E> encoder) {
+        this.encoder = encoder;
     }
 
     public boolean isAckResponseMode() {
@@ -347,3 +360,4 @@ public class FluencyLogbackAppender extends UnsynchronizedAppenderBase<ILoggingE
         }
     }
 }
+
