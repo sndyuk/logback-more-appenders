@@ -133,6 +133,7 @@ public class FluencyLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
     private Integer flushIntervalMillis;
     private Integer senderMaxRetryCount;
     private boolean useEventTime; // Flag to enable/disable usage of eventtime
+    private boolean sslEnabled;
 
     public RemoteServers getRemoteServers() {
         return remoteServers;
@@ -165,6 +166,10 @@ public class FluencyLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
     public void setPort(int port) {
         this.port = port;
     }
+
+    public boolean isSslEnabled() { return sslEnabled; }
+
+    public void setSslEnabled(boolean useSsl) { this.sslEnabled = useSsl; }
 
     public void addAdditionalField(Field field) {
         if (additionalFields == null) {
@@ -284,6 +289,8 @@ public class FluencyLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
         if (waitUntilFlusherTerminated != null) { config.setWaitUntilFlusherTerminated(waitUntilFlusherTerminated); }
         if (flushIntervalMillis != null) { config.setFlushIntervalMillis(flushIntervalMillis); }
         if (senderMaxRetryCount != null) { config.setSenderMaxRetryCount(senderMaxRetryCount); }
+        config.setSslEnabled(sslEnabled);
+
         return config;
     }
 
