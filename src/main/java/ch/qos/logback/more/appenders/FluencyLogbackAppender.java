@@ -15,40 +15,44 @@
  */
 package ch.qos.logback.more.appenders;
 
-import ch.qos.logback.classic.pattern.CallerDataConverter;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.classic.spi.ThrowableProxyUtil;
-import ch.qos.logback.core.Layout;
-import ch.qos.logback.core.UnsynchronizedAppenderBase;
-import ch.qos.logback.core.encoder.EchoEncoder;
-import ch.qos.logback.core.encoder.Encoder;
-import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
-import org.komamitsu.fluency.EventTime;
-import org.komamitsu.fluency.Fluency;
-
+import static ch.qos.logback.core.CoreConstants.CODES_URL;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.komamitsu.fluency.EventTime;
+import org.komamitsu.fluency.Fluency;
+import ch.qos.logback.core.Layout;
+import ch.qos.logback.core.encoder.Encoder;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 
-import static ch.qos.logback.core.CoreConstants.CODES_URL;
+public class FluencyLogbackAppender<E> extends FluentdAppender<E> {
 
-public class FluencyLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
-
-    private static final String DATA_MSG = "msg";
-    private static final String DATA_MESSAGE = "message";
-    private static final String DATA_LOGGER = "logger";
-    private static final String DATA_THREAD = "thread";
-    private static final String DATA_LEVEL = "level";
-    private static final String DATA_MARKER = "marker";
-    private static final String DATA_CALLER = "caller";
-    private static final String DATA_THROWABLE = "throwable";
-    private static final String EMPTY_STRING = "";
-
-    private Encoder<E> encoder = new EchoEncoder<E>();
     private Fluency fluency;
+
+    @Deprecated
+    public void setLayout(Layout<E> layout) {
+        addWarn("This appender no longer admits a layout as a sub-component, set an encoder instead.");
+        addWarn("To ensure compatibility, wrapping your layout in LayoutWrappingEncoder.");
+        addWarn("See also " + CODES_URL + "#layoutInsteadOfEncoder for details");
+        LayoutWrappingEncoder<E> lwe = new LayoutWrappingEncoder<E>();
+        lwe.setLayout(layout);
+        lwe.setContext(context);
+        this.encoder = lwe;
+    }
+
+    public void setEncoder(Encoder<E> encoder) {
+        this.encoder = encoder;
+    }
+
+    public void addAdditionalField(Field field) {
+        if (additionalFields == null) {
+            additionalFields = new HashMap<String, String>();
+        }
+        additionalFields.put(field.getKey(), field.getValue());
+    }
 
     @Override
     public void start() {
@@ -63,35 +67,10 @@ public class FluencyLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 
     @Override
     protected void append(E event) {
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put(DATA_MSG, encoder.encode(event));
-
-        if (event instanceof ILoggingEvent) {
-            ILoggingEvent loggingEvent = (ILoggingEvent) event;
-            data.put(DATA_MESSAGE, loggingEvent.getFormattedMessage());
-            data.put(DATA_LOGGER, loggingEvent.getLoggerName());
-            data.put(DATA_THREAD, loggingEvent.getThreadName());
-            data.put(DATA_LEVEL, loggingEvent.getLevel().levelStr);
-            if (loggingEvent.getMarker() != null) {
-                data.put(DATA_MARKER, loggingEvent.getMarker().toString());
-            }
-            if (loggingEvent.hasCallerData()) {
-                data.put(DATA_CALLER, new CallerDataConverter().convert(loggingEvent));
-            }
-            if (loggingEvent.getThrowableProxy() != null) {
-                data.put(DATA_THROWABLE, ThrowableProxyUtil.asString(loggingEvent.getThrowableProxy()));
-            }
-            for (Map.Entry<String, String> entry : loggingEvent.getMDCPropertyMap().entrySet()) {
-                data.put(entry.getKey(), entry.getValue());
-            }
-        }
-
-        if (additionalFields != null) {
-            data.putAll(additionalFields);
-        }
+        Map<String, Object> data = createData(event);
 
         try {
-            String tag = this.tag == null ? EMPTY_STRING : this.tag;
+            String tag = this.tag == null ? "" : this.tag;
             if (this.isUseEventTime()) {
                 EventTime eventTime = EventTime.fromEpochMilli(System.currentTimeMillis());
                 fluency.emit(tag, eventTime, data);
@@ -121,7 +100,6 @@ public class FluencyLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
     private String tag;
     private String remoteHost;
     private int port;
-    private Map<String, String> additionalFields;
     private RemoteServers remoteServers;
     private boolean ackResponseMode;
     private String fileBackupDir;
@@ -170,28 +148,6 @@ public class FluencyLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
     public boolean isSslEnabled() { return sslEnabled; }
 
     public void setSslEnabled(boolean useSsl) { this.sslEnabled = useSsl; }
-
-    public void addAdditionalField(Field field) {
-        if (additionalFields == null) {
-            additionalFields = new HashMap<String, String>();
-        }
-        additionalFields.put(field.getKey(), field.getValue());
-    }
-
-    @Deprecated
-    public void setLayout(Layout<E> layout) {
-        addWarn("This appender no longer admits a layout as a sub-component, set an encoder instead.");
-        addWarn("To ensure compatibility, wrapping your layout in LayoutWrappingEncoder.");
-        addWarn("See also " + CODES_URL + "#layoutInsteadOfEncoder for details");
-        LayoutWrappingEncoder<E> lwe = new LayoutWrappingEncoder<E>();
-        lwe.setLayout(layout);
-        lwe.setContext(context);
-        this.encoder = lwe;
-    }
-
-    public void setEncoder(Encoder<E> encoder) {
-        this.encoder = encoder;
-    }
 
     public boolean isAckResponseMode() {
         return ackResponseMode;
@@ -343,27 +299,6 @@ public class FluencyLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
 
         public void setPort(int port) {
             this.port = port;
-        }
-    }
-
-    public static class Field {
-        private String key;
-        private String value;
-
-        public String getKey() {
-            return key;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
         }
     }
 }

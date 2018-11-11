@@ -1,38 +1,54 @@
 /**
  * Copyright (c) 2012 sndyuk <sanada@sndyuk.com>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package ch.qos.logback.more.appenders;
 
+import static ch.qos.logback.core.CoreConstants.CODES_URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import org.fluentd.logger.FluentLogger;
+import ch.qos.logback.core.Layout;
+import ch.qos.logback.core.encoder.Encoder;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 
-import ch.qos.logback.classic.pattern.CallerDataConverter;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.classic.spi.ThrowableProxyUtil;
-import ch.qos.logback.core.UnsynchronizedAppenderBase;
-
-public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
+public class DataFluentAppender<E> extends FluentdAppender<E> {
     private FluentLogger fluentLogger;
+
+    @Deprecated
+    public void setLayout(Layout<E> layout) {
+        addWarn("This appender no longer admits a layout as a sub-component, set an encoder instead.");
+        addWarn("To ensure compatibility, wrapping your layout in LayoutWrappingEncoder.");
+        addWarn("See also " + CODES_URL + "#layoutInsteadOfEncoder for details");
+        LayoutWrappingEncoder<E> lwe = new LayoutWrappingEncoder<E>();
+        lwe.setLayout(layout);
+        lwe.setContext(context);
+        this.encoder = lwe;
+    }
+
+    public void setEncoder(Encoder<E> encoder) {
+        this.encoder = encoder;
+    }
+
+    public void addAdditionalField(Field field) {
+        if (additionalFields == null) {
+            additionalFields = new HashMap<String, String>();
+        }
+        additionalFields.put(field.getKey(), field.getValue());
+    }
 
     @Override
     public void start() {
         super.start();
-
         fluentLogger = FluentLogger.getLogger(label != null ? tag : null, remoteHost, port);
     }
 
@@ -49,32 +65,13 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
     }
 
     @Override
-    protected void append(ILoggingEvent rawData) {
-        final Map<String, Object> data = new HashMap<String, Object>();
-        data.put("message", rawData.getFormattedMessage());
-        data.put("logger", rawData.getLoggerName());
-        data.put("thread", rawData.getThreadName());
-        data.put("level", rawData.getLevel());
-        if (rawData.getMarker() != null) {
-            data.put("marker", rawData.getMarker());
-        }
-        if (rawData.hasCallerData()) {
-            data.put("caller", new CallerDataConverter().convert(rawData));
-        }
-        if (rawData.getThrowableProxy() != null) {
-            data.put("throwable", ThrowableProxyUtil.asString(rawData.getThrowableProxy()));
-        }
-        if (additionalFields != null) {
-            data.putAll(additionalFields);
-        }
-        for (Entry<String, String> entry : rawData.getMDCPropertyMap().entrySet()) {
-            data.put(entry.getKey(), entry.getValue());
-        }
+    protected void append(E event) {
+        Map<String, Object> data = createData(event);
 
-        if (label == null) {
-            fluentLogger.log(tag, data, rawData.getTimeStamp() / 1000);
+        if (useEventTime) {
+            fluentLogger.log(label == null ? tag : label, data, System.currentTimeMillis() / 1000);
         } else {
-            fluentLogger.log(label, data, rawData.getTimeStamp() / 1000);
+            fluentLogger.log(label == null ? tag : label, data);
         }
     }
 
@@ -82,7 +79,7 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
     private String label;
     private String remoteHost;
     private int port;
-    private Map<String, String> additionalFields;
+    private boolean useEventTime;
 
     public String getTag() {
         return tag;
@@ -116,31 +113,11 @@ public class DataFluentAppender extends UnsynchronizedAppenderBase<ILoggingEvent
         this.port = port;
     }
 
-    public void addAdditionalField(Field field) {
-        if (additionalFields == null) {
-            additionalFields = new HashMap<String, String>();
-        }
-        additionalFields.put(field.getKey(), field.getValue());
+    public boolean isUseEventTime() {
+        return this.useEventTime;
     }
 
-    public static class Field {
-        private String key;
-        private String value;
-
-        public String getKey() {
-            return key;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
+    public void setUseEventTime(boolean useEventTime) {
+        this.useEventTime = useEventTime;
     }
 }

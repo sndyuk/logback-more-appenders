@@ -15,15 +15,13 @@
     <!-- Unique instance name for this app server instance.
          If you have multiple servers, you need to use different name for each servers. -->
     <instanceName>instance-1</instanceName>
-    <!-- Max queue size of logs which is waiting to be sent (When it reach to the max size, the log will be disappeared). -->
-    <maxQueueSize>999</maxQueueSize>
 
-    <layout class="ch.qos.logback.classic.PatternLayout">
+    <encoder>
       <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg]]></pattern>
-    </layout>
+    </encoder>
   </appender>
 
-  <appender name="FLUENT_SYNC"
+  <appender name="FLUENT"
     class="ch.qos.logback.more.appenders.DataFluentAppender">
 
     <!-- Tag for Fluentd. Farther information: http://docs.fluentd.org/articles/config-file -->
@@ -42,33 +40,10 @@
       <key>foo2</key>
       <value>bar2</value>
     </additionalField>
-  </appender>
 
-  <appender name="FLUENT" class="ch.qos.logback.classic.AsyncAppender">
-    <!-- Max queue size of logs which is waiting to be sent (When it reach to the max size, the log will be disappeared). -->
-    <queueSize>999</queueSize>
-    <appender-ref ref="FLUENT_SYNC" />
-  </appender>
-
-  <appender name="FLUENT_TEXT_SYNC"
-    class="ch.qos.logback.more.appenders.FluentLogbackAppender">
-    <!-- Tag for Fluentd. Farther information: http://docs.fluentd.org/articles/config-file -->
-    <tag>debug</tag>
-    <!-- [Optional] Label for Fluentd. Farther information: http://docs.fluentd.org/articles/config-file -->
-    <label>logback</label>
-    <!-- Host name/address and port number which Flentd placed -->
-    <remoteHost>localhost</remoteHost>
-    <port>24224</port>
-
-    <layout class="ch.qos.logback.classic.PatternLayout">
+    <encoder>
       <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg]]></pattern>
-    </layout>
-  </appender>
-
-  <appender name="FLUENT_TEXT" class="ch.qos.logback.classic.AsyncAppender">
-    <!-- Max queue size of logs which is waiting to be sent (When it reach to the max size, the log will be disappeared). -->
-    <queueSize>999</queueSize>
-    <appender-ref ref="FLUENT_TEXT_SYNC" />
+    </encoder>
   </appender>
 
   <appender name="FLUENCY" class="ch.qos.logback.more.appenders.FluencyLogbackAppender">

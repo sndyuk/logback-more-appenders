@@ -5,9 +5,8 @@
   <include resource="logback-appenders.xml" />
 
   <logger name="ch.qos.logback.more.appenders.LogbackAppenderTest" level="TRACE">
-    <appender-ref ref="FLUENT" />
-    <appender-ref ref="FLUENT_TEXT" />
     <appender-ref ref="FLUENCY" />
+    <appender-ref ref="FLUENT" />
     <appender-ref ref="DYNAMODB" />
   </logger>
 

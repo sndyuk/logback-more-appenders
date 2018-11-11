@@ -25,6 +25,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Use UnsynchronizedAppenderBase instead.
+ */
+@Deprecated
 public abstract class DaemonAppender<E> implements Runnable {
     private static ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
 
