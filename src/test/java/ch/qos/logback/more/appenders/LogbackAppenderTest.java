@@ -15,14 +15,18 @@
  */
 package ch.qos.logback.more.appenders;
 
-import java.io.IOException;
-
+import ch.qos.logback.more.appenders.marker.AppendersMarker;
+import ch.qos.logback.more.appenders.marker.AppendersMarkerMap;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.slf4j.Marker;
 import org.slf4j.helpers.BasicMarkerFactory;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LogbackAppenderTest {
 
@@ -71,6 +75,20 @@ public class LogbackAppenderTest {
         LOG.info("Without Exception.");
         LOG.error("Test the checked Exception.", new IOException("Connection something"));
         LOG.warn("Test the unchecked Exception.", new IllegalStateException("Oh your state"));
+
+        Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
+    }
+
+    @Test
+    public void logMarkerMap() throws InterruptedException {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("key1", "value1");
+        map.put("key2", "value2");
+
+        AppendersMarker markerMap = new AppendersMarkerMap(map);
+
+        LOG.debug(markerMap, "Test the marker map.");
 
         Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
     }
