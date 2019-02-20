@@ -15,18 +15,16 @@
  */
 package ch.qos.logback.more.appenders;
 
-import ch.qos.logback.more.appenders.marker.AppendersMarker;
-import ch.qos.logback.more.appenders.marker.AppendersMarkerMap;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.slf4j.Marker;
 import org.slf4j.helpers.BasicMarkerFactory;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import ch.qos.logback.more.appenders.marker.MapMarker;
 
 public class LogbackAppenderTest {
 
@@ -82,11 +80,11 @@ public class LogbackAppenderTest {
     @Test
     public void logMarkerMap() throws InterruptedException {
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("key1", "value1");
         map.put("key2", "value2");
 
-        AppendersMarker markerMap = new AppendersMarkerMap(map);
+        MapMarker markerMap = new MapMarker("MAP_MARKER", map);
 
         LOG.debug(markerMap, "Test the marker map.");
 
