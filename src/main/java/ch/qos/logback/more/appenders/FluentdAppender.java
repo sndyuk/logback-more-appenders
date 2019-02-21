@@ -1,6 +1,7 @@
 package ch.qos.logback.more.appenders;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import org.slf4j.Marker;
 import ch.qos.logback.classic.pattern.CallerDataConverter;
@@ -24,6 +25,7 @@ abstract class FluentdAppender<E> extends UnsynchronizedAppenderBase<E> {
 
     protected Encoder<E> encoder = new EchoEncoder<E>();
     protected Map<String, String> additionalFields;
+    protected boolean flattenMapMarker;
 
     protected Map<String, Object> createData(E event) {
         Map<String, Object> data = new HashMap<String, Object>();
@@ -39,12 +41,20 @@ abstract class FluentdAppender<E> extends UnsynchronizedAppenderBase<E> {
             Marker marker = loggingEvent.getMarker();
             if (marker != null) {
                 if (marker instanceof MapMarker) {
-                    MapMarker markerMap = (MapMarker) marker;
-                    data.put(DATA_MARKER + "." + markerMap.getName(), markerMap.getMap());
+                    extractMapMarker((MapMarker) marker, data);
                 } else {
                     data.put(DATA_MARKER, marker.toString());
+                    if (marker.hasReferences()) {
+                        for (Iterator<Marker> iter = marker.iterator(); iter.hasNext();) {
+                            Marker nestedMarker = iter.next();
+                            if (nestedMarker instanceof MapMarker) {
+                                extractMapMarker((MapMarker) nestedMarker, data);
+                            }
+                        }
+                    }
                 }
             }
+
             if (loggingEvent.hasCallerData()) {
                 data.put(DATA_CALLER, new CallerDataConverter().convert(loggingEvent));
             }
@@ -63,6 +73,13 @@ abstract class FluentdAppender<E> extends UnsynchronizedAppenderBase<E> {
         return data;
     }
 
+    private void extractMapMarker(MapMarker mapMarker, Map<String, Object> data) {
+        if (flattenMapMarker) {
+            data.putAll(mapMarker.getMap());
+        } else {
+            data.put(DATA_MARKER + "." + mapMarker.getName(), mapMarker.getMap());
+        }
+    }
 
     public static class Field {
         private String key;

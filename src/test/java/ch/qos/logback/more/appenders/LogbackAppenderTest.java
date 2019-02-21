@@ -78,15 +78,29 @@ public class LogbackAppenderTest {
     }
 
     @Test
-    public void logMarkerMap() throws InterruptedException {
+    public void logMapMarker() throws InterruptedException {
 
         Map<String, String> map = new HashMap<String, String>();
         map.put("key1", "value1");
         map.put("key2", "value2");
 
-        MapMarker markerMap = new MapMarker("MAP_MARKER", map);
+        MapMarker mapMarker = new MapMarker("MAP_MARKER", map);
 
-        LOG.debug(markerMap, "Test the marker map.");
+        LOG.debug(mapMarker, "Test the marker map.");
+
+        Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
+    }
+
+    @Test
+    public void logNestedMapMarker() throws InterruptedException {
+        Marker notifyMarker = new BasicMarkerFactory().getMarker("NOTIFY");
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("key1", "value1");
+        map.put("key2", "value2");
+
+        MapMarker mapMarker = new MapMarker("MAP_MARKER", map);
+        notifyMarker.add(mapMarker);
+        LOG.debug(notifyMarker, "Test the nested marker map.");
 
         Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
     }
