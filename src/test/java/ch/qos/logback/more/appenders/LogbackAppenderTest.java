@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.slf4j.Marker;
-import org.slf4j.helpers.BasicMarkerFactory;
+import org.slf4j.MarkerFactory;
 import ch.qos.logback.more.appenders.marker.MapMarker;
 
 public class LogbackAppenderTest {
@@ -50,7 +50,7 @@ public class LogbackAppenderTest {
 
     @Test
     public void logMarker() throws InterruptedException {
-        Marker sendEmailMarker = new BasicMarkerFactory().getMarker("SEND_EMAIL");
+        Marker sendEmailMarker = MarkerFactory.getMarker("SEND_EMAIL");
         LOG.debug(sendEmailMarker, "Test the marker 1.");
         LOG.debug(sendEmailMarker, "Test the marker 2.");
 
@@ -59,8 +59,8 @@ public class LogbackAppenderTest {
 
     @Test
     public void logNestedMarker() throws InterruptedException {
-        Marker notifyMarker = new BasicMarkerFactory().getMarker("NOTIFY");
-        Marker sendEmailMarker = new BasicMarkerFactory().getMarker("SEND_EMAIL");
+        Marker notifyMarker = MarkerFactory.getMarker("NOTIFY");
+        Marker sendEmailMarker = MarkerFactory.getMarker("SEND_EMAIL");
         sendEmailMarker.add(notifyMarker);
         LOG.debug(sendEmailMarker, "Test the nested marker 1.");
         LOG.debug(sendEmailMarker, "Test the nested marker 2.");
@@ -93,7 +93,7 @@ public class LogbackAppenderTest {
 
     @Test
     public void logNestedMapMarker() throws InterruptedException {
-        Marker notifyMarker = new BasicMarkerFactory().getMarker("NOTIFY");
+        Marker notifyMarker = MarkerFactory.getMarker("NOTIFY");
         Map<String, String> map = new HashMap<String, String>();
         map.put("key1", "value1");
         map.put("key2", "value2");
@@ -101,6 +101,14 @@ public class LogbackAppenderTest {
         MapMarker mapMarker = new MapMarker("MAP_MARKER", map);
         notifyMarker.add(mapMarker);
         LOG.debug(notifyMarker, "Test the nested marker map.");
+
+        Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
+    }
+
+    @Test
+    public void logDecidedByAppendersMarkerFilter() throws InterruptedException {
+        Marker alertMarker = MarkerFactory.getMarker("SECURITY_ALERT");
+        LOG.debug(alertMarker, "Test alert filter.");
 
         Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
     }
