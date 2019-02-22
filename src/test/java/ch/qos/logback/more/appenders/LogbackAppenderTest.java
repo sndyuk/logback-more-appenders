@@ -18,18 +18,35 @@ package ch.qos.logback.more.appenders;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.more.appenders.marker.MapMarker;
 
 public class LogbackAppenderTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogbackAppenderTest.class);
 
+    @Before
+    public void before() {
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        if (!lc.isStarted()) {
+            lc.start();
+        }
+    }
+
+    @After
+    public void after() {
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        lc.stop();
+    }
+    
     @Test
     public void logSimple() throws InterruptedException {
 
@@ -100,7 +117,10 @@ public class LogbackAppenderTest {
 
         MapMarker mapMarker = new MapMarker("MAP_MARKER", map);
         notifyMarker.add(mapMarker);
-        LOG.debug(notifyMarker, "Test the nested marker map.");
+        for (int i = 0; i < 100; i++) {
+            LOG.debug(notifyMarker, "Test the nested marker map." + i);
+        }
+
 
         Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
     }

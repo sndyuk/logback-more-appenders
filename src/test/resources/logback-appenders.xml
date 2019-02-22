@@ -2,14 +2,56 @@
 <!DOCTYPE logback>
 <included>
 
+  <appender name="CLOUDWATCH_SYNC"
+    class="ch.qos.logback.more.appenders.CloudWatchLogbackAppender">
+
+    <awsConfig>
+      <!-- [Optional] Place AwsCredentials.properties in class path. -->
+      <credentialFilePath>AwsCredentials.properties</credentialFilePath>
+      <region>ap-northeast-1</region>
+    </awsConfig>
+    <logGroupName>test-log</logGroupName>
+    <!-- [Optional] Automatically roll current log stream and resume logging in a new stream. -->
+    <logStreamRolling class="ch.qos.logback.more.appenders.CountBasedStreamName">
+      <!-- The limit is not exactly checked. The stream can have more than the limit depends on emitInterval and maxFlushTime. -->
+      <limit>100000</limit>
+    </logStreamRolling>
+    <!-- [Optional] Or you can specify static stream name.
+    <logStreamName>my-log-stream</logStreamName>
+    -->
+    <!-- [Optional] Create Log group and stream automatically. -->
+    <createLogDestination>true</createLogDestination>
+    <!-- The minimum interval millis for each CloudWatch API call. -->
+    <emitInterval>100</emitInterval>
+
+    <encoder>
+      <pattern><![CDATA[[%thread] %-5level %logger{15}#%line %msg]]></pattern>
+    </encoder>
+  </appender>
+
+  <appender name="CLOUDWATCH" class="ch.qos.logback.classic.AsyncAppender">
+    <!-- Max queue size of logs which is waiting to be sent (When it reach to the max size, the log will be disappeared). -->
+    <queueSize>999</queueSize>
+    <!-- Never block when the queue becomes full. -->
+    <neverBlock>true</neverBlock>
+    <!-- The default maximum queue flush time allowed during appender stop. 
+         If the worker takes longer than this time it will exit, discarding any remaining items in the queue.
+         10000 millis
+     -->
+   <maxFlushTime>100</maxFlushTime>
+    <appender-ref ref="CLOUDWATCH_SYNC" />
+  </appender>
+
+
   <appender name="DYNAMODB_SYNC"
     class="ch.qos.logback.more.appenders.DynamoDBLogbackAppender">
 
-    <!-- Place AwsCredentials.properties in class path. -->
-    <dynamodbCredentialFilePath>AwsCredentials.properties</dynamodbCredentialFilePath>
-    <!-- Endpoint and Region. Farther information: https://docs.aws.amazon.com/general/latest/gr/rande.html#ddb_region -->
-    <dynamodbEndpoint>dynamodb.ap-northeast-1.amazonaws.com</dynamodbEndpoint>
-    <dynamodbRegion>ap-northeast-1</dynamodbRegion>
+    <awsConfig>
+      <!-- [Optional] Place AwsCredentials.properties in class path. -->
+      <credentialFilePath>AwsCredentials.properties</credentialFilePath>
+      <region>ap-northeast-1</region>
+    </awsConfig>
+
     <!-- Table name of DynamoDB -->
     <outputTableName>AppLog</outputTableName>
     <!-- Unique instance name for this app server instance.
@@ -30,9 +72,10 @@
          If the worker takes longer than this time it will exit, discarding any remaining items in the queue.
          10000 millis
      -->
-    <maxFlushTime>10000</maxFlushTime>
+    <maxFlushTime>1000</maxFlushTime>
     <appender-ref ref="DYNAMODB_SYNC" />
   </appender>
+
 
   <appender name="FLUENT_SYNC"
     class="ch.qos.logback.more.appenders.DataFluentAppender">
@@ -73,6 +116,7 @@
     <maxFlushTime>10000</maxFlushTime>
     <appender-ref ref="FLUENT_SYNC" />
   </appender>
+
 
   <appender name="FLUENCY_SYNC" class="ch.qos.logback.more.appenders.FluencyLogbackAppender">
     <!-- Tag for Fluentd. Farther information: http://docs.fluentd.org/articles/config-file -->
@@ -137,6 +181,7 @@
     <maxFlushTime>10000</maxFlushTime>
     <appender-ref ref="FLUENCY_SYNC" />
   </appender>
+
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>

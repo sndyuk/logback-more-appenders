@@ -13,59 +13,40 @@
  */
 package ch.qos.logback.more.appenders;
 
-import static ch.qos.logback.core.CoreConstants.CODES_URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.PropertiesCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
 import com.amazonaws.services.dynamodbv2.model.QueryRequest;
 import com.amazonaws.services.dynamodbv2.model.QueryResult;
-import ch.qos.logback.core.Layout;
-import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import ch.qos.logback.core.encoder.EchoEncoder;
 import ch.qos.logback.core.encoder.Encoder;
-import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 
-public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
+public class DynamoDBLogbackAppender<E> extends AwsAppender<E> {
 
     private Encoder<E> encoder = new EchoEncoder<E>();
 
-    @Deprecated
-    public void setLayout(Layout<E> layout) {
-        addWarn("This appender no longer admits a layout as a sub-component, set an encoder instead.");
-        addWarn("To ensure compatibility, wrapping your layout in LayoutWrappingEncoder.");
-        addWarn("See also " + CODES_URL + "#layoutInsteadOfEncoder for details");
-        LayoutWrappingEncoder<E> lwe = new LayoutWrappingEncoder<E>();
-        lwe.setLayout(layout);
-        lwe.setContext(context);
-        this.encoder = lwe;
-    }
-
     public void setEncoder(Encoder<E> encoder) {
         this.encoder = encoder;
+    }
+
+    public void setAwsConfig(AwsConfig config) {
+        this.config = config;
     }
 
     @Override
     public void start() {
         try {
             super.start();
-            PropertiesCredentials credentials = new PropertiesCredentials(
-                    getClass().getClassLoader().getResourceAsStream(dynamodbCredentialFilePath));
             this.dynamoClient = AmazonDynamoDBClientBuilder.standard()
                     .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                    .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(
-                            dynamodbEndpoint, dynamodbRegion))
-                    .build();
-            this.id = getLastId(outputTableName, instanceName, dynamoClient);
+                    .withRegion(config.getRegion()).build();
         } catch (Exception e) {
-            addWarn("Could not initialize " + DynamoDBLogbackAppender.class.getCanonicalName()
-                    + " ( will try to initialize again later ): " + e);
+            addError("Could not initialize " + DynamoDBLogbackAppender.class.getCanonicalName(), e);
         }
     }
 
@@ -87,8 +68,8 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
         if (this.id == -1) {
             this.id = getLastId(outputTableName, instanceName, dynamoClient);
             if (this.id == -1) {
-                addWarn("Could not initialize " + DynamoDBLogbackAppender.class.getCanonicalName()
-                        + " ( will try to initialize again later ): ");
+                addError(
+                        "Could not initialize " + DynamoDBLogbackAppender.class.getCanonicalName());
                 return;
             }
         }
@@ -97,7 +78,8 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
         data.put("id", new AttributeValue().withN(String.valueOf(++id)));
         data.put("msg", new AttributeValue().withS(new String(encoder.encode(event))));
 
-        PutItemRequest itemRequest = new PutItemRequest().withTableName(outputTableName).withItem(data);
+        PutItemRequest itemRequest =
+                new PutItemRequest().withTableName(outputTableName).withItem(data);
         dynamoClient.putItem(itemRequest);
     }
 
@@ -117,25 +99,10 @@ public class DynamoDBLogbackAppender<E> extends UnsynchronizedAppenderBase<E> {
         }
     }
 
-    private String dynamodbCredentialFilePath;
-    private String dynamodbEndpoint;
-    private String dynamodbRegion;
     private String outputTableName;
     private String instanceName;
     private long id = -1;
     private AmazonDynamoDB dynamoClient;
-
-    public void setDynamodbCredentialFilePath(String dynamodbCredentialFilePath) {
-        this.dynamodbCredentialFilePath = dynamodbCredentialFilePath;
-    }
-
-    public void setDynamodbEndpoint(String dynamodbEndpoint) {
-        this.dynamodbEndpoint = dynamodbEndpoint;
-    }
-
-    public void setDynamodbRegion(String dynamodbRegion) {
-        this.dynamodbRegion = dynamodbRegion;
-    }
 
     public void setOutputTableName(String outputTableName) {
         this.outputTableName = outputTableName;

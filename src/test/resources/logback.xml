@@ -5,6 +5,7 @@
   <include resource="logback-appenders.xml" />
 
   <logger name="ch.qos.logback.more.appenders.LogbackAppenderTest" level="TRACE" additivity="true">
+    <appender-ref ref="CLOUDWATCH" />
     <appender-ref ref="FLUENCY" />
     <appender-ref ref="FLUENT" />
     <appender-ref ref="SECURITY_ALERT" />
