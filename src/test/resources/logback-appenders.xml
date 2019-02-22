@@ -44,7 +44,7 @@
     <!-- Host name/address and port number which Flentd placed -->
     <remoteHost>localhost</remoteHost>
     <port>24224</port>
-    <!-- Additional fields(Pairs of key: value) -->
+    <!-- [Optional] Additional fields(Pairs of key: value) -->
     <additionalField>
       <key>foo</key>
       <value>bar</value>
@@ -53,6 +53,8 @@
       <key>foo2</key>
       <value>bar2</value>
     </additionalField>
+    <!--  [Optional] If true, Map Marker is expanded instead of nesting in the marker name -->
+    <flattenMapMarker>false</flattenMapMarker>
 
     <encoder>
       <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg]]></pattern>
@@ -115,6 +117,8 @@
     <!-- [Optional] Enable/Disable use of EventTime to get sub second resolution of log event date-time -->
     <useEventTime>true</useEventTime>
     <sslEnabled>false</sslEnabled>
+    <!--  [Optional] If true, Map Marker is expanded instead of nesting in the marker name -->
+    <flattenMapMarker>false</flattenMapMarker>
 
     <encoder>
       <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg]]></pattern>

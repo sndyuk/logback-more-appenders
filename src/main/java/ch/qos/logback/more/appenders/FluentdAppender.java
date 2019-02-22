@@ -1,13 +1,16 @@
 package ch.qos.logback.more.appenders;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import org.slf4j.Marker;
 import ch.qos.logback.classic.pattern.CallerDataConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import ch.qos.logback.core.encoder.EchoEncoder;
 import ch.qos.logback.core.encoder.Encoder;
+import ch.qos.logback.more.appenders.marker.MapMarker;
 
 abstract class FluentdAppender<E> extends UnsynchronizedAppenderBase<E> {
 
@@ -22,6 +25,7 @@ abstract class FluentdAppender<E> extends UnsynchronizedAppenderBase<E> {
 
     protected Encoder<E> encoder = new EchoEncoder<E>();
     protected Map<String, String> additionalFields;
+    protected boolean flattenMapMarker;
 
     protected Map<String, Object> createData(E event) {
         Map<String, Object> data = new HashMap<String, Object>();
@@ -33,9 +37,24 @@ abstract class FluentdAppender<E> extends UnsynchronizedAppenderBase<E> {
             data.put(DATA_LOGGER, loggingEvent.getLoggerName());
             data.put(DATA_THREAD, loggingEvent.getThreadName());
             data.put(DATA_LEVEL, loggingEvent.getLevel().levelStr);
-            if (loggingEvent.getMarker() != null) {
-                data.put(DATA_MARKER, loggingEvent.getMarker().toString());
+
+            Marker marker = loggingEvent.getMarker();
+            if (marker != null) {
+                if (marker instanceof MapMarker) {
+                    extractMapMarker((MapMarker) marker, data);
+                } else {
+                    data.put(DATA_MARKER, marker.toString());
+                    if (marker.hasReferences()) {
+                        for (Iterator<Marker> iter = marker.iterator(); iter.hasNext();) {
+                            Marker nestedMarker = iter.next();
+                            if (nestedMarker instanceof MapMarker) {
+                                extractMapMarker((MapMarker) nestedMarker, data);
+                            }
+                        }
+                    }
+                }
             }
+
             if (loggingEvent.hasCallerData()) {
                 data.put(DATA_CALLER, new CallerDataConverter().convert(loggingEvent));
             }
@@ -54,6 +73,13 @@ abstract class FluentdAppender<E> extends UnsynchronizedAppenderBase<E> {
         return data;
     }
 
+    private void extractMapMarker(MapMarker mapMarker, Map<String, Object> data) {
+        if (flattenMapMarker) {
+            data.putAll(mapMarker.getMap());
+        } else {
+            data.put(DATA_MARKER + "." + mapMarker.getName(), mapMarker.getMap());
+        }
+    }
 
     public static class Field {
         private String key;

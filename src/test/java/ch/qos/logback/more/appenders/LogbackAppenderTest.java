@@ -16,13 +16,15 @@
 package ch.qos.logback.more.appenders;
 
 import java.io.IOException;
-
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.slf4j.Marker;
 import org.slf4j.helpers.BasicMarkerFactory;
+import ch.qos.logback.more.appenders.marker.MapMarker;
 
 public class LogbackAppenderTest {
 
@@ -71,6 +73,34 @@ public class LogbackAppenderTest {
         LOG.info("Without Exception.");
         LOG.error("Test the checked Exception.", new IOException("Connection something"));
         LOG.warn("Test the unchecked Exception.", new IllegalStateException("Oh your state"));
+
+        Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
+    }
+
+    @Test
+    public void logMapMarker() throws InterruptedException {
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("key1", "value1");
+        map.put("key2", "value2");
+
+        MapMarker mapMarker = new MapMarker("MAP_MARKER", map);
+
+        LOG.debug(mapMarker, "Test the marker map.");
+
+        Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
+    }
+
+    @Test
+    public void logNestedMapMarker() throws InterruptedException {
+        Marker notifyMarker = new BasicMarkerFactory().getMarker("NOTIFY");
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("key1", "value1");
+        map.put("key2", "value2");
+
+        MapMarker mapMarker = new MapMarker("MAP_MARKER", map);
+        notifyMarker.add(mapMarker);
+        LOG.debug(notifyMarker, "Test the nested marker map.");
 
         Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
     }

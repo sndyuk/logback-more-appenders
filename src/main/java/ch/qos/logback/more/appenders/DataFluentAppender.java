@@ -46,6 +46,9 @@ public class DataFluentAppender<E> extends FluentdAppender<E> {
         additionalFields.put(field.getKey(), field.getValue());
     }
 
+    public boolean isFlattenMapMarker() { return flattenMapMarker; }
+    public void setFlattenMapMarker(boolean flattenMapMarker) { this.flattenMapMarker = flattenMapMarker; }
+
     @Override
     public void start() {
         super.start();
