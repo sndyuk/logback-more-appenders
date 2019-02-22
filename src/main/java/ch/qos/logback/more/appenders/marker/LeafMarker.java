@@ -43,13 +43,15 @@ public class LeafMarker implements Marker {
         return null;
     }
 
-    @Override
     public boolean contains(Marker other) {
-        return false;
+        if (other == null) {
+            throw new IllegalArgumentException("Other cannot be null");
+        }
+        return this.equals(other);
     }
 
     @Override
     public boolean contains(String name) {
-        return false;
+        return this.name != null && this.name.equals(name);
     }
 }

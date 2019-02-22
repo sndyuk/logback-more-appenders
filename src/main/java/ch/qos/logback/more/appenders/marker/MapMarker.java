@@ -1,12 +1,14 @@
 package ch.qos.logback.more.appenders.marker;
 
 import java.util.Map;
+import org.slf4j.Marker;
 
 public class MapMarker extends LeafMarker {
 
     private static final long serialVersionUID = 1L;
 
     private final Map<String, ?> map;
+    private String mapStr;
 
     public MapMarker(String name, Map<String, ?> map) {
         super(name);
@@ -21,13 +23,18 @@ public class MapMarker extends LeafMarker {
     public boolean equals(final Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        if (!super.equals(o))
+        if (o == null)
             return false;
 
-        final MapMarker that = (MapMarker) o;
-        return map != null ? map.equals(that.map) : that.map == null;
+        if (o instanceof MapMarker) {
+            final MapMarker that = (MapMarker) o;
+            return map != null ? map.equals(that.map) : that.map == null;
+        }
+        if (o instanceof Marker) {
+            final Marker that = (Marker) o;
+            return that.equals(this);
+        }
+        return false;
     }
 
     @Override
@@ -39,6 +46,9 @@ public class MapMarker extends LeafMarker {
 
     @Override
     public String toString() {
-        return "AppendersMarkerMap{" + "map=" + map + '}';
+        if (mapStr == null) {
+            mapStr = mapStr.toString();
+        }
+        return getName() + '{' + mapStr + '}';
     }
 }
