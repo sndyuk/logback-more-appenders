@@ -4,10 +4,10 @@
 
   <include resource="logback-appenders.xml" />
 
-  <logger name="ch.qos.logback.more.appenders.LogbackAppenderTest" level="TRACE">
+  <logger name="ch.qos.logback.more.appenders.LogbackAppenderTest" level="TRACE" additivity="true">
     <appender-ref ref="FLUENCY" />
     <appender-ref ref="FLUENT" />
-    <appender-ref ref="DYNAMODB" />
+    <appender-ref ref="SECURITY_ALERT" />
   </logger>
 
   <root>
