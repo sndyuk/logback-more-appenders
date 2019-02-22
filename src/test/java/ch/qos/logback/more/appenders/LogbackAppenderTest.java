@@ -117,9 +117,7 @@ public class LogbackAppenderTest {
 
         MapMarker mapMarker = new MapMarker("MAP_MARKER", map);
         notifyMarker.add(mapMarker);
-        for (int i = 0; i < 100; i++) {
-            LOG.debug(notifyMarker, "Test the nested marker map." + i);
-        }
+        LOG.debug(notifyMarker, "Test the nested marker map.");
 
 
         Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...

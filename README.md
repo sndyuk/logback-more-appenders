@@ -3,6 +3,9 @@ Logback more appenders
 is additional appenders for [Logback](http://logback.qos.ch/).
 
 ## Appenders
+- [CloudWatch](https://aws.amazon.com/jp/cloudwatch/)
+    - depends on [aws-java-sdk-logs](http://aws.amazon.com/jp/sdkforjava/).
+
 - [fluentd](http://fluentd.org/)
     - depends on [fluent-logger for Java](https://github.com/fluent/fluent-logger-java).
      - Install fluentd before running logger.
@@ -18,11 +21,14 @@ is additional appenders for [Logback](http://logback.qos.ch/).
 
 ### Latest changes
 
+##### Version 1.5.2
+
+* Added CloudWatchLogbackAppender.
+
 ##### Version 1.5.1
 
 * Accept dynamic `Map<String, ?>` as the additional log property. https://github.com/sndyuk/logback-more-appenders/pull/32
 * Added simple marker filter for Appender. https://github.com/sndyuk/logback-more-appenders/pull/33
-
 
 ##### Version 1.5.0
 
@@ -77,9 +83,16 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.5.1</version>
+        <version>1.5.2</version>
       </dependency>
-    
+
+      <!-- [Optional] If you use The CloudWatch appender, You need to add the dependency(aws-java-sdk-logs). -->
+      <dependency>
+        <groupId>com.amazonaws</groupId>
+        <artifactId>aws-java-sdk-logs</artifactId>
+        <version>${aws.version}</version>
+      </dependency>
+
       <!-- [Optional] If you use The Fluentd appender, You need to add the dependency(fluent-logger). -->
       <dependency>
         <groupId>org.fluentd</groupId>
