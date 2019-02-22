@@ -18,6 +18,12 @@ is additional appenders for [Logback](http://logback.qos.ch/).
 
 ### Latest changes
 
+##### Version 1.5.1
+
+* Accept dynamic `Map<String, ?>` as the additional log property. https://github.com/sndyuk/logback-more-appenders/pull/32
+* Added simple marker filter for Appender. https://github.com/sndyuk/logback-more-appenders/pull/33
+
+
 ##### Version 1.5.0
 
 * Use Encoder instead of Layout directly. https://github.com/sndyuk/logback-more-appenders/pull/28
@@ -71,7 +77,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.5.0</version>
+        <version>1.5.1</version>
       </dependency>
     
       <!-- [Optional] If you use The Fluentd appender, You need to add the dependency(fluent-logger). -->
