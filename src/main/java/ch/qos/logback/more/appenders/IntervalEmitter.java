@@ -41,7 +41,7 @@ public class IntervalEmitter<E, R> {
     }
 
     public void emit() {
-        if (appender.append(events)) {
+        if (!events.isEmpty() && appender.append(events)) {
             events.clear();
         }
     }
