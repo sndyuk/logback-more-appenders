@@ -90,12 +90,10 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         try {
             super.stop();
         } finally {
-            if (fluency != null) {
-                try {
-                    fluency.close();
-                } catch (IOException e) {
-                    // pass
-                }
+            try {
+                fluency.close();
+            } catch (Exception e) {
+                // pass
             }
         }
     }
