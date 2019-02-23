@@ -28,7 +28,7 @@ import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 
-public class FluencyLogbackAppender<E> extends FluentdAppender<E> {
+public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
 
     private Fluency fluency;
 

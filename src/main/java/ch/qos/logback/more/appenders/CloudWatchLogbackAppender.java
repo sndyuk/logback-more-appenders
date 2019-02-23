@@ -1,6 +1,20 @@
+/**
+ * Copyright (c) 2018 sndyuk <sanada@sndyuk.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package ch.qos.logback.more.appenders;
 
 import java.util.List;
+import java.util.UUID;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.AWSLogsClientBuilder;
@@ -11,8 +25,6 @@ import com.amazonaws.services.logs.model.DescribeLogGroupsResult;
 import com.amazonaws.services.logs.model.DescribeLogStreamsRequest;
 import com.amazonaws.services.logs.model.DescribeLogStreamsResult;
 import com.amazonaws.services.logs.model.InputLogEvent;
-import com.amazonaws.services.logs.model.LogGroup;
-import com.amazonaws.services.logs.model.LogStream;
 import com.amazonaws.services.logs.model.PutLogEventsRequest;
 import com.amazonaws.services.logs.model.PutLogEventsResult;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -21,6 +33,13 @@ import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.more.appenders.IntervalEmitter.EventMapper;
 import ch.qos.logback.more.appenders.IntervalEmitter.IntervalAppender;
 
+/**
+ * Appender for CloudWatch. It appends logs for every emitInterval.
+ * 
+ * @author sndyuk
+ *
+ * @param <E>
+ */
 public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
 
     private IntervalEmitter<E, InputLogEvent> emitter;
@@ -97,12 +116,11 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
 
     private void ensureLogGroup() {
         DescribeLogGroupsRequest request =
-                new DescribeLogGroupsRequest().withLogGroupNamePrefix(logGroupName);
+                new DescribeLogGroupsRequest().withLogGroupNamePrefix(logGroupName).withLimit(1);
         DescribeLogGroupsResult result = awsLogs.describeLogGroups(request);
-        for (LogGroup group : result.getLogGroups()) {
-            if (logGroupName.equals(group.getLogGroupName())) {
-                return;
-            }
+        if (result.getLogGroups().size() == 1
+                && result.getLogGroups().get(0).getLogGroupName().equals(logGroupName)) {
+            return;
         }
         if (createLogDestination) {
             awsLogs.createLogGroup(new CreateLogGroupRequest(logGroupName));
@@ -114,12 +132,10 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
 
     private String ensureLogStream(String name) {
         DescribeLogStreamsRequest request = new DescribeLogStreamsRequest()
-                .withLogGroupName(logGroupName).withLogStreamNamePrefix(name);
+                .withLogGroupName(logGroupName).withLogStreamNamePrefix(name).withLimit(1);
         DescribeLogStreamsResult result = awsLogs.describeLogStreams(request);
-        for (LogStream stream : result.getLogStreams()) {
-            if (name.equals(stream.getLogStreamName())) {
-                return stream.getUploadSequenceToken();
-            }
+        if (result.getLogStreams().size() == 1 && result.getLogStreams().get(0).getLogStreamName().equals(name)) {
+            return result.getLogStreams().get(0).getUploadSequenceToken();
         }
         if (createLogDestination) {
             awsLogs.createLogStream(new CreateLogStreamRequest(logGroupName, name));
@@ -196,7 +212,7 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
         }
     }
 
-    protected interface StreamName {
+    public interface StreamName {
         String get(List<InputLogEvent> events);
     }
 
@@ -210,6 +226,36 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
         @Override
         public String get(List<InputLogEvent> events) {
             return name;
+        }
+    }
+
+    public static class CountBasedStreamName implements StreamName {
+        private long count = 0;
+        private long limit = 1000;
+        private String baseName = "";
+        private String currentName;
+
+        public void setBaseName(String baseName) {
+            this.baseName = baseName;
+        }
+
+        public void setLimit(long limit) {
+            this.limit = limit;
+            this.count = limit + 1;
+        }
+
+        @Override
+        public String get(List<InputLogEvent> events) {
+            count += events.size();
+            if (count > limit) {
+                synchronized (this) {
+                    if (count > limit) {
+                        currentName = baseName + UUID.randomUUID();
+                        count = events.size();
+                    }
+                }
+            }
+            return currentName;
         }
     }
 }

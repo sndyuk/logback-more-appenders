@@ -21,7 +21,7 @@ import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 
-public class DataFluentAppender<E> extends FluentdAppender<E> {
+public class DataFluentAppender<E> extends FluentdAppenderBase<E> {
     private FluentLogger fluentLogger;
 
     @Deprecated

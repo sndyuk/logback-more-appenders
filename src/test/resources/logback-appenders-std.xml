@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE logback>
+<included>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %marker %-5level %logger{15}#%line %X{req.requestURI} %msg\n]]></pattern>
+    </encoder>
+  </appender>
+
+  <appender name="SECURITY_ALERT" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- The simple marker filter instead of writing complex configuration with EvaluatorFilter -->
+    <filter class="ch.qos.logback.more.appenders.filter.AppendersMarkerFilter">
+      <marker>SECURITY_ALERT</marker>
+    </filter>
+
+    <target>System.err</target>
+
+    <encoder>
+      <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %marker %-5level %logger{15}#%line %X{req.requestURI} %msg\n]]></pattern>
+    </encoder>
+  </appender>
+
+</included>
