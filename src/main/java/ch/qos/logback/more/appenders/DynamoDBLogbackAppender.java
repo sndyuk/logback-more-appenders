@@ -26,6 +26,10 @@ import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import ch.qos.logback.core.encoder.EchoEncoder;
 import ch.qos.logback.core.encoder.Encoder;
 
+/**
+ * @deprecated Use Kinesis stream(KinesisStreamLogbackAppender) with stream and DynamoDB stream API.
+ */
+@Deprecated
 public class DynamoDBLogbackAppender<E> extends AwsAppender<E> {
 
     private Encoder<E> encoder = new EchoEncoder<E>();

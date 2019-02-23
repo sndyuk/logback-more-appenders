@@ -61,7 +61,10 @@
 
     <streamName>test-stream</streamName>
     <shardCount>2</shardCount>
-    <!-- [Optional] Default RandomPartitionKey. You can create custom Partition key by implementing PartitionKey interface. -->
+    <!-- [Optional] Default RandomPartitionKey. You can create custom Partition key by implementing PartitionKey interface.
+                    Tips: If you won't have multiple shard, you can use the partition key for performance.
+                    ch.qos.logback.more.appenders.KinesisStreamLogbackAppender$SinglePartitionKey
+    -->
     <partitionKey class="ch.qos.logback.more.appenders.KinesisStreamLogbackAppender$RandomPartitionKey" />
     <!-- [Optional] Create the stream automatically. -->
     <createStreamDestination>true</createStreamDestination>
@@ -85,42 +88,5 @@
    <maxFlushTime>100</maxFlushTime>
     <appender-ref ref="KINESIS_SYNC" />
   </appender>
-
-
-  <!-- DynamoDB -->
-
-  <appender name="DYNAMODB_SYNC"
-    class="ch.qos.logback.more.appenders.DynamoDBLogbackAppender">
-
-    <awsConfig>
-      <!-- [Optional] Place AwsCredentials.properties in class path. -->
-      <credentialFilePath>AwsCredentials.properties</credentialFilePath>
-      <region>ap-northeast-1</region>
-    </awsConfig>
-
-    <!-- Table name of DynamoDB -->
-    <outputTableName>AppLog</outputTableName>
-    <!-- Unique instance name for this app server instance.
-         If you have multiple servers, you need to use different name for each servers. -->
-    <instanceName>instance-1</instanceName>
-
-    <encoder>
-      <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg]]></pattern>
-    </encoder>
-  </appender>
-
-  <appender name="DYNAMODB" class="ch.qos.logback.classic.AsyncAppender">
-    <!-- Max queue size of logs which is waiting to be sent (When it reach to the max size, the log will be disappeared). -->
-    <queueSize>999</queueSize>
-    <!-- Never block when the queue becomes full. -->
-    <neverBlock>true</neverBlock>
-    <!-- The default maximum queue flush time allowed during appender stop. 
-         If the worker takes longer than this time it will exit, discarding any remaining items in the queue.
-         10000 millis
-     -->
-    <maxFlushTime>1000</maxFlushTime>
-    <appender-ref ref="DYNAMODB_SYNC" />
-  </appender>
-
 
 </included>

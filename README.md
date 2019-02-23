@@ -1,10 +1,13 @@
 Logback more appenders
 ==================================================
-is additional appenders for [Logback](http://logback.qos.ch/).
+is additional appenders for [Logback](http://logback.qos.ch/) and provide better performance and data consistency without any concern.
 
 ## Appenders
-- [CloudWatch](https://aws.amazon.com/jp/cloudwatch/)
-    - depends on [aws-java-sdk-logs](http://aws.amazon.com/jp/sdkforjava/).
+- [CloudWatch](https://aws.amazon.com/cloudwatch/)
+    - depends on [aws-java-sdk-logs](http://aws.amazon.com/sdkforjava/).
+
+- [Kinesis Stream](https://aws.amazon.com/kinesis/data-streams/)
+    - depends on [aws-java-sdk-kinesis](http://aws.amazon.com/sdkforjava/).
 
 - [fluentd](http://fluentd.org/)
     - depends on [fluent-logger for Java](https://github.com/fluent/fluent-logger-java).
@@ -14,12 +17,12 @@ is additional appenders for [Logback](http://logback.qos.ch/).
     - depends on [fluency](https://github.com/komamitsu/fluency).
     - Install fluentd before running logger.
 
-- [Amazon DynamoDB](http://aws.amazon.com/jp/dynamodb/)
-    - depends on [aws-java-sdk](http://aws.amazon.com/jp/sdkforjava/).
-    - [Create Amazon DynamoDB Table](#Creating-Amazon-DynamoDB-Table)
-
-
 ### Latest changes
+
+##### Version 1.5.3
+
+* Added KinesisStreamLogbackAppender.
+* Deprecated DynamoDBLogbackAppender. Use Kinesis stream(KinesisStreamLogbackAppender) with stream and DynamoDB stream API.
 
 ##### Version 1.5.2
 
@@ -83,13 +86,20 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.5.2</version>
+        <version>1.5.3</version>
       </dependency>
 
       <!-- [Optional] If you use The CloudWatch appender, You need to add the dependency(aws-java-sdk-logs). -->
       <dependency>
         <groupId>com.amazonaws</groupId>
         <artifactId>aws-java-sdk-logs</artifactId>
+        <version>${aws.version}</version>
+      </dependency>
+
+      <!-- [Optional] If you use The Kinesis appender, You need to add the dependency(aws-java-sdk-kinesis). -->
+      <dependency>
+        <groupId>com.amazonaws</groupId>
+        <artifactId>aws-java-sdk-kinesis</artifactId>
         <version>${aws.version}</version>
       </dependency>
 
@@ -107,29 +117,16 @@ Configure your pom.xml:
         <version>${fluency.version}</version>
       </dependency>
     
-      <!-- [Optional] If you use The Amazon DynamoDB appender, You need to add the dependency(aws-java-sdk-dynamodb). -->
-      <dependency>
-        <groupId>com.amazonaws</groupId>
-        <artifactId>aws-java-sdk-dynamodb</artifactId>
-        <version>${aws.version}</version>
-      </dependency>
-    
     </dependencies>
 
 ### Configure your logback.xml
 You can find the sample configuration files here:
 
-- [logback-appenders.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders.xml)
+- [AWS services - logback-appenders-aws.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders-aws.xml)
+- [Fluentd - logback-appenders-fluentd.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders-fluentd.xml)
+- [Stdout/err - logback-appenders-std.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders-std.xml)
+
 - [logback.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback.xml)
-
-### <a name="Creating-Amazon-DynamoDB-Table"></a>Creating Amazon DynamoDB Table
-Before you use Amazon DynamoDB appender, you need to create the table on DynamoDB:
-
-AWS Console -> DynamoDB -> Choose region -> Create Table -> 
-
-    Table Name: [Table name described in logback.xml]
-    Partition key: "instance" as String / (Hash Attribute)
-    Add sort key: "id" as Number / (Range Attribute)
 
 ### License
 [Apache License, Version 2.0](LICENSE)

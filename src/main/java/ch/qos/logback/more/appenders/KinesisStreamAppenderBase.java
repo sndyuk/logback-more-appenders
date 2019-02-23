@@ -61,15 +61,10 @@ public abstract class KinesisStreamAppenderBase<E> extends AwsAppender<E> {
     }
 
     private void ensureKinesisStream() {
-        ListStreamsRequest listStreamsRequest = new ListStreamsRequest();
-        listStreamsRequest.setExclusiveStartStreamName(streamName);
-        listStreamsRequest.setLimit(1);
-        ListStreamsResult listStreamsResult = kinesis.listStreams(listStreamsRequest);
-        List<String> streamNames = listStreamsResult.getStreamNames();
-        if (streamNames.size() == 1 && streamNames.get(0).equals(streamName)) {
+        DescribeStreamResult describeStreamsResult = kinesis.describeStream(streamName);
+        if (describeStreamsResult.getStreamDescription() != null) {
             return;
         }
-
         // Watch the stream becomes ACTIVE.
         Thread th = new Thread(new Runnable() {
             @Override

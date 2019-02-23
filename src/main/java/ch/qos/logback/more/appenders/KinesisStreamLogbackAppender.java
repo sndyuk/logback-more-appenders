@@ -173,4 +173,11 @@ public class KinesisStreamLogbackAppender extends KinesisStreamAppenderBase<ILog
             return String.valueOf(rand.nextInt(maxPartition));
         }
     }
+
+    public static class SinglePartitionKey implements PartitionKey<ILoggingEvent> {
+        @Override
+        public String get(ILoggingEvent event) {
+            return "0";
+        }
+    }
 }
