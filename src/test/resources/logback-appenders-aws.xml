@@ -29,8 +29,20 @@
     <!-- The minimum interval millis for each CloudWatch API call. -->
     <emitInterval>100</emitInterval>
 
-    <encoder>
-      <pattern><![CDATA[[%thread] %-5level %logger{15}#%line %msg]]></pattern>
+    <!-- The FastJsonEncoder treats the log as JSON. -->
+    <encoder class="ch.qos.logback.more.appenders.encoder.FastJsonEncoder">
+      <pattern><![CDATA[{
+        "date": "%date{HH:mm:ss.SSS}",
+        "thread": "%thread",
+        "marker": "%marker",
+        "level": "%-5level",
+        "logger": "%logger",
+        "line": %line,
+        "requestURI": "%X{req.requestURI}",
+        "message": "%msg"
+      }\n]]></pattern>
+      <!-- Remove redandant spaces and lines. -->
+      <compressSpace>true</compressSpace>
     </encoder>
   </appender>
 
@@ -71,8 +83,20 @@
     <!-- The minimum interval millis for each Kinesis API call. -->
     <emitInterval>100</emitInterval>
 
-    <encoder>
-      <pattern><![CDATA[[%thread] %-5level %logger{15}#%line %msg]]></pattern>
+    <!-- The FastJsonEncoder treats the log as JSON. -->
+    <encoder class="ch.qos.logback.more.appenders.encoder.FastJsonEncoder">
+      <pattern><![CDATA[{
+        "date": "%date{HH:mm:ss.SSS}",
+        "thread": "%thread",
+        "marker": "%marker",
+        "level": "%-5level",
+        "logger": "%logger",
+        "line": %line,
+        "requestURI": "%X{req.requestURI}",
+        "message": "%msg"
+      }\n]]></pattern>
+      <!-- Remove redandant spaces and lines. -->
+      <compressSpace>true</compressSpace>
     </encoder>
   </appender>
 
