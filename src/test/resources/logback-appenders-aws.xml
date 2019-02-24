@@ -37,7 +37,7 @@
         "marker": "%marker",
         "level": "%-5level",
         "logger": "%logger",
-        "line": %line,
+        "line": "%line",
         "requestURI": "%X{req.requestURI}",
         "message": "%msg"
       }\n]]></pattern>
@@ -91,7 +91,7 @@
         "marker": "%marker",
         "level": "%-5level",
         "logger": "%logger",
-        "line": %line,
+        "line": "%line",
         "requestURI": "%X{req.requestURI}",
         "message": "%msg"
       }\n]]></pattern>
