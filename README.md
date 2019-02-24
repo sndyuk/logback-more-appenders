@@ -19,6 +19,10 @@ is additional appenders for [Logback](http://logback.qos.ch/) and provide better
 
 ### Latest changes
 
+##### Version 1.5.4
+
+* Added JSON Encoder.
+
 ##### Version 1.5.3
 
 * Added KinesisStreamLogbackAppender.
