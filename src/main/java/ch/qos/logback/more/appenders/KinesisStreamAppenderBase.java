@@ -13,15 +13,12 @@
  */
 package ch.qos.logback.more.appenders;
 
-import java.util.List;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.AmazonKinesisClientBuilder;
 import com.amazonaws.services.kinesis.model.CreateStreamRequest;
 import com.amazonaws.services.kinesis.model.DescribeStreamRequest;
 import com.amazonaws.services.kinesis.model.DescribeStreamResult;
-import com.amazonaws.services.kinesis.model.ListStreamsRequest;
-import com.amazonaws.services.kinesis.model.ListStreamsResult;
 import com.amazonaws.services.kinesis.model.ResourceNotFoundException;
 import ch.qos.logback.core.encoder.EchoEncoder;
 import ch.qos.logback.core.encoder.Encoder;
@@ -33,7 +30,7 @@ public abstract class KinesisStreamAppenderBase<E> extends AwsAppender<E> {
     protected int shardCount;
     protected boolean createStreamDestination;
     protected Encoder<E> encoder = new EchoEncoder<E>();
-    protected boolean isActive;
+    protected boolean active;
 
     @Override
     public void start() {
@@ -61,9 +58,12 @@ public abstract class KinesisStreamAppenderBase<E> extends AwsAppender<E> {
     }
 
     private void ensureKinesisStream() {
-        DescribeStreamResult describeStreamsResult = kinesis.describeStream(streamName);
-        if (describeStreamsResult.getStreamDescription() != null) {
+        try {
+            kinesis.describeStream(streamName);
+            active = true;
             return;
+        } catch (ResourceNotFoundException e) {
+            // pass
         }
         // Watch the stream becomes ACTIVE.
         Thread th = new Thread(new Runnable() {
@@ -78,10 +78,10 @@ public abstract class KinesisStreamAppenderBase<E> extends AwsAppender<E> {
                 describeStreamRequest.setStreamName(streamName);
 
                 long startTime = System.currentTimeMillis();
-                long endTime = startTime + (60 * 1000);
+                long endTime = startTime + (120 * 1000);
                 while (true) {
                     try {
-                        Thread.sleep(3 * 1000);
+                        Thread.sleep(5 * 1000);
                     } catch (Exception e) {
                         // pass
                     }
@@ -91,7 +91,7 @@ public abstract class KinesisStreamAppenderBase<E> extends AwsAppender<E> {
                         String streamStatus =
                                 describeStreamResponse.getStreamDescription().getStreamStatus();
                         if (streamStatus.equals("ACTIVE")) {
-                            started = true;
+                            active = true;
                             return;
                         }
                     } catch (ResourceNotFoundException e) {

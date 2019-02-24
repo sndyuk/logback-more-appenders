@@ -94,7 +94,7 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
     @Override
     public void stop() {
         try {
-            emitter.emit();
+            emitter.emitForShutdown(10000, 10);
         } catch (Exception e) {
             // Ignore
         }

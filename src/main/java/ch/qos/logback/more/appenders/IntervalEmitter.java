@@ -35,15 +35,35 @@ public class IntervalEmitter<E, R> {
 
         long now = System.currentTimeMillis();
         if (now > lastEmit + maxInterval) {
-            emit();
-            lastEmit = now;
+            if (emit()) {
+                lastEmit = now;
+            }
         }
     }
 
-    public void emit() {
-        if (!events.isEmpty() && appender.append(events)) {
-            events.clear();
+    public boolean emit() {
+        if (!events.isEmpty()) {
+            if (appender.append(events)) {
+                events.clear();
+                return true;
+            }
+            return false;
         }
+        return true;
+    }
+
+    public void emitForShutdown(long waitMillis, int retry) {
+        try {
+            for (int i = 0; i < retry; i++) {
+                if (emit()) {
+                    return;
+                }
+                Thread.sleep(waitMillis);
+            }
+        } catch (InterruptedException e) {
+            // Ignore
+        }
+        System.err.println("Could not write the log: " + events);
     }
 
     public interface EventMapper<E, R> {

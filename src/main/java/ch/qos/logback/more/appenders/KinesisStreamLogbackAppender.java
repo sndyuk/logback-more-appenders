@@ -77,18 +77,14 @@ public class KinesisStreamLogbackAppender extends KinesisStreamAppenderBase<ILog
     @Override
     public void stop() {
         try {
-            emitter.emit();
+            emitter.emitForShutdown(10000, 10);
         } catch (Exception e) {
             // Ignore
         }
         try {
             super.stop();
-        } finally {
-            try {
-                kinesis.shutdown();
-            } catch (Exception e) {
-                // pass
-            }
+        } catch (Exception e) {
+            // Ignore
         }
     }
 
@@ -112,7 +108,8 @@ public class KinesisStreamLogbackAppender extends KinesisStreamAppenderBase<ILog
 
         @Override
         public boolean append(List<PutRecordsRequestEntry> entries) {
-            if (!started) {
+            if (!active) {
+                addWarn("Kinesis stream is not started.");
                 return false;
             }
             return append(entries, 0);
