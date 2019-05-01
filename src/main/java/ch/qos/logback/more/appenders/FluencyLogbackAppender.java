@@ -27,6 +27,8 @@ import org.komamitsu.fluency.Fluency;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
+import org.komamitsu.fluency.FluencyBuilder;
+import org.komamitsu.fluency.fluentd.FluencyBuilderForFluentd;
 
 public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
 
@@ -62,7 +64,8 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         super.start();
 
         try {
-            this.fluency = Fluency.defaultFluency(configureServers(), configureFluency());
+            FluencyBuilderForFluentd builder = configureFluency();
+            this.fluency = builder.build(configureServers());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -236,19 +239,21 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
      */
     public void setUseEventTime(boolean useEventTime) { this.useEventTime = useEventTime; }
 
-    protected Fluency.Config configureFluency() {
-        Fluency.Config config = new Fluency.Config().setAckResponseMode(ackResponseMode);
-        if (fileBackupDir != null) { config.setFileBackupDir(fileBackupDir); }
-        if (bufferChunkInitialSize != null) { config.setBufferChunkInitialSize(bufferChunkInitialSize); }
-        if (bufferChunkRetentionSize != null) { config.setBufferChunkRetentionSize(bufferChunkRetentionSize); }
-        if (maxBufferSize != null) { config.setMaxBufferSize(maxBufferSize); }
-        if (waitUntilBufferFlushed != null) { config.setWaitUntilBufferFlushed(waitUntilBufferFlushed); }
-        if (waitUntilFlusherTerminated != null) { config.setWaitUntilFlusherTerminated(waitUntilFlusherTerminated); }
-        if (flushIntervalMillis != null) { config.setFlushIntervalMillis(flushIntervalMillis); }
-        if (senderMaxRetryCount != null) { config.setSenderMaxRetryCount(senderMaxRetryCount); }
-        config.setSslEnabled(sslEnabled);
+    protected FluencyBuilderForFluentd configureFluency() {
+        FluencyBuilderForFluentd builder = new FluencyBuilderForFluentd();
 
-        return config;
+        builder.setAckResponseMode(ackResponseMode);
+        if (fileBackupDir != null) { builder.setFileBackupDir(fileBackupDir); }
+        if (bufferChunkInitialSize != null) { builder.setBufferChunkInitialSize(bufferChunkInitialSize); }
+        if (bufferChunkRetentionSize != null) { builder.setBufferChunkRetentionSize(bufferChunkRetentionSize); }
+        if (maxBufferSize != null) { builder.setMaxBufferSize(maxBufferSize); }
+        if (waitUntilBufferFlushed != null) { builder.setWaitUntilBufferFlushed(waitUntilBufferFlushed); }
+        if (waitUntilFlusherTerminated != null) { builder.setWaitUntilFlusherTerminated(waitUntilFlusherTerminated); }
+        if (flushIntervalMillis != null) { builder.setFlushIntervalMillis(flushIntervalMillis); }
+        if (senderMaxRetryCount != null) { builder.setSenderMaxRetryCount(senderMaxRetryCount); }
+        builder.setSslEnabled(sslEnabled);
+
+        return builder;
     }
 
     protected List<InetSocketAddress> configureServers() {

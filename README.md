@@ -19,6 +19,10 @@ is additional appenders for [Logback](http://logback.qos.ch/) and provide better
 
 ### Latest changes
 
+##### Version 1.5.5
+
+* Update FLUENCY dependency version to 2.2.1
+
 ##### Version 1.5.4
 
 * Added JSON Encoder.
