@@ -30,8 +30,6 @@ import ch.qos.logback.more.appenders.IntervalEmitter.IntervalAppender;
  * Appender for Kinesis Stream. It appends entries for every emitInterval.
  * 
  * @author sndyuk
- *
- * @param <E>
  */
 public class KinesisStreamLogbackAppender extends KinesisStreamAppenderBase<ILoggingEvent> {
 
