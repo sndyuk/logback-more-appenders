@@ -24,11 +24,10 @@ import java.util.List;
 import java.util.Map;
 import org.komamitsu.fluency.EventTime;
 import org.komamitsu.fluency.Fluency;
+import org.komamitsu.fluency.fluentd.FluencyBuilderForFluentd;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
-import org.komamitsu.fluency.FluencyBuilder;
-import org.komamitsu.fluency.fluentd.FluencyBuilderForFluentd;
 
 public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
 

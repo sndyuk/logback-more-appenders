@@ -21,11 +21,11 @@ is additional appenders for [Logback](http://logback.qos.ch/) and provide better
 
 ##### Version 1.5.5
 
-* Update FLUENCY dependency version to 2.2.1
+* Major update FLUENCY dependency version to 2.2.1 https://github.com/sndyuk/logback-more-appenders/pull/36
 
 ##### Version 1.5.4
 
-* Added JSON Encoder.
+* Added JSON Encoder. https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders-std.xml#L27-L40
 
 ##### Version 1.5.3
 
