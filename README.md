@@ -94,7 +94,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.5.3</version>
+        <version>1.5.5</version>
       </dependency>
 
       <!-- [Optional] If you use The CloudWatch appender, You need to add the dependency(aws-java-sdk-logs). -->
@@ -121,8 +121,15 @@ Configure your pom.xml:
       <!-- [Optional] If you use The Fluency appender, You need to add the dependency(fluency). -->
       <dependency>
         <groupId>org.komamitsu</groupId>
-        <artifactId>fluency</artifactId>
+        <artifactId>fluency-core</artifactId>
         <version>${fluency.version}</version>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>org.komamitsu</groupId>
+        <artifactId>fluency-fluentd</artifactId>
+        <version>${fluency.version}</version>
+        <optional>true</optional>
       </dependency>
     
     </dependencies>
