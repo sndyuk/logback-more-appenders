@@ -62,7 +62,7 @@ public class DataFluentAppender<E> extends FluentdAppenderBase<E> {
             super.stop();
         } finally {
             try {
-                fluentLogger.close();
+                FluentLogger.closeAll();
             } catch (Exception e) {
                 // pass
             }
