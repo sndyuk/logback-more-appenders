@@ -19,6 +19,10 @@ is additional appenders for [Logback](http://logback.qos.ch/) and provide better
 
 ### Latest changes
 
+##### Version 1.5.6
+
+* Fix Issue#23 https://github.com/sndyuk/logback-more-appenders/pull/37
+
 ##### Version 1.5.5
 
 * Major update FLUENCY dependency version to 2.2.1 https://github.com/sndyuk/logback-more-appenders/pull/36
@@ -94,7 +98,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.5.5</version>
+        <version>1.5.6</version>
       </dependency>
 
       <!-- [Optional] If you use The CloudWatch appender, You need to add the dependency(aws-java-sdk-logs). -->
