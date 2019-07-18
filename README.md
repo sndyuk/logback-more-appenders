@@ -17,6 +17,31 @@ is additional appenders for [Logback](http://logback.qos.ch/) and provide better
     - depends on [fluency](https://github.com/komamitsu/fluency).
     - Install fluentd before running logger.
 
+### Java 9 module(Jigsaw) with old Slf4j API.
+This version is a patch for applications implemented with Java9 module(Jigsaw) but using Slf4j version 1.7(which is not a java 9 module), for example Spring boot doesn't allow to use Slf4j 1.8.x(org.slf4j module).  
+
+Just add it to your dependency then you can use the slf4j module in your application.
+
+##### Gradle
+```
+  implementation 'com.sndyuk:logback-more-appenders:1.5.7-JAVA9MODULE_SLF4J17'
+```
+
+##### Maven
+```
+  <dependency>
+    <groupId>ch.qos.logback</groupId>
+    <artifactId>logback-classic</artifactId>
+    <version>1.5.7-JAVA9MODULE_SLF4J17</version>
+  </dependency>
+```
+
+##### module-info.java
+```
+  requires org.slf4j;
+```
+
+
 ### Latest changes
 
 ##### Version 1.5.6
@@ -49,37 +74,6 @@ is additional appenders for [Logback](http://logback.qos.ch/) and provide better
 
 * Use Encoder instead of Layout directly. https://github.com/sndyuk/logback-more-appenders/pull/28
 * Support SSL enabled for Fluency. https://github.com/sndyuk/logback-more-appenders/pull/29
-
-##### Version 1.4.4
-
-* Remove unnecessary log message size limit. https://github.com/sndyuk/logback-more-appenders/pull/26
-
-##### Version 1.4.3
-
-* Added new parameter to FLUENCY appender: 
-  useEventTime, set to true to use EventTime instead of standard timestamp and gain millisecond precision
-  use fluentd option time_format to change time resolution in messages
-  
-* Update FLUENCY dependency version to 1.6.0
-
-##### Version 1.4.2
-
-* Added new fluentds fields to FLUENCY appender.  
-  See details: https://github.com/sndyuk/logback-more-appenders/issues/17
-
-##### Version 1.4.1
-
-* Added the new appender for [Fluency](https://github.com/komamitsu/fluency).  
-  See (FLUENCY) appender on [logback-appenders.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders.xml#L73).  
-  https://github.com/sndyuk/logback-more-appenders/pull/14
-
-
-##### Version 1.4.0
-
-* If you use same logback.xml as before, the appenders work synchronously. Now you can choose sync or async fluent appenders on config file.  
-  See (FLUENT_SYNC | FLUENT) appenders on [logback-appenders.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders.xml).  
-  https://github.com/sndyuk/logback-more-appenders/pull/13
-
 
 
 ## Installing
