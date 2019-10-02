@@ -83,6 +83,8 @@
     <bufferChunkInitialSize>2097152</bufferChunkInitialSize>
     <bufferChunkRetentionSize>16777216</bufferChunkRetentionSize>
     <maxBufferSize>268435456</maxBufferSize>
+    <connectionTimeoutMilli>5000</connectionTimeoutMilli>
+    <readTimeoutMilli>5000</readTimeoutMilli>
     <waitUntilBufferFlushed>30</waitUntilBufferFlushed>
     <waitUntilFlusherTerminated>40</waitUntilFlusherTerminated>
     <flushIntervalMillis>200</flushIntervalMillis>

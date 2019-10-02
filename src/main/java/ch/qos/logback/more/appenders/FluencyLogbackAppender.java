@@ -109,6 +109,8 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
     private Integer bufferChunkInitialSize;
     private Integer bufferChunkRetentionSize;
     private Long maxBufferSize;
+    private Integer connectionTimeoutMilli;
+    private Integer readTimeoutMilli;
     private Integer waitUntilBufferFlushed;
     private Integer waitUntilFlusherTerminated;
     private Integer flushIntervalMillis;
@@ -192,6 +194,22 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         this.maxBufferSize = maxBufferSize;
     }
 
+    public Integer getConnectionTimeoutMilli() {
+        return connectionTimeoutMilli;
+    }
+
+    public void setConnectionTimeoutMilli(Integer connectionTimeoutMilli) {
+        this.connectionTimeoutMilli = connectionTimeoutMilli;
+    }
+
+    public Integer getReadTimeoutMilli() {
+        return readTimeoutMilli;
+    }
+
+    public void setReadTimeoutMilli(Integer readTimeoutMilli) {
+        this.readTimeoutMilli = readTimeoutMilli;
+    }
+
     public Integer getWaitUntilBufferFlushed() {
         return waitUntilBufferFlushed;
     }
@@ -246,6 +264,8 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         if (bufferChunkInitialSize != null) { builder.setBufferChunkInitialSize(bufferChunkInitialSize); }
         if (bufferChunkRetentionSize != null) { builder.setBufferChunkRetentionSize(bufferChunkRetentionSize); }
         if (maxBufferSize != null) { builder.setMaxBufferSize(maxBufferSize); }
+        if (connectionTimeoutMilli != null) { builder.setConnectionTimeoutMilli(connectionTimeoutMilli); }
+        if (readTimeoutMilli != null) { builder.setReadTimeoutMilli(readTimeoutMilli); }
         if (waitUntilBufferFlushed != null) { builder.setWaitUntilBufferFlushed(waitUntilBufferFlushed); }
         if (waitUntilFlusherTerminated != null) { builder.setWaitUntilFlusherTerminated(waitUntilFlusherTerminated); }
         if (flushIntervalMillis != null) { builder.setFlushIntervalMillis(flushIntervalMillis); }
