@@ -24,7 +24,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ##### Gradle
 ```
-  implementation 'com.sndyuk:logback-more-appenders:1.5.7-JAVA9MODULE_SLF4J17'
+  implementation 'com.sndyuk:logback-more-appenders:1.5.8-JAVA9MODULE_SLF4J17'
 ```
 
 ##### Maven
@@ -32,7 +32,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
   <dependency>
     <groupId>ch.qos.logback</groupId>
     <artifactId>logback-classic</artifactId>
-    <version>1.5.7-JAVA9MODULE_SLF4J17</version>
+    <version>1.5.8-JAVA9MODULE_SLF4J17</version>
   </dependency>
 ```
 
@@ -44,7 +44,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ### Latest changes
 
-##### Version 1.5.7
+##### Version 1.5.8
 
 * Minimum java target version to 7 from 6
 * https://github.com/sndyuk/logback-more-appenders/pull/38
@@ -98,7 +98,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.5.7</version>
+        <version>1.5.8</version>
       </dependency>
 
       <!-- [Optional] If you use The CloudWatch appender, You need to add the dependency(aws-java-sdk-logs). -->
