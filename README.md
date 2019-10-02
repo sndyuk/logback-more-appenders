@@ -44,16 +44,11 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ### Latest changes
 
-##### Version 1.6.0
-
-* Remove DynamoAppender
-
-
 ##### Version 1.5.8
 
 * Minimum java target version to 7 from 6
-* https://github.com/sndyuk/logback-more-appenders/pull/38
-
+* Remove DynamoAppender
+* Add connectionTimeoutMilli and readTimeoutMilli properties for Fluency https://github.com/sndyuk/logback-more-appenders/pull/38
 
 ##### Version 1.5.6
 

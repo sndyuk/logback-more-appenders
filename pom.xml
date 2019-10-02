@@ -16,11 +16,11 @@
   </licenses>
 
   <properties>
-    <fluentd.logger.version>0.3.3</fluentd.logger.version>
+    <fluentd.logger.version>0.3.4</fluentd.logger.version>
     <fluency.version>2.2.1</fluency.version>
     <logback.version>1.2.3</logback.version>
     <jackson.version>2.9.8</jackson.version>
-    <aws.version>1.11.504</aws.version>
+    <aws.version>1.11.642</aws.version>
     <maven.compiler.source>1.6</maven.compiler.source>
     <maven.compiler.target>1.6</maven.compiler.target>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
@@ -159,7 +159,7 @@
     <connection>scm:git:git@github.com:sndyuk/logback-more-appenders.git</connection>
     <developerConnection>scm:git:git@github.com:sndyuk/logback-more-appenders.git</developerConnection>
     <url>git@github.com:sndyuk/logback-more-appenders.git</url>
-    <tag>logback-more-appenders-1.4.3</tag>
+    <tag>logback-more-appenders-1.5.8</tag>
   </scm>
 
   <profiles>
