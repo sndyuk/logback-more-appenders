@@ -44,6 +44,12 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ### Latest changes
 
+##### Version 1.5.7
+
+* Minimum java target version to 7 from 6
+* https://github.com/sndyuk/logback-more-appenders/pull/38
+
+
 ##### Version 1.5.6
 
 * Fix Issue#23 https://github.com/sndyuk/logback-more-appenders/pull/37
@@ -92,7 +98,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.5.6</version>
+        <version>1.5.7</version>
       </dependency>
 
       <!-- [Optional] If you use The CloudWatch appender, You need to add the dependency(aws-java-sdk-logs). -->
