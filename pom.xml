@@ -21,8 +21,8 @@
     <logback.version>1.2.3</logback.version>
     <jackson.version>2.9.8</jackson.version>
     <aws.version>1.11.504</aws.version>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
   </properties>
 
@@ -122,14 +122,6 @@
       <groupId>org.komamitsu</groupId>
       <artifactId>fluency-fluentd</artifactId>
       <version>${fluency.version}</version>
-      <optional>true</optional>
-    </dependency>
-
-
-    <dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk-dynamodb</artifactId>
-      <version>${aws.version}</version>
       <optional>true</optional>
     </dependency>
 
