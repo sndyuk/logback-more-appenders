@@ -13,20 +13,14 @@
  */
 package ch.qos.logback.more.appenders;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.AWSLogsClientBuilder;
-import com.amazonaws.services.logs.model.CreateLogGroupRequest;
-import com.amazonaws.services.logs.model.CreateLogStreamRequest;
-import com.amazonaws.services.logs.model.DescribeLogGroupsRequest;
-import com.amazonaws.services.logs.model.DescribeLogGroupsResult;
-import com.amazonaws.services.logs.model.DescribeLogStreamsRequest;
-import com.amazonaws.services.logs.model.DescribeLogStreamsResult;
-import com.amazonaws.services.logs.model.InputLogEvent;
-import com.amazonaws.services.logs.model.PutLogEventsRequest;
-import com.amazonaws.services.logs.model.PutLogEventsResult;
+import com.amazonaws.services.logs.model.*;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.encoder.EchoEncoder;
 import ch.qos.logback.core.encoder.Encoder;
@@ -35,7 +29,7 @@ import ch.qos.logback.more.appenders.IntervalEmitter.IntervalAppender;
 
 /**
  * Appender for CloudWatch. It appends logs for every emitInterval.
- * 
+ *
  * @author sndyuk
  *
  * @param <E>
@@ -84,9 +78,6 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
         if (logGroupName == null || logGroupName.length() == 0 || logStreamName == null) {
             throw new IllegalArgumentException("logGroupName and logStreamName must be defined.");
         }
-        this.awsLogs = AWSLogsClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(config.getRegion()).build();
         this.emitter = new IntervalEmitter<E, InputLogEvent>(emitInterval,
                 new CloudWatchEventMapper(), new CloudWatchIntervalAppender());
     }
@@ -115,11 +106,16 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
     }
 
     private void ensureLogGroup() {
-        DescribeLogGroupsRequest request =
-                new DescribeLogGroupsRequest().withLogGroupNamePrefix(logGroupName).withLimit(1);
+        if (this.awsLogs == null) {
+            this.awsLogs = AWSLogsClientBuilder.standard()
+              .withCredentials(new AWSStaticCredentialsProvider(credentials))
+              .withRegion(config.getRegion())
+            .build();
+        }
+        DescribeLogGroupsRequest request = new DescribeLogGroupsRequest().withLogGroupNamePrefix(logGroupName).withLimit(1);
         DescribeLogGroupsResult result = awsLogs.describeLogGroups(request);
         if (result.getLogGroups().size() == 1
-                && result.getLogGroups().get(0).getLogGroupName().equals(logGroupName)) {
+          && result.getLogGroups().get(0).getLogGroupName().equals(logGroupName)) {
             return;
         }
         if (createLogDestination) {
@@ -147,26 +143,20 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
     }
 
     private final class CloudWatchEventMapper implements EventMapper<E, InputLogEvent> {
-
         @Override
         public InputLogEvent map(E event) {
             InputLogEvent logEvent = new InputLogEvent();
-            if (event instanceof ILoggingEvent) {
-                ILoggingEvent loggingEvent = (ILoggingEvent) event;
-                logEvent.setTimestamp(loggingEvent.getTimeStamp());
-            } else {
-                logEvent.setTimestamp(System.currentTimeMillis());
-            }
+            logEvent.setTimestamp(System.currentTimeMillis());
             logEvent.setMessage(new String(encoder.encode(event)));
             return logEvent;
         }
     }
 
     private final class CloudWatchIntervalAppender implements IntervalAppender<InputLogEvent> {
-        private String sequenceToken;
-        private boolean initialized = false;
-        private boolean switchingStream = false;
-        private String currentStreamName;
+        private volatile String sequenceToken;
+        private volatile boolean initialized = false;
+        private volatile boolean switchingStream = false;
+        private volatile String currentStreamName = logStreamName.get(Collections.EMPTY_LIST);
 
         @Override
         public boolean append(List<InputLogEvent> events) {
@@ -184,25 +174,25 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
             }
             String streamName = logStreamName.get(events);
             if (!streamName.equals(currentStreamName)) {
-                switchingStream = true;
                 synchronized (this) {
                     if (switchingStream) {
-                        sequenceToken = ensureLogStream(streamName);
-                        currentStreamName = streamName;
-                        switchingStream = false;
-                    } else {
                         return false;
                     }
+                    switchingStream = true;
+                    sequenceToken = ensureLogStream(streamName);
+                    currentStreamName = streamName;
+                    switchingStream = false;
                 }
             }
             try {
-                PutLogEventsRequest request =
-                        new PutLogEventsRequest(logGroupName, streamName, events);
-                if (sequenceToken != null) {
-                    request.withSequenceToken(sequenceToken);
+                synchronized (this) {
+                    PutLogEventsRequest request = new PutLogEventsRequest(logGroupName, streamName, events);
+                    if (sequenceToken != null) {
+                        request.withSequenceToken(sequenceToken);
+                    }
+                    PutLogEventsResult result = awsLogs.putLogEvents(request);
+                    sequenceToken = result.getNextSequenceToken();
                 }
-                PutLogEventsResult result = awsLogs.putLogEvents(request);
-                sequenceToken = result.getNextSequenceToken();
                 return true;
             } catch (RuntimeException e) {
                 sequenceToken = null;
@@ -233,7 +223,7 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
         private long count = 0;
         private long limit = 1000;
         private String baseName = "";
-        private String currentName;
+        private volatile String currentName;
 
         public void setBaseName(String baseName) {
             this.baseName = baseName;
@@ -246,6 +236,14 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
 
         @Override
         public String get(List<InputLogEvent> events) {
+            if (currentName == null) {
+                synchronized (this) {
+                    if (currentName == null) {
+                        currentName = baseName + UUID.randomUUID();
+                        return currentName;
+                    }
+                }
+            }
             count += events.size();
             if (count > limit) {
                 synchronized (this) {

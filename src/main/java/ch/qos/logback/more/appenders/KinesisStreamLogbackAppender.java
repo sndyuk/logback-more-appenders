@@ -107,7 +107,11 @@ public class KinesisStreamLogbackAppender extends KinesisStreamAppenderBase<ILog
         @Override
         public boolean append(List<PutRecordsRequestEntry> entries) {
             if (!active) {
-                addWarn("Kinesis stream is not started.");
+                synchronized (this) {
+                    if (!active) {
+                        ensureKinesisStream();
+                    }
+                }
                 return false;
             }
             return append(entries, 0);

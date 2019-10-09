@@ -30,7 +30,7 @@ public abstract class KinesisStreamAppenderBase<E> extends AwsAppender<E> {
     protected int shardCount;
     protected boolean createStreamDestination;
     protected Encoder<E> encoder = new EchoEncoder<E>();
-    protected boolean active;
+    protected volatile boolean active;
 
     @Override
     public void start() {
@@ -38,10 +38,6 @@ public abstract class KinesisStreamAppenderBase<E> extends AwsAppender<E> {
         if (streamName == null || streamName.length() == 0) {
             throw new IllegalArgumentException("streamName must be defined.");
         }
-        this.kinesis = AmazonKinesisClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(config.getRegion()).build();
-        ensureKinesisStream();
     }
 
     @Override
@@ -57,7 +53,12 @@ public abstract class KinesisStreamAppenderBase<E> extends AwsAppender<E> {
         }
     }
 
-    private void ensureKinesisStream() {
+    protected void ensureKinesisStream() {
+        if (this.kinesis == null) {
+            this.kinesis = AmazonKinesisClientBuilder.standard()
+              .withCredentials(new AWSStaticCredentialsProvider(credentials))
+              .withRegion(config.getRegion()).build();
+        }
         try {
             kinesis.describeStream(streamName);
             active = true;

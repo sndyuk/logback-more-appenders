@@ -8,15 +8,20 @@
     class="ch.qos.logback.more.appenders.CloudWatchLogbackAppender">
 
     <awsConfig>
-      <!-- [Optional] Place AwsCredentials.properties in class path. -->
+      <!--
+      [Optional] Place AwsCredentials.properties in class path.
       <credentialFilePath>AwsCredentials.properties</credentialFilePath>
+      [Optional] Or you can specify AWS profile.
+      <profile>production</profile>
+      -->
       <region>ap-northeast-1</region>
-    </awsConfig>
 
-    <logGroupName>test-log</logGroupName>
-    <!-- [Optional] Automatically roll current log stream and resume logging in a new stream.
-                    You can create custom Partition key by implementing StreamName interface.
-    -->
+  </awsConfig>
+
+  <logGroupName>test-log</logGroupName>
+  <!-- [Optional] Automatically roll current log stream and resume logging in a new stream.
+                  You can create custom Partition key by implementing StreamName interface.
+  -->
     <logStreamRolling class="ch.qos.logback.more.appenders.CloudWatchLogbackAppender$CountBasedStreamName">
       <!-- The limit is not exactly checked. The stream can have more than the limit depends on emitInterval and maxFlushTime. -->
       <limit>100000</limit>
@@ -55,7 +60,7 @@
          If the worker takes longer than this time it will exit, discarding any remaining items in the queue.
          10000 millis
      -->
-   <maxFlushTime>100</maxFlushTime>
+   <maxFlushTime>1000</maxFlushTime>
     <appender-ref ref="CLOUDWATCH_SYNC" />
   </appender>
 
@@ -66,8 +71,12 @@
     class="ch.qos.logback.more.appenders.KinesisStreamLogbackAppender">
 
     <awsConfig>
-      <!-- [Optional] Place AwsCredentials.properties in class path. -->
+      <!--
+      [Optional] Place AwsCredentials.properties in class path.
       <credentialFilePath>AwsCredentials.properties</credentialFilePath>
+      [Optional] Or you can specify AWS profile.
+      <profile>production</profile>
+      -->
       <region>ap-northeast-1</region>
     </awsConfig>
 

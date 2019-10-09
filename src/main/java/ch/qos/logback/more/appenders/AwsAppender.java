@@ -13,10 +13,12 @@
  */
 package ch.qos.logback.more.appenders;
 
+import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.PropertiesCredentials;
-import ch.qos.logback.core.UnsynchronizedAppenderBase;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+
 
 public abstract class AwsAppender<E> extends UnsynchronizedAppenderBase<E> {
 
@@ -28,12 +30,13 @@ public abstract class AwsAppender<E> extends UnsynchronizedAppenderBase<E> {
         try {
             super.start();
             if (config.getCredentialFilePath() != null
-                    && config.getCredentialFilePath().length() > 0) {
+              && config.getCredentialFilePath().length() > 0) {
                 this.credentials = new PropertiesCredentials(getClass().getClassLoader()
-                        .getResourceAsStream(config.getCredentialFilePath()));
+                  .getResourceAsStream(config.getCredentialFilePath()));
+            } else if (config.getProfile() != null && config.getProfile().length() > 0) {
+                this.credentials = new ProfileCredentialsProvider(config.getProfile()).getCredentials();
             } else {
-                this.credentials =
-                        DefaultAWSCredentialsProviderChain.getInstance().getCredentials();
+                this.credentials = DefaultAWSCredentialsProviderChain.getInstance().getCredentials();
             }
         } catch (Exception e) {
             addWarn("Could not initialize " + AwsAppender.class.getCanonicalName()
@@ -44,6 +47,7 @@ public abstract class AwsAppender<E> extends UnsynchronizedAppenderBase<E> {
     public static class AwsConfig {
         private String credentialFilePath;
         private String region;
+        private String profile;
 
         public void setCredentialFilePath(String credentialFilePath) {
             this.credentialFilePath = credentialFilePath;
@@ -59,6 +63,14 @@ public abstract class AwsAppender<E> extends UnsynchronizedAppenderBase<E> {
 
         public void setRegion(String region) {
             this.region = region;
+        }
+
+        public String getProfile() {
+            return profile;
+        }
+
+        public void setProfile(String profile) {
+            this.profile = profile;
         }
     }
 }

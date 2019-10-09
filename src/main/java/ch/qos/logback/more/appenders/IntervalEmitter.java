@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IntervalEmitter<E, R> {
-    private long lastEmit = -1;
+    private volatile long lastEmit = -1;
     private long maxInterval;
-    private final List<R> events;
+    private volatile List<R> events;
     private final EventMapper<E, R> eventMapper;
     private final IntervalAppender<R> appender;
 
@@ -31,22 +31,26 @@ public class IntervalEmitter<E, R> {
     }
 
     void append(E event) {
-        events.add(eventMapper.map(event));
-
         long now = System.currentTimeMillis();
         if (now > lastEmit + maxInterval) {
-            if (emit()) {
+            List<R> tmpEvents = new ArrayList<>(this.events.size() + 3);
+            List<R> copiedEvents = new ArrayList(this.events);
+            copiedEvents.add(this.eventMapper.map(event));
+            this.events = tmpEvents;
+            if (emit(copiedEvents)) {
                 lastEmit = now;
             }
+        } else {
+            events.add(eventMapper.map(event));
         }
     }
 
-    public boolean emit() {
-        if (!events.isEmpty()) {
-            if (appender.append(events)) {
-                events.clear();
+    public boolean emit(List<R> copiedEvents) {
+        if (!copiedEvents.isEmpty()) {
+            if (appender.append(copiedEvents)) {
                 return true;
             }
+            events.addAll(0, copiedEvents);
             return false;
         }
         return true;
@@ -55,7 +59,7 @@ public class IntervalEmitter<E, R> {
     public void emitForShutdown(long waitMillis, int retry) {
         try {
             for (int i = 0; i < retry; i++) {
-                if (emit()) {
+                if (emit(events)) {
                     return;
                 }
                 Thread.sleep(waitMillis);

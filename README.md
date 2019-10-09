@@ -24,7 +24,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ##### Gradle
 ```
-  implementation 'com.sndyuk:logback-more-appenders:1.5.8-JAVA9MODULE_SLF4J17'
+  implementation 'com.sndyuk:logback-more-appenders:1.7.0-JAVA9MODULE_SLF4J17'
 ```
 
 ##### Maven
@@ -32,7 +32,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
   <dependency>
     <groupId>ch.qos.logback</groupId>
     <artifactId>logback-classic</artifactId>
-    <version>1.5.8-JAVA9MODULE_SLF4J17</version>
+    <version>1.7.0-JAVA9MODULE_SLF4J17</version>
   </dependency>
 ```
 
@@ -44,6 +44,10 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ### Latest changes
 
+##### Version 1.7.0
+
+* Fix multithreading problem on CloudWatch and KinesisStream LogbackAppender.
+
 ##### Version 1.5.8
 
 * Minimum java target version to 7 from 6
@@ -53,33 +57,6 @@ Just add it to your dependency then you can use the slf4j module in your applica
 ##### Version 1.5.6
 
 * Fix Issue#23 https://github.com/sndyuk/logback-more-appenders/pull/37
-
-##### Version 1.5.5
-
-* Major update FLUENCY dependency version to 2.2.1 https://github.com/sndyuk/logback-more-appenders/pull/36
-
-##### Version 1.5.4
-
-* Added JSON Encoder. https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders-std.xml#L27-L40
-
-##### Version 1.5.3
-
-* Added KinesisStreamLogbackAppender.
-* Deprecated DynamoDBLogbackAppender. Use Kinesis stream(KinesisStreamLogbackAppender) with stream and DynamoDB stream API.
-
-##### Version 1.5.2
-
-* Added CloudWatchLogbackAppender.
-
-##### Version 1.5.1
-
-* Accept dynamic `Map<String, ?>` as the additional log property. https://github.com/sndyuk/logback-more-appenders/pull/32
-* Added simple marker filter for Appender. https://github.com/sndyuk/logback-more-appenders/pull/33
-
-##### Version 1.5.0
-
-* Use Encoder instead of Layout directly. https://github.com/sndyuk/logback-more-appenders/pull/28
-* Support SSL enabled for Fluency. https://github.com/sndyuk/logback-more-appenders/pull/29
 
 
 ## Installing
@@ -98,7 +75,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.5.8</version>
+        <version>1.7.0</version>
       </dependency>
 
       <!-- [Optional] If you use The CloudWatch appender, You need to add the dependency(aws-java-sdk-logs). -->

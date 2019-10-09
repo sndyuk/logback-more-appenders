@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.sndyuk</groupId>
   <artifactId>logback-more-appenders</artifactId>
-  <version>1.5.8-JAVA9MODULE_SLF4J17</version>
+  <version>1.7.0-JAVA9MODULE_SLF4J17</version>
   <name>logback-more-appenders</name>
   <description>logback appenders.</description>
   <url>https://github.com/sndyuk/logback-more-appenders</url>
@@ -22,7 +22,7 @@
     <slf4j.version>1.7.26</slf4j.version>
     <jackson.version>2.9.8</jackson.version>
     <aws.version>1.11.504</aws.version>
-    <jdk.version>1.6</jdk.version>
+    <jdk.version>9</jdk.version>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
   </properties>
 
