@@ -15,6 +15,7 @@ package ch.qos.logback.more.appenders;
 
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
@@ -23,6 +24,7 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 public abstract class AwsAppender<E> extends UnsynchronizedAppenderBase<E> {
 
     protected AwsConfig config;
+    protected AWSCredentialsProvider credentialsProvider;
     protected AWSCredentials credentials;
 
     @Override
@@ -34,9 +36,9 @@ public abstract class AwsAppender<E> extends UnsynchronizedAppenderBase<E> {
                 this.credentials = new PropertiesCredentials(getClass().getClassLoader()
                   .getResourceAsStream(config.getCredentialFilePath()));
             } else if (config.getProfile() != null && config.getProfile().length() > 0) {
-                this.credentials = new ProfileCredentialsProvider(config.getProfile()).getCredentials();
+                this.credentialsProvider = new ProfileCredentialsProvider(config.getProfile());
             } else {
-                this.credentials = DefaultAWSCredentialsProviderChain.getInstance().getCredentials();
+                this.credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance();
             }
         } catch (Exception e) {
             addWarn("Could not initialize " + AwsAppender.class.getCanonicalName()

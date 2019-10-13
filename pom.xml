@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.sndyuk</groupId>
   <artifactId>logback-more-appenders</artifactId>
-  <version>1.7.0</version>
+  <version>1.7.1</version>
   <name>logback-more-appenders</name>
   <description>logback appenders.</description>
   <url>https://github.com/sndyuk/logback-more-appenders</url>
@@ -59,7 +59,7 @@
           <source>${jdk.version}</source>
           <target>${jdk.version}</target>
           <excludes>
-            <exclude>module-info.java</exclude>
+            <exclude>**/module-info.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -90,6 +90,9 @@
         </executions>
         <configuration>
           <additionalparam>-Xdoclint:none</additionalparam>
+          <sourceFileExcludes>
+            <sourceFileExclude>**/module-info.java</sourceFileExclude>
+          </sourceFileExcludes>
         </configuration>
       </plugin>
       <plugin>

@@ -13,19 +13,19 @@
  */
 package ch.qos.logback.more.appenders;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import ch.qos.logback.core.encoder.EchoEncoder;
+import ch.qos.logback.core.encoder.Encoder;
+import ch.qos.logback.more.appenders.IntervalEmitter.EventMapper;
+import ch.qos.logback.more.appenders.IntervalEmitter.IntervalAppender;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.AWSLogsClientBuilder;
 import com.amazonaws.services.logs.model.*;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.encoder.EchoEncoder;
-import ch.qos.logback.core.encoder.Encoder;
-import ch.qos.logback.more.appenders.IntervalEmitter.EventMapper;
-import ch.qos.logback.more.appenders.IntervalEmitter.IntervalAppender;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Appender for CloudWatch. It appends logs for every emitInterval.
@@ -107,10 +107,13 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
 
     private void ensureLogGroup() {
         if (this.awsLogs == null) {
-            this.awsLogs = AWSLogsClientBuilder.standard()
-              .withCredentials(new AWSStaticCredentialsProvider(credentials))
-              .withRegion(config.getRegion())
-            .build();
+             AWSLogsClientBuilder builder = AWSLogsClientBuilder.standard().withRegion(config.getRegion());
+            if (credentials != null) {
+                builder.withCredentials(new AWSStaticCredentialsProvider(credentials));
+            } else if (credentialsProvider != null) {
+                builder.withCredentials(credentialsProvider);
+            }
+            this.awsLogs = builder.build();
         }
         DescribeLogGroupsRequest request = new DescribeLogGroupsRequest().withLogGroupNamePrefix(logGroupName).withLimit(1);
         DescribeLogGroupsResult result = awsLogs.describeLogGroups(request);
