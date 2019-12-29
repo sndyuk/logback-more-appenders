@@ -60,7 +60,7 @@ public class MapMarker extends LeafMarker {
     @Override
     public String toString() {
         if (mapStr == null) {
-            mapStr = mapStr.toString();
+            mapStr = map.toString();
         }
         return getName() + '{' + mapStr + '}';
     }
