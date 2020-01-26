@@ -156,46 +156,37 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
     }
 
     private final class CloudWatchIntervalAppender implements IntervalAppender<InputLogEvent> {
-        private volatile String sequenceToken;
-        private volatile boolean initialized = false;
-        private volatile boolean switchingStream = false;
-        private volatile String currentStreamName = logStreamName.get(Collections.EMPTY_LIST);
+        private String sequenceToken;
+        private boolean initialized = false;
+        private boolean switchingStream = false;
+        private String currentStreamName = logStreamName.get(Collections.<InputLogEvent>emptyList());
 
         @Override
         public boolean append(List<InputLogEvent> events) {
             if (!initialized) {
-                synchronized (this) {
-                    if (!initialized) {
-                        ensureLogGroup();
-                        initialized = true;
-                    }
-                }
-                return false;
+                ensureLogGroup();
+                initialized = true;
             }
             if (switchingStream) {
                 return false;
             }
             String streamName = logStreamName.get(events);
             if (!streamName.equals(currentStreamName)) {
-                synchronized (this) {
-                    if (switchingStream) {
-                        return false;
-                    }
-                    switchingStream = true;
-                    sequenceToken = ensureLogStream(streamName);
-                    currentStreamName = streamName;
-                    switchingStream = false;
+                if (switchingStream) {
+                    return false;
                 }
+                switchingStream = true;
+                sequenceToken = ensureLogStream(streamName);
+                currentStreamName = streamName;
+                switchingStream = false;
             }
             try {
-                synchronized (this) {
-                    PutLogEventsRequest request = new PutLogEventsRequest(logGroupName, streamName, events);
-                    if (sequenceToken != null) {
-                        request.withSequenceToken(sequenceToken);
-                    }
-                    PutLogEventsResult result = awsLogs.putLogEvents(request);
-                    sequenceToken = result.getNextSequenceToken();
+                PutLogEventsRequest request = new PutLogEventsRequest(logGroupName, streamName, events);
+                if (sequenceToken != null) {
+                    request.withSequenceToken(sequenceToken);
                 }
+                PutLogEventsResult result = awsLogs.putLogEvents(request);
+                sequenceToken = result.getNextSequenceToken();
                 return true;
             } catch (RuntimeException e) {
                 sequenceToken = null;
@@ -226,7 +217,7 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
         private long count = 0;
         private long limit = 1000;
         private String baseName = "";
-        private volatile String currentName;
+        private String currentName;
 
         public void setBaseName(String baseName) {
             this.baseName = baseName;
@@ -240,21 +231,13 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
         @Override
         public String get(List<InputLogEvent> events) {
             if (currentName == null) {
-                synchronized (this) {
-                    if (currentName == null) {
-                        currentName = baseName + UUID.randomUUID();
-                        return currentName;
-                    }
-                }
+                currentName = baseName + UUID.randomUUID();
+                return currentName;
             }
             count += events.size();
             if (count > limit) {
-                synchronized (this) {
-                    if (count > limit) {
-                        currentName = baseName + UUID.randomUUID();
-                        count = events.size();
-                    }
-                }
+                currentName = baseName + UUID.randomUUID();
+                count = events.size();
             }
             return currentName;
         }

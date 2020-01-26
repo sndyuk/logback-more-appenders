@@ -15,10 +15,13 @@ package ch.qos.logback.more.appenders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class IntervalEmitter<E, R> {
     private volatile long lastEmit = -1;
     private long maxInterval;
+    private Timer timer;
     private volatile List<R> events;
     private final EventMapper<E, R> eventMapper;
     private final IntervalAppender<R> appender;
@@ -28,20 +31,32 @@ public class IntervalEmitter<E, R> {
         this.maxInterval = maxInterval;
         this.eventMapper = eventMapper;
         this.appender = appender;
+        this.timer = new Timer();
+        this.timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                IntervalEmitter.this.append(null);
+            }
+        }, this.maxInterval, this.maxInterval);
     }
 
     void append(E event) {
         long now = System.currentTimeMillis();
         if (now > lastEmit + maxInterval) {
-            List<R> tmpEvents = new ArrayList<>(this.events.size() + 3);
-            List<R> copiedEvents = new ArrayList(this.events);
-            copiedEvents.add(this.eventMapper.map(event));
-            this.events = tmpEvents;
-            if (emit(copiedEvents)) {
-                lastEmit = now;
+            synchronized (this) {
+                List<R> copiedEvents = new ArrayList<>(this.events);
+                this.events = new ArrayList<>(copiedEvents.size() + 3);
+                if (event != null) {
+                    copiedEvents.add(this.eventMapper.map(event));
+                }
+                if (emit(copiedEvents)) {
+                    lastEmit = now;
+                }
             }
         } else {
-            events.add(eventMapper.map(event));
+            if (event != null) {
+                events.add(eventMapper.map(event));
+            }
         }
     }
 
@@ -75,6 +90,7 @@ public class IntervalEmitter<E, R> {
     }
 
     public interface IntervalAppender<R> {
+        // Threadsafe
         boolean append(List<R> events);
     }
 }
