@@ -64,7 +64,11 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
 
         try {
             FluencyBuilderForFluentd builder = configureFluency();
-            this.fluency = builder.build(configureServers());
+            if (remoteHost != null && port > 0 && (remoteServers == null || remoteServers.getRemoteServers().size() == 0)) {
+                this.fluency = builder.build(remoteHost, port);
+            } else {
+                this.fluency = builder.build(configureServers());
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
