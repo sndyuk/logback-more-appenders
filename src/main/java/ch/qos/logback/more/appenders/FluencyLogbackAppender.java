@@ -85,18 +85,16 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         try {
             String tag = this.tag == null ? "" : this.tag;
             if (this.isUseEventTime()) {
-                EventTime eventTime = EventTime.fromEpochMilli(System.currentTimeMillis());
-
+                EventTime eventTime;
                 if (event instanceof ILoggingEvent) {
                     long timeStampInMs = ((ILoggingEvent) event).getTimeStamp();
                     eventTime = EventTime.fromEpochMilli(timeStampInMs);
-                }
-
-                if (event instanceof IAccessEvent) {
+                } else if (event instanceof IAccessEvent) {
                     long timeStampInMs = ((IAccessEvent) event).getTimeStamp();
                     eventTime = EventTime.fromEpochMilli(timeStampInMs);
+                } else {
+                    eventTime = EventTime.fromEpochMilli(System.currentTimeMillis());
                 }
-
                 fluency.emit(tag, eventTime, data);
             } else {
                 fluency.emit(tag, data);
