@@ -15,19 +15,23 @@
  */
 package ch.qos.logback.more.appenders;
 
-import static ch.qos.logback.core.CoreConstants.CODES_URL;
+import ch.qos.logback.access.spi.IAccessEvent;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Layout;
+import ch.qos.logback.core.encoder.Encoder;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
+import org.komamitsu.fluency.EventTime;
+import org.komamitsu.fluency.Fluency;
+import org.komamitsu.fluency.fluentd.FluencyBuilderForFluentd;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.komamitsu.fluency.EventTime;
-import org.komamitsu.fluency.Fluency;
-import org.komamitsu.fluency.fluentd.FluencyBuilderForFluentd;
-import ch.qos.logback.core.Layout;
-import ch.qos.logback.core.encoder.Encoder;
-import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
+
+import static ch.qos.logback.core.CoreConstants.CODES_URL;
 
 public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
 
@@ -82,6 +86,17 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
             String tag = this.tag == null ? "" : this.tag;
             if (this.isUseEventTime()) {
                 EventTime eventTime = EventTime.fromEpochMilli(System.currentTimeMillis());
+
+                if (event instanceof ILoggingEvent) {
+                    long timeStampInMs = ((ILoggingEvent) event).getTimeStamp();
+                    eventTime = EventTime.fromEpochMilli(timeStampInMs);
+                }
+
+                if (event instanceof IAccessEvent) {
+                    long timeStampInMs = ((IAccessEvent) event).getTimeStamp();
+                    eventTime = EventTime.fromEpochMilli(timeStampInMs);
+                }
+
                 fluency.emit(tag, eventTime, data);
             } else {
                 fluency.emit(tag, data);
