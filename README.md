@@ -44,6 +44,14 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ### Latest changes
 
+##### Version 1.7.5
+
+* FluencyLogbackAppender - add support for use original timestamp for logs https://github.com/sndyuk/logback-more-appenders/pull/44
+
+##### Version 1.7.4
+
+* Ensure send logs by `emitInterval`.
+
 ##### Version 1.7.3
 
 * Use single host fluency build method when single host configured in logback xml config https://github.com/sndyuk/logback-more-appenders/pull/43

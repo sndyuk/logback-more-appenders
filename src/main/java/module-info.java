@@ -3,6 +3,7 @@ open module org.slf4j {
   requires transitive logback.core;
   requires transitive logback.classic;
 
+  requires static logback.access;
   requires static fluent.logger;
   requires static fluency.core;
   requires static fluency.fluentd;
