@@ -17,7 +17,7 @@
 
   <properties>
     <fluentd.logger.version>0.3.4</fluentd.logger.version>
-    <fluency.version>2.2.1</fluency.version>
+    <fluency.version>2.4.1</fluency.version>
     <logback.version>1.2.3</logback.version>
     <jackson.version>2.9.8</jackson.version>
     <aws.version>1.11.642</aws.version>
