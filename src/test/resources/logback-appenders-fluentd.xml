@@ -27,7 +27,7 @@
     <flattenMapMarker>false</flattenMapMarker>
 
     <encoder>
-      <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg]]></pattern>
+      <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %message]]></pattern>
     </encoder>
   </appender>
 
@@ -96,7 +96,7 @@
     <flattenMapMarker>false</flattenMapMarker>
 
     <encoder>
-      <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %msg]]></pattern>
+      <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %message]]></pattern>
     </encoder>
   </appender>
 

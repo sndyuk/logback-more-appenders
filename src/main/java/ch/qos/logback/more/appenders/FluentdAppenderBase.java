@@ -27,7 +27,6 @@ import ch.qos.logback.more.appenders.marker.MapMarker;
 
 abstract class FluentdAppenderBase<E> extends UnsynchronizedAppenderBase<E> {
 
-    private static final String DATA_MSG = "msg";
     private static final String DATA_MESSAGE = "message";
     private static final String DATA_LOGGER = "logger";
     private static final String DATA_THREAD = "thread";
@@ -42,7 +41,6 @@ abstract class FluentdAppenderBase<E> extends UnsynchronizedAppenderBase<E> {
 
     protected Map<String, Object> createData(E event) {
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put(DATA_MSG, encoder.encode(event));
 
         if (event instanceof ILoggingEvent) {
             ILoggingEvent loggingEvent = (ILoggingEvent) event;
@@ -78,6 +76,8 @@ abstract class FluentdAppenderBase<E> extends UnsynchronizedAppenderBase<E> {
             for (Map.Entry<String, String> entry : loggingEvent.getMDCPropertyMap().entrySet()) {
                 data.put(entry.getKey(), entry.getValue());
             }
+        } else {
+            data.put(DATA_MESSAGE, encoder.encode(event));
         }
 
         if (additionalFields != null) {
