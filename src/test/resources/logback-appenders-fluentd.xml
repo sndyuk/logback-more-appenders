@@ -87,7 +87,7 @@
     <readTimeoutMilli>5000</readTimeoutMilli>
     <waitUntilBufferFlushed>30</waitUntilBufferFlushed>
     <waitUntilFlusherTerminated>40</waitUntilFlusherTerminated>
-    <flushIntervalMillis>200</flushIntervalMillis>
+    <flushAttemptIntervalMillis>200</flushAttemptIntervalMillis>
     <senderMaxRetryCount>12</senderMaxRetryCount>
     <!-- [Optional] Enable/Disable use of EventTime to get sub second resolution of log event date-time -->
     <useEventTime>true</useEventTime>

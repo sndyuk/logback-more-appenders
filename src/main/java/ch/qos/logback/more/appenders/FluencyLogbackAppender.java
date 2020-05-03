@@ -130,7 +130,7 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
     private Integer readTimeoutMilli;
     private Integer waitUntilBufferFlushed;
     private Integer waitUntilFlusherTerminated;
-    private Integer flushIntervalMillis;
+    private Integer flushAttemptIntervalMillis;
     private Integer senderMaxRetryCount;
     private boolean useEventTime; // Flag to enable/disable usage of eventtime
     private boolean sslEnabled;
@@ -243,12 +243,12 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         this.waitUntilFlusherTerminated = waitUntilFlusherTerminated;
     }
 
-    public Integer getFlushIntervalMillis() {
-        return flushIntervalMillis;
+    public Integer getFlushAttemptIntervalMillis() {
+        return flushAttemptIntervalMillis;
     }
 
-    public void setFlushIntervalMillis(Integer flushIntervalMillis) {
-        this.flushIntervalMillis = flushIntervalMillis;
+    public void setFlushAttemptIntervalMillis(Integer flushAttemptIntervalMillis) {
+        this.flushAttemptIntervalMillis = flushAttemptIntervalMillis;
     }
 
     public Integer getSenderMaxRetryCount() {
@@ -285,7 +285,7 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         if (readTimeoutMilli != null) { builder.setReadTimeoutMilli(readTimeoutMilli); }
         if (waitUntilBufferFlushed != null) { builder.setWaitUntilBufferFlushed(waitUntilBufferFlushed); }
         if (waitUntilFlusherTerminated != null) { builder.setWaitUntilFlusherTerminated(waitUntilFlusherTerminated); }
-        if (flushIntervalMillis != null) { builder.setFlushIntervalMillis(flushIntervalMillis); }
+        if (flushAttemptIntervalMillis != null) { builder.setFlushAttemptIntervalMillis(flushAttemptIntervalMillis); }
         if (senderMaxRetryCount != null) { builder.setSenderMaxRetryCount(senderMaxRetryCount); }
         builder.setSslEnabled(sslEnabled);
 
