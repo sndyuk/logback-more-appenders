@@ -101,6 +101,7 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
             }
         } catch (IOException e) {
             // pass
+            addError("Fluency throws the error and the message has been omitted. " + data, e);
         }
     }
 
