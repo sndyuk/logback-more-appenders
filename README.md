@@ -24,7 +24,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ##### Gradle
 ```
-  implementation 'com.sndyuk:logback-more-appenders:1.7.5-JAVA9MODULE_SLF4J17'
+  implementation 'com.sndyuk:logback-more-appenders:1.8.0-JAVA9MODULE_SLF4J17'
 ```
 
 ##### Maven
@@ -32,7 +32,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
   <dependency>
     <groupId>ch.qos.logback</groupId>
     <artifactId>logback-classic</artifactId>
-    <version>1.7.5-JAVA9MODULE_SLF4J17</version>
+    <version>1.8.0-JAVA9MODULE_SLF4J17</version>
   </dependency>
 ```
 
@@ -43,6 +43,11 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 
 ### Latest changes
+
+##### Version 1.8.0
+
+* Upgrade Fluency version from 2.2.1 to 2.4.1 https://github.com/sndyuk/logback-more-appenders/pull/48
+* Remove redundant "msg" field from Fluentd request. Use "message" instead.
 
 ##### Version 1.7.5
 
@@ -64,17 +69,6 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 * Fix multithreading problem on CloudWatch and KinesisStream LogbackAppender.
 
-##### Version 1.5.8
-
-* Minimum java target version to 7 from 6
-* Remove DynamoAppender
-* Add connectionTimeoutMilli and readTimeoutMilli properties for Fluency https://github.com/sndyuk/logback-more-appenders/pull/38
-
-##### Version 1.5.6
-
-* Fix Issue#23 https://github.com/sndyuk/logback-more-appenders/pull/37
-
-
 ## Installing
 
 ### Install jars from Maven2 repository
@@ -91,7 +85,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.7.5</version>
+        <version>1.8.0</version>
       </dependency>
 
       <!-- [Optional] If you use The CloudWatch appender, You need to add the dependency(aws-java-sdk-logs). -->
