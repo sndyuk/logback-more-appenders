@@ -67,9 +67,9 @@ public class KinesisStreamLogbackAppender extends KinesisStreamAppenderBase<ILog
 
     @Override
     public void start() {
-        super.start();
         this.emitter = new IntervalEmitter<ILoggingEvent, PutRecordsRequestEntry>(emitInterval,
                 new KinesisEventMapper(), new KinesisIntervalAppender());
+        super.start();
     }
 
     @Override

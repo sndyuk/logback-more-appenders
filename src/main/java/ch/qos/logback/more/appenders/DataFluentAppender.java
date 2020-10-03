@@ -20,6 +20,7 @@ import org.fluentd.logger.FluentLogger;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
+import org.fluentd.logger.sender.ExponentialDelayReconnector;
 
 public class DataFluentAppender<E> extends FluentdAppenderBase<E> {
     private FluentLogger fluentLogger;
@@ -39,6 +40,8 @@ public class DataFluentAppender<E> extends FluentdAppenderBase<E> {
         this.encoder = encoder;
     }
 
+    public void setMessageFieldKeyName(String messageFieldKeyName) { this.messageFieldKeyName = messageFieldKeyName; }
+
     public void addAdditionalField(Field field) {
         if (additionalFields == null) {
             additionalFields = new HashMap<String, String>();
@@ -51,8 +54,8 @@ public class DataFluentAppender<E> extends FluentdAppenderBase<E> {
 
     @Override
     public void start() {
+        fluentLogger = FluentLogger.getLogger(label != null ? tag : null, remoteHost, port, getTimeout(), getBufferCapacity());
         super.start();
-        fluentLogger = FluentLogger.getLogger(label != null ? tag : null, remoteHost, port);
     }
 
 
@@ -85,6 +88,8 @@ public class DataFluentAppender<E> extends FluentdAppenderBase<E> {
     private String remoteHost;
     private int port;
     private boolean useEventTime;
+    private Integer timeout;
+    private Integer bufferCapacity;
 
     public String getTag() {
         return tag;
@@ -124,5 +129,21 @@ public class DataFluentAppender<E> extends FluentdAppenderBase<E> {
 
     public void setUseEventTime(boolean useEventTime) {
         this.useEventTime = useEventTime;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
+
+    public int getTimeout() {
+        return timeout != null ? timeout : 1000;
+    }
+
+    public void setBufferCapacity(Integer bufferCapacity) {
+        this.bufferCapacity = bufferCapacity;
+    }
+
+    public int getBufferCapacity() {
+        return bufferCapacity != null ? bufferCapacity : 16777216;
     }
 }

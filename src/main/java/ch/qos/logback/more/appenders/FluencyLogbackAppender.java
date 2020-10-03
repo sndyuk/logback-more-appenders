@@ -52,6 +52,8 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         this.encoder = encoder;
     }
 
+    public void setMessageFieldKeyName(String messageFieldKeyName) { this.messageFieldKeyName = messageFieldKeyName; }
+
     public void addAdditionalField(Field field) {
         if (additionalFields == null) {
             additionalFields = new HashMap<String, String>();
@@ -64,8 +66,6 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
 
     @Override
     public void start() {
-        super.start();
-
         try {
             FluencyBuilderForFluentd builder = configureFluency();
             if (remoteHost != null && port > 0 && (remoteServers == null || remoteServers.getRemoteServers().size() == 0)) {
@@ -73,6 +73,7 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
             } else {
                 this.fluency = builder.build(configureServers());
             }
+            super.start();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -81,7 +82,6 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
     @Override
     protected void append(E event) {
         Map<String, Object> data = createData(event);
-
         try {
             String tag = this.tag == null ? "" : this.tag;
             if (this.isUseEventTime()) {
@@ -111,6 +111,9 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
             super.stop();
         } finally {
             try {
+                fluency.flush();
+                long maxWaitMillis = Math.min((waitUntilBufferFlushed != null ? waitUntilBufferFlushed : 1) + (waitUntilFlusherTerminated != null ? waitUntilFlusherTerminated : 1), 5) * 1000;
+                Thread.sleep(maxWaitMillis);
                 fluency.close();
             } catch (Exception e) {
                 // pass

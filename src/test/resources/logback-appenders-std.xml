@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE logback>
 <included>
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -35,7 +34,7 @@
         "requestURI": "%X{req.requestURI}",
         "message": "%msg"
       }\n]]></pattern>
-      <!-- Remove redandant spaces and lines. -->
+      <!-- Remove redundant spaces and lines. -->
       <compressSpace>true</compressSpace>
     </encoder>
   </appender>

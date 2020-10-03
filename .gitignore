@@ -21,3 +21,4 @@ server.ec2*
 AwsCredentials.properties
 .directory
 
+/fluent

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE logback>
 <included>
 
   <!-- CloudWatch -->
@@ -118,7 +117,7 @@
          If the worker takes longer than this time it will exit, discarding any remaining items in the queue.
          10000 millis
      -->
-   <maxFlushTime>100</maxFlushTime>
+   <maxFlushTime>1000</maxFlushTime>
     <appender-ref ref="KINESIS_SYNC" />
   </appender>
 

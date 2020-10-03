@@ -44,6 +44,14 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ### Latest changes
 
+##### Version 1.8.1
+
+* Add options for Fluent / Fluency appenders:
+  * "encoder" option becomes optional. If you don't set encoder, the log message outputs pure message. 
+  * "messageFieldKeyName" option has been added: Set it if you want to change the default message field key name(= "message").
+* Fix bug: Messages were lost sometimes when the messages had been waiting for flushing on shutting down an application.  
+* Fix bug: Fluent appender: Do not raise an error when a fluentd server is down.
+  
 ##### Version 1.8.0
 
 * Upgrade Fluency version from 2.2.1 to 2.4.1 https://github.com/sndyuk/logback-more-appenders/pull/48
@@ -133,6 +141,9 @@ You can find the sample configuration files here:
 - [Stdout/err - logback-appenders-std.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback-appenders-std.xml)
 
 - [logback.xml](https://github.com/sndyuk/logback-more-appenders/blob/master/src/test/resources/logback.xml)
+
+### 
+
 
 ### License
 [Apache License, Version 2.0](LICENSE)

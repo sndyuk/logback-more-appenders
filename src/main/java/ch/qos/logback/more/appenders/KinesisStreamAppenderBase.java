@@ -34,10 +34,10 @@ public abstract class KinesisStreamAppenderBase<E> extends AwsAppender<E> {
 
     @Override
     public void start() {
-        super.start();
         if (streamName == null || streamName.length() == 0) {
             throw new IllegalArgumentException("streamName must be defined.");
         }
+        super.start();
     }
 
     @Override

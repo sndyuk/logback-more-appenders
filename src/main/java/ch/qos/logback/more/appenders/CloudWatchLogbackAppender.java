@@ -74,12 +74,12 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
 
     @Override
     public void start() {
-        super.start();
         if (logGroupName == null || logGroupName.length() == 0 || logStreamName == null) {
             throw new IllegalArgumentException("logGroupName and logStreamName must be defined.");
         }
         this.emitter = new IntervalEmitter<E, InputLogEvent>(emitInterval,
                 new CloudWatchEventMapper(), new CloudWatchIntervalAppender());
+        super.start();
     }
 
     @Override

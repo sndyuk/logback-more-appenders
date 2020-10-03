@@ -13,20 +13,19 @@
  */
 package ch.qos.logback.more.appenders;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import org.slf4j.Marker;
 import ch.qos.logback.classic.pattern.CallerDataConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
-import ch.qos.logback.core.UnsynchronizedAppenderBase;
-import ch.qos.logback.core.encoder.EchoEncoder;
+import ch.qos.logback.core.AppenderBase;
 import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.more.appenders.marker.MapMarker;
+import org.slf4j.Marker;
 
-abstract class FluentdAppenderBase<E> extends UnsynchronizedAppenderBase<E> {
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
+abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
     private static final String DATA_MESSAGE = "message";
     private static final String DATA_LOGGER = "logger";
     private static final String DATA_THREAD = "thread";
@@ -35,16 +34,16 @@ abstract class FluentdAppenderBase<E> extends UnsynchronizedAppenderBase<E> {
     private static final String DATA_CALLER = "caller";
     private static final String DATA_THROWABLE = "throwable";
 
-    protected Encoder<E> encoder = new EchoEncoder<E>();
+    protected Encoder<E> encoder;
     protected Map<String, String> additionalFields;
     protected boolean flattenMapMarker;
+    protected String messageFieldKeyName = DATA_MESSAGE;
 
     protected Map<String, Object> createData(E event) {
         Map<String, Object> data = new HashMap<String, Object>();
-
         if (event instanceof ILoggingEvent) {
             ILoggingEvent loggingEvent = (ILoggingEvent) event;
-            data.put(DATA_MESSAGE, loggingEvent.getFormattedMessage());
+            data.put(messageFieldKeyName, encoder != null ? encoder.encode(event) : loggingEvent.getFormattedMessage());
             data.put(DATA_LOGGER, loggingEvent.getLoggerName());
             data.put(DATA_THREAD, loggingEvent.getThreadName());
             data.put(DATA_LEVEL, loggingEvent.getLevel().levelStr);
@@ -77,7 +76,7 @@ abstract class FluentdAppenderBase<E> extends UnsynchronizedAppenderBase<E> {
                 data.put(entry.getKey(), entry.getValue());
             }
         } else {
-            data.put(DATA_MESSAGE, encoder.encode(event));
+            data.put(messageFieldKeyName, encoder != null ? encoder.encode(event) : event.toString());
         }
 
         if (additionalFields != null) {

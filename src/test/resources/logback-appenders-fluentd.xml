@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE logback>
+<?xml version="1.0"?>
 <included>
 
   <!-- Fluend java -->
@@ -11,6 +10,7 @@
     <tag>debug</tag>
     <!-- [Optional] Label for Fluentd. Farther information: http://docs.fluentd.org/articles/config-file -->
     <label>logback</label>
+
     <!-- Host name/address and port number which Flentd placed -->
     <remoteHost>localhost</remoteHost>
     <port>24224</port>
@@ -23,12 +23,22 @@
       <key>foo2</key>
       <value>bar2</value>
     </additionalField>
+
+    <!-- [Optional] Configurations to customize Fluent-logger-java's behavior -->
+    <bufferCapacity>16777216</bufferCapacity> <!-- in bytes -->
+    <timeout>10000</timeout> <!-- in milliseconds -->
+
     <!--  [Optional] If true, Map Marker is expanded instead of nesting in the marker name -->
     <flattenMapMarker>false</flattenMapMarker>
 
+    <!-- [Optional] Message encoder if you want to customize message -->
     <encoder>
       <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %message]]></pattern>
     </encoder>
+
+    <!-- [Optional] Message field key name. Default: "message" -->
+    <messageFieldKeyName>msg</messageFieldKeyName>
+
   </appender>
 
   <appender name="FLUENT" class="ch.qos.logback.classic.AsyncAppender">
@@ -40,7 +50,7 @@
          If the worker takes longer than this time it will exit, discarding any remaining items in the queue.
          10000 millis
      -->
-    <maxFlushTime>10000</maxFlushTime>
+    <maxFlushTime>1000</maxFlushTime>
     <appender-ref ref="FLUENT_SYNC" />
   </appender>
 
@@ -50,12 +60,14 @@
   <appender name="FLUENCY_SYNC" class="ch.qos.logback.more.appenders.FluencyLogbackAppender">
     <!-- Tag for Fluentd. Farther information: http://docs.fluentd.org/articles/config-file -->
     <tag>debug</tag>
+    <!-- [Optional] Label for Fluentd. Farther information: http://docs.fluentd.org/articles/config-file -->
+    <label>logback</label>
 
     <!-- Host name/address and port number which Flentd placed -->
     <remoteHost>localhost</remoteHost>
     <port>24224</port>
 
-    <!-- [Optional] Multiple name/addresses and port numbers which Flentd placed -->
+    <!-- [Optional] Multiple name/addresses and port numbers which Flentd placed
    <remoteServers>
       <remoteServer>
         <host>primary</host>
@@ -66,6 +78,7 @@
         <port>24224</port>
       </remoteServer>
     </remoteServers>
+     -->
 
     <!-- [Optional] Additional fields(Pairs of key: value) -->
     <additionalField>
@@ -79,7 +92,7 @@
 
     <!-- [Optional] Configurations to customize Fluency's behavior: https://github.com/komamitsu/fluency#usage  -->
     <ackResponseMode>true</ackResponseMode>
-    <fileBackupDir>/tmp</fileBackupDir>
+    <!-- <fileBackupDir>/tmp</fileBackupDir> -->
     <bufferChunkInitialSize>2097152</bufferChunkInitialSize>
     <bufferChunkRetentionSize>16777216</bufferChunkRetentionSize>
     <maxBufferSize>268435456</maxBufferSize>
@@ -92,12 +105,17 @@
     <!-- [Optional] Enable/Disable use of EventTime to get sub second resolution of log event date-time -->
     <useEventTime>true</useEventTime>
     <sslEnabled>false</sslEnabled>
-    <!--  [Optional] If true, Map Marker is expanded instead of nesting in the marker name -->
+    <!-- [Optional] If true, Map Marker is expanded instead of nesting in the marker name -->
     <flattenMapMarker>false</flattenMapMarker>
 
+    <!-- [Optional] Message encoder if you want to customize message -->
     <encoder>
       <pattern><![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %message]]></pattern>
     </encoder>
+
+    <!-- [Optional] Message field key name. Default: "message" -->
+    <messageFieldKeyName>msg</messageFieldKeyName>
+
   </appender>
 
   <appender name="FLUENCY" class="ch.qos.logback.classic.AsyncAppender">
@@ -109,7 +127,7 @@
          If the worker takes longer than this time it will exit, discarding any remaining items in the queue.
          10000 millis
      -->
-    <maxFlushTime>10000</maxFlushTime>
+    <maxFlushTime>1000</maxFlushTime>
     <appender-ref ref="FLUENCY_SYNC" />
   </appender>
 

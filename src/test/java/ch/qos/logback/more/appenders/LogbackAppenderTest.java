@@ -15,88 +15,75 @@
  */
 package ch.qos.logback.more.appenders;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.more.appenders.marker.MapMarker;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.slf4j.*;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.more.appenders.marker.MapMarker;
 
 public class LogbackAppenderTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogbackAppenderTest.class);
 
-    @Before
-    public void before() {
+    @BeforeClass
+    public static void before() {
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         if (!lc.isStarted()) {
             lc.start();
         }
     }
 
-    @After
-    public void after() {
+    @AfterClass
+    public static void after() throws InterruptedException {
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         lc.stop();
+
+        Thread.sleep(1500); // Wait a moment because these log is being appended asynchronous...
     }
     
     @Test
-    public void logSimple() throws InterruptedException {
-
+    public void logSimple() {
         LOG.debug("Test the logger 1.");
         LOG.debug("Test the logger 2.");
-
-        Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
     }
 
     @Test
-    public void logMdc() throws InterruptedException {
+    public void logMdc() {
         MDC.put("req.requestURI", "/hello/world.js");
         LOG.debug("Test the logger 1.");
         LOG.debug("Test the logger 2.");
-
-        Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
     }
 
     @Test
-    public void logMarker() throws InterruptedException {
+    public void logMarker() {
         Marker sendEmailMarker = MarkerFactory.getMarker("SEND_EMAIL");
         LOG.debug(sendEmailMarker, "Test the marker 1.");
         LOG.debug(sendEmailMarker, "Test the marker 2.");
-
-        Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
     }
 
     @Test
-    public void logNestedMarker() throws InterruptedException {
+    public void logNestedMarker() {
         Marker notifyMarker = MarkerFactory.getMarker("NOTIFY");
         Marker sendEmailMarker = MarkerFactory.getMarker("SEND_EMAIL");
         sendEmailMarker.add(notifyMarker);
         LOG.debug(sendEmailMarker, "Test the nested marker 1.");
         LOG.debug(sendEmailMarker, "Test the nested marker 2.");
-
-        Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
     }
 
     @Test
-    public void logThrowable() throws InterruptedException {
+    public void logThrowable() {
         LOG.info("Without Exception.");
         LOG.error("Test the checked Exception.", new IOException("Connection something"));
         LOG.warn("Test the unchecked Exception.", new IllegalStateException("Oh your state"));
-
-        Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
     }
 
     @Test
-    public void logMapMarker() throws InterruptedException {
-
+    public void logMapMarker() {
         Map<String, String> map = new HashMap<String, String>();
         map.put("key1", "value1");
         map.put("key2", "value2");
@@ -104,12 +91,10 @@ public class LogbackAppenderTest {
         MapMarker mapMarker = new MapMarker("MAP_MARKER", map);
 
         LOG.debug(mapMarker, "Test the marker map.");
-
-        Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
     }
 
     @Test
-    public void logNestedMapMarker() throws InterruptedException {
+    public void logNestedMapMarker() {
         Marker notifyMarker = MarkerFactory.getMarker("NOTIFY");
         Map<String, String> map = new HashMap<String, String>();
         map.put("key1", "value1");
@@ -118,16 +103,11 @@ public class LogbackAppenderTest {
         MapMarker mapMarker = new MapMarker("MAP_MARKER", map);
         notifyMarker.add(mapMarker);
         LOG.debug(notifyMarker, "Test the nested marker map.");
-
-
-        Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
     }
 
     @Test
-    public void logDecidedByAppendersMarkerFilter() throws InterruptedException {
+    public void logDecidedByAppendersMarkerFilter() {
         Marker alertMarker = MarkerFactory.getMarker("SECURITY_ALERT");
         LOG.debug(alertMarker, "Test alert filter.");
-
-        Thread.sleep(1000); // Wait a moment because these log is being appended asynchronous...
     }
 }
