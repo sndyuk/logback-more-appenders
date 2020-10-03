@@ -13,14 +13,15 @@
  */
 package ch.qos.logback.more.appenders;
 
-import static ch.qos.logback.core.CoreConstants.CODES_URL;
-import java.util.HashMap;
-import java.util.Map;
-import org.fluentd.logger.FluentLogger;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
-import org.fluentd.logger.sender.ExponentialDelayReconnector;
+import org.fluentd.logger.FluentLogger;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static ch.qos.logback.core.CoreConstants.CODES_URL;
 
 public class DataFluentAppender<E> extends FluentdAppenderBase<E> {
     private FluentLogger fluentLogger;

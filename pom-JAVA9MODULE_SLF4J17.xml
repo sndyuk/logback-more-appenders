@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.sndyuk</groupId>
   <artifactId>logback-more-appenders</artifactId>
-  <version>1.8.0-JAVA9MODULE_SLF4J17</version>
+  <version>1.8.1-JAVA9MODULE_SLF4J17</version>
   <name>logback-more-appenders</name>
   <description>logback appenders.</description>
   <url>https://github.com/sndyuk/logback-more-appenders</url>
@@ -53,31 +53,31 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.7.0</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.2.0</version>
         <executions>
           <execution>
-            <id>default-compile</id>
-            <configuration>
-              <release>9</release>
-            </configuration>
-          </execution>
-          <execution>
-            <id>base-compile</id>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
             <goals>
-              <goal>compile</goal>
+              <goal>add-source</goal>
             </goals>
             <configuration>
-              <excludes>
-                <exclude>module-info.java</exclude>
-              </excludes>
+              <sources>
+                <source>src/java9/java</source>
+              </sources>
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
         <configuration>
           <fork>true</fork>
-          <release>8</release>
+          <release>9</release>
           <encoding>${project.build.sourceEncoding}</encoding>
           <source>${jdk.version}</source>
           <target>${jdk.version}</target>

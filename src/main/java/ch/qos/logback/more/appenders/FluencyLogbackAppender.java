@@ -129,6 +129,7 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
     private String fileBackupDir;
     private Integer bufferChunkInitialSize;
     private Integer bufferChunkRetentionSize;
+    private Integer bufferChunkRetentionTimeMillis;
     private Long maxBufferSize;
     private Integer connectionTimeoutMilli;
     private Integer readTimeoutMilli;
@@ -205,6 +206,14 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
 
     public void setBufferChunkRetentionSize(Integer bufferChunkRetentionSize) {
         this.bufferChunkRetentionSize = bufferChunkRetentionSize;
+    }
+
+    public Integer getBufferChunkRetentionTimeMillis() {
+        return bufferChunkRetentionTimeMillis;
+    }
+
+    public void setBufferChunkRetentionTimeMillis(Integer bufferChunkRetentionTimeMillis) {
+        this.bufferChunkRetentionTimeMillis = bufferChunkRetentionTimeMillis;
     }
 
     public Long getMaxBufferSize() {
@@ -284,6 +293,7 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         if (fileBackupDir != null) { builder.setFileBackupDir(fileBackupDir); }
         if (bufferChunkInitialSize != null) { builder.setBufferChunkInitialSize(bufferChunkInitialSize); }
         if (bufferChunkRetentionSize != null) { builder.setBufferChunkRetentionSize(bufferChunkRetentionSize); }
+        if (bufferChunkRetentionTimeMillis != null) { builder.setBufferChunkRetentionTimeMillis(bufferChunkRetentionTimeMillis); }
         if (maxBufferSize != null) { builder.setMaxBufferSize(maxBufferSize); }
         if (connectionTimeoutMilli != null) { builder.setConnectionTimeoutMilli(connectionTimeoutMilli); }
         if (readTimeoutMilli != null) { builder.setReadTimeoutMilli(readTimeoutMilli); }
