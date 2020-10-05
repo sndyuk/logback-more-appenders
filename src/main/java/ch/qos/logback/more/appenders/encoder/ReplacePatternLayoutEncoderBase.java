@@ -7,8 +7,7 @@ import ch.qos.logback.core.pattern.Converter;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.pattern.PatternLayoutEncoderBase;
 
-public abstract class ReplacePatternLayoutEncoderBase
-        extends PatternLayoutEncoderBase<ILoggingEvent> {
+public abstract class ReplacePatternLayoutEncoderBase extends PatternLayoutEncoderBase<ILoggingEvent> {
 
     public interface Writer {
         void write(Converter<ILoggingEvent> converter, ILoggingEvent event, StringBuilder buf);

@@ -27,8 +27,7 @@ public class FastJsonEncoder extends ReplacePatternLayoutEncoderBase {
 
     private final class JsonWriter implements Writer {
         @Override
-        public void write(Converter<ILoggingEvent> converter, ILoggingEvent event,
-                StringBuilder buf) {
+        public void write(Converter<ILoggingEvent> converter, ILoggingEvent event, StringBuilder buf) {
             try {
                 int start = buf.length();
                 converter.write(buf, event);
