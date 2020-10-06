@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
+public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
     private static final String DATA_MESSAGE = "message";
     private static final String DATA_LOGGER = "logger";
     private static final String DATA_THREAD = "thread";
