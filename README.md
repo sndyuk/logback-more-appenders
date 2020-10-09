@@ -44,6 +44,10 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ### Latest changes
 
+##### Version 1.8.2
+
+* Fix issue at FastJsonEncoder.
+
 ##### Version 1.8.1
 
 * Add options for Fluent / Fluency appenders:
