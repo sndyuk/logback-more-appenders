@@ -78,7 +78,7 @@ public class LogbackAppenderTest {
     @Test
     public void logThrowable() {
         LOG.info("Without Exception.");
-        LOG.error("Test the checked Exception.", new IOException("Connection something"));
+        LOG.error("\"Test the checked Exception\"", new IOException("Connection something"));
         LOG.warn("Test the unchecked Exception.", new IllegalStateException("Oh your state"));
     }
 

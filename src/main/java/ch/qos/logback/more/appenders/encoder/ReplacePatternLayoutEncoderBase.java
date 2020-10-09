@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.pattern.Converter;
+import ch.qos.logback.core.pattern.FormattingConverter;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.pattern.PatternLayoutEncoderBase;
 
@@ -50,25 +51,28 @@ public abstract class ReplacePatternLayoutEncoderBase extends PatternLayoutEncod
         return super.encode(event);
     }
 
-    public String replace(char[] chars) {
-        StringBuilder replaced = new StringBuilder((int)(chars.length * 1.5));
-        CHARS: for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
+    public void replace(StringBuilder buff, int start, int end) {
+        int modified = 0;
+        CHARS: for (int i = start; i < end + modified; i++) {
             FROM: for (int j = 0; j < from.length; j++) {
                 char[] f = from[j];
+                if (i + f.length > buff.length()) {
+                    continue FROM;
+                }
                 for (int k = 0; k < f.length; k++) {
-                    if (f[k] != chars[i + k]) {
+                    if (f[k] != buff.charAt(i + k)) {
                         continue FROM;
                     }
                 }
                 // Found
-                replaced.append(to[j]);
+                buff.delete(i, i + f.length);
+                buff.insert(i, to[j]);
+                int d = (to[j].length - f.length);
+                i = i + d;
+                modified = modified + d;
                 continue CHARS;
             }
-            // Not found
-            replaced.append(c);
         }
-        return replaced.toString();
     }
 
     protected static class ReplacePatternLayout extends PatternLayout {
@@ -95,6 +99,7 @@ public abstract class ReplacePatternLayoutEncoderBase extends PatternLayoutEncod
 
         @Override
         protected String writeLoopOnConverters(ILoggingEvent event) {
+            super.writeLoopOnConverters(event);
             StringBuilder buf = new StringBuilder(256);
             Converter<ILoggingEvent> c = head;
             while (c != null) {

@@ -1,5 +1,7 @@
 package ch.qos.logback.more.appenders.encoder;
 
+import ch.qos.logback.classic.pattern.ThrowableHandlingConverter;
+import ch.qos.logback.classic.pattern.ThrowableProxyConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.pattern.Converter;
 import ch.qos.logback.core.pattern.DynamicConverter;
@@ -8,7 +10,7 @@ import ch.qos.logback.core.pattern.LiteralConverter;
 /**
  * JSON encoder. It just escape meta characters of JSON not to lose performance. It doesn't handle
  * null value.
- * 
+ *
  * @author sndyuk
  */
 public class FastJsonEncoder extends ReplacePatternLayoutEncoderBase {
@@ -29,36 +31,60 @@ public class FastJsonEncoder extends ReplacePatternLayoutEncoderBase {
         @Override
         public void write(Converter<ILoggingEvent> converter, ILoggingEvent event, StringBuilder buf) {
             try {
-                int start = buf.length();
-                converter.write(buf, event);
-                int end = buf.length();
+                int start, end;
+                if (converter instanceof ThrowableProxyConverter) {
+                    if (event.getThrowableProxy() == null) {
+                        return;
+                    }
+                    int closing = buf.lastIndexOf("}");
+                    String closingStr = buf.substring(closing);
+                    buf.delete(closing, buf.length()).append(",\"stacktrace\":\"");
+                    start = buf.length();
+                    converter.write(buf, event);
+                    end = buf.length();
+                    buf.append("\"");
+                    buf.append(closingStr);
+                } else {
+                    start = buf.length();
+                    converter.write(buf, event);
+                    end = buf.length();
+                }
+
+                if (end == start) {
+                    return;
+                }
                 if (compressSpace) {
                     if (converter instanceof LiteralConverter) {
-                        
-                        int segmentEndIndex = -1;
-                        int segmentStartIndex = -1;
-                        for (int i = start; i < end; i++) {
+                        int spaceStart = -1, spaceEnd = -1, spaceRemoved = 0;
+                        boolean withinValue = false;
+                        for (int i = start + 1; i < end - spaceRemoved; i++) {
                             char c = buf.charAt(i);
-                            if (segmentEndIndex == -1 && (c == '\n' || c == ' ')) {
-                                segmentEndIndex = i;
+                            if (!withinValue) {
+                              boolean space = c == '\r' || c == '\n' || c == ' ' || c == '\t';
+                              if (spaceStart == -1 && space) {
+                                spaceStart = i;
+                              } else if (spaceStart >= 0 && !space) {
+                                spaceEnd = i;
+                              }
+                              if (spaceEnd > spaceStart) {
+                                buf.delete(spaceStart, spaceEnd);
+                                spaceRemoved += spaceEnd - spaceStart;
+                                spaceStart = -1;
+                                spaceEnd = -1;
+                              }
                             }
-                            if (c == '"' || c == '}') {
-                                segmentStartIndex = i;
-                            }
-                            if (segmentEndIndex >= 0 && segmentStartIndex >= segmentEndIndex) {
-                                buf.replace(segmentEndIndex, segmentStartIndex, " ");
-                                end -= (segmentStartIndex - segmentEndIndex);
-                                segmentEndIndex = -1;
-                                segmentStartIndex = -1;
+                            if (c == '"' && buf.charAt(i - 1) != '\\') {
+                                withinValue = !withinValue;
+                                if (withinValue) {
+                                    spaceStart = -1;
+                                    spaceEnd = -1;
+                                }
                             }
                         }
                     }
                 }
                 if (converter instanceof DynamicConverter) {
-                    char[] sub = new char[end - start];
-                    buf.getChars(start, end, sub, 0);
-                    String to = replace(sub);
-                    buf.replace(start, end, to != null ? to : "");
+                    replace(buf, start, end);
                 }
             } catch (RuntimeException e) {
                 e.printStackTrace();
