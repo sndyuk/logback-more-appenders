@@ -219,13 +219,13 @@ public class FluentdAppenderBaseTest {
     @Test
     public void mapMarkerNameTest() {
         TestAppender<Object> appender = new TestAppender<>();
-        assertEquals("marker", appender.mapMarkerName());
-        appender.setMapMarkerPrefix("custom");
-        assertEquals("custom", appender.mapMarkerName());
-        appender.setMapMarkerPrefix("");
-        assertEquals("marker", appender.mapMarkerName());
-        appender.setMapMarkerPrefix(null);
-        assertEquals("marker", appender.mapMarkerName());
+        assertEquals("marker", appender.markerName());
+        appender.setMarkerPrefix("custom");
+        assertEquals("custom", appender.markerName());
+        appender.setMarkerPrefix("");
+        assertEquals("marker", appender.markerName());
+        appender.setMarkerPrefix(null);
+        assertEquals("marker", appender.markerName());
     }
 
     @Test
@@ -236,13 +236,13 @@ public class FluentdAppenderBaseTest {
         // default map marker prefix
         assertEquals("marker.MAP_MARKER", appender.mapMarkerName(mapMarker));
 
-        appender.setMapMarkerPrefix("custom");
+        appender.setMarkerPrefix("custom");
         assertEquals("custom.MAP_MARKER", appender.mapMarkerName(mapMarker));
 
-        appender.setMapMarkerPrefix("");
+        appender.setMarkerPrefix("");
         assertEquals("MAP_MARKER", appender.mapMarkerName(mapMarker));
 
-        appender.setMapMarkerPrefix(null);
+        appender.setMarkerPrefix(null);
         assertEquals("marker.MAP_MARKER", appender.mapMarkerName(mapMarker));
     }
 
@@ -312,7 +312,7 @@ public class FluentdAppenderBaseTest {
     @Test
     public void createDataILoggingEventWithMapMarkerNoPrefix() {
         TestAppender<Object> appender = new TestAppender<>();
-        appender.setMapMarkerPrefix("");
+        appender.setMarkerPrefix("");
         MapMarker mapMarker = makeMapMarker("MAP_MARKER");
 
         TestEvent testEvent = new TestEvent("Test Message");
