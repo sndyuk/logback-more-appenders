@@ -39,11 +39,11 @@ public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
     private static final String DATA_CALLER = "caller";
     private static final String DATA_THROWABLE = "throwable";
 
-    protected Encoder<E> encoder;
+    private Encoder<E> encoder;
     protected Map<String, String> additionalFields;
-    protected boolean flattenMapMarker;
-    protected String mapMarkerPrefix = DATA_MARKER;
-    protected String messageFieldKeyName = DATA_MESSAGE;
+    private boolean flattenMapMarker;
+    private String mapMarkerPrefix = DATA_MARKER;
+    private String messageFieldKeyName = DATA_MESSAGE;
 
     protected Map<String, Object> createData(E event) {
         Map<String, Object> data = new HashMap<String, Object>();
@@ -90,7 +90,7 @@ public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
         return data;
     }
 
-    private void extractMapMarker(MapMarker mapMarker, Map<String, Object> data) {
+    protected void extractMapMarker(MapMarker mapMarker, Map<String, Object> data) {
         if (flattenMapMarker) {
             data.putAll(mapMarker.getMap());
         } else
@@ -103,7 +103,7 @@ public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
      * @param string to check
      * @return true if null or empty
      */
-    private boolean emptyString(String string) {
+    public static boolean emptyString(String string) {
         return ((string == null) || (string.isEmpty()));
     }
 
@@ -112,7 +112,7 @@ public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
      * 
      * @return maprker name
      */
-    private String mapMarkerName() {
+    protected String mapMarkerName() {
         return (emptyString(mapMarkerPrefix)) ? DATA_MARKER : mapMarkerPrefix;
     }
 
@@ -122,7 +122,7 @@ public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
      * @param mapMarker
      * @return
      */
-    private String mapMarkerName(MapMarker mapMarker) {
+    protected String mapMarkerName(MapMarker mapMarker) {
         if ((mapMarker == null) || (emptyString(mapMarker.getName()))) {
             return mapMarkerName();
         }
@@ -155,10 +155,10 @@ public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
 
     /* formerly duplicated code */
 
-    protected String tag;
-    protected String remoteHost;
-    protected int port;
-    protected boolean useEventTime; // Flag to enable/disable usage of eventtime
+    private String tag;
+    private String remoteHost;
+    private int port;
+    private boolean useEventTime; // Flag to enable/disable usage of eventtime
 
     public void addAdditionalField(Field field) {
         if (additionalFields == null) {
@@ -248,6 +248,12 @@ public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
         return mapMarkerPrefix;
     }
 
+    /**
+     * Set Map Marker Prefix
+     * 
+     * @param mapMarkerPrefix - string representing map marker prefix. If null, use
+     *                        default. If blank, no prefix is used.
+     */
     public void setMapMarkerPrefix(String mapMarkerPrefix) {
         this.mapMarkerPrefix = (mapMarkerPrefix != null) ? mapMarkerPrefix : DATA_MARKER;
     }

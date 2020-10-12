@@ -36,9 +36,9 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
     public void start() {
         try {
             FluencyBuilderForFluentd builder = configureFluency();
-            if (remoteHost != null && port > 0
+            if (getRemoteHost() != null && getPort() > 0
                     && (remoteServers == null || remoteServers.getRemoteServers().size() == 0)) {
-                this.fluency = builder.build(remoteHost, port);
+                this.fluency = builder.build(getRemoteHost(), getPort());
             } else {
                 this.fluency = builder.build(configureServers());
             }
@@ -52,8 +52,8 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
     protected void append(E event) {
         Map<String, Object> data = createData(event);
         try {
-            String tag = this.tag == null ? "" : this.tag;
-            if (this.isUseEventTime()) {
+            String tag = getTag() == null ? "" : getTag();
+            if (isUseEventTime()) {
                 EventTime eventTime;
                 if (event instanceof ILoggingEvent) {
                     long timeStampInMs = ((ILoggingEvent) event).getTimeStamp();
@@ -262,8 +262,8 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
 
     protected List<InetSocketAddress> configureServers() {
         List<InetSocketAddress> dest = new ArrayList<InetSocketAddress>();
-        if (remoteHost != null && port > 0) {
-            dest.add(new InetSocketAddress(remoteHost, port));
+        if (getRemoteHost() != null && getPort() > 0) {
+            dest.add(new InetSocketAddress(getRemoteHost(), getPort()));
         }
         if (remoteServers != null) {
             for (RemoteServer server : remoteServers.getRemoteServers()) {

@@ -22,8 +22,8 @@ public class DataFluentAppender<E> extends FluentdAppenderBase<E> {
 
     @Override
     public void start() {
-        fluentLogger = FluentLogger.getLogger(label != null ? tag : null, remoteHost, port, getTimeout(),
-                getBufferCapacity());
+        fluentLogger = FluentLogger.getLogger(getLabel() != null ? getTag() : null, getRemoteHost(), getPort(),
+                getTimeout(), getBufferCapacity());
         super.start();
     }
 
@@ -44,16 +44,15 @@ public class DataFluentAppender<E> extends FluentdAppenderBase<E> {
     protected void append(E event) {
         Map<String, Object> data = createData(event);
 
-        if (useEventTime) {
-            fluentLogger.log(label == null ? tag : label, data, System.currentTimeMillis() / 1000);
+        if (isUseEventTime()) {
+            fluentLogger.log(getLabel() == null ? getTag() : getLabel(), data, System.currentTimeMillis() / 1000);
         } else {
-            fluentLogger.log(label == null ? tag : label, data);
+            fluentLogger.log(getLabel() == null ? getTag() : getLabel(), data);
         }
     }
 
     private Integer timeout;
     private Integer bufferCapacity;
-
     private String label;
 
     public String getLabel() {
