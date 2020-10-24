@@ -15,61 +15,30 @@
  */
 package ch.qos.logback.more.appenders;
 
-import ch.qos.logback.access.spi.IAccessEvent;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.Layout;
-import ch.qos.logback.core.encoder.Encoder;
-import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.komamitsu.fluency.EventTime;
 import org.komamitsu.fluency.Fluency;
 import org.komamitsu.fluency.fluentd.FluencyBuilderForFluentd;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static ch.qos.logback.core.CoreConstants.CODES_URL;
+import ch.qos.logback.access.spi.IAccessEvent;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
 
     private Fluency fluency;
 
-    @Deprecated
-    public void setLayout(Layout<E> layout) {
-        addWarn("This appender no longer admits a layout as a sub-component, set an encoder instead.");
-        addWarn("To ensure compatibility, wrapping your layout in LayoutWrappingEncoder.");
-        addWarn("See also " + CODES_URL + "#layoutInsteadOfEncoder for details");
-        LayoutWrappingEncoder<E> lwe = new LayoutWrappingEncoder<E>();
-        lwe.setLayout(layout);
-        lwe.setContext(context);
-        this.encoder = lwe;
-    }
-
-    public void setEncoder(Encoder<E> encoder) {
-        this.encoder = encoder;
-    }
-
-    public void setMessageFieldKeyName(String messageFieldKeyName) { this.messageFieldKeyName = messageFieldKeyName; }
-
-    public void addAdditionalField(Field field) {
-        if (additionalFields == null) {
-            additionalFields = new HashMap<String, String>();
-        }
-        additionalFields.put(field.getKey(), field.getValue());
-    }
-
-    public boolean isFlattenMapMarker() { return flattenMapMarker; }
-    public void setFlattenMapMarker(boolean flattenMapMarker) { this.flattenMapMarker = flattenMapMarker; }
-
     @Override
     public void start() {
         try {
             FluencyBuilderForFluentd builder = configureFluency();
-            if (remoteHost != null && port > 0 && (remoteServers == null || remoteServers.getRemoteServers().size() == 0)) {
-                this.fluency = builder.build(remoteHost, port);
+            if (getRemoteHost() != null && getPort() > 0
+                    && (remoteServers == null || remoteServers.getRemoteServers().size() == 0)) {
+                this.fluency = builder.build(getRemoteHost(), getPort());
             } else {
                 this.fluency = builder.build(configureServers());
             }
@@ -83,8 +52,8 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
     protected void append(E event) {
         Map<String, Object> data = createData(event);
         try {
-            String tag = this.tag == null ? "" : this.tag;
-            if (this.isUseEventTime()) {
+            String tag = getTag() == null ? "" : getTag();
+            if (isUseEventTime()) {
                 EventTime eventTime;
                 if (event instanceof ILoggingEvent) {
                     long timeStampInMs = ((ILoggingEvent) event).getTimeStamp();
@@ -112,7 +81,8 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         } finally {
             try {
                 fluency.flush();
-                long maxWaitMillis = Math.min((waitUntilBufferFlushed != null ? waitUntilBufferFlushed : 1) + (waitUntilFlusherTerminated != null ? waitUntilFlusherTerminated : 1), 5) * 1000;
+                long maxWaitMillis = Math.min((waitUntilBufferFlushed != null ? waitUntilBufferFlushed : 1)
+                        + (waitUntilFlusherTerminated != null ? waitUntilFlusherTerminated : 1), 5) * 1000;
                 Thread.sleep(maxWaitMillis);
                 fluency.close();
             } catch (Exception e) {
@@ -121,9 +91,6 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         }
     }
 
-    private String tag;
-    private String remoteHost;
-    private int port;
     private RemoteServers remoteServers;
     private boolean ackResponseMode;
     private String fileBackupDir;
@@ -137,7 +104,6 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
     private Integer waitUntilFlusherTerminated;
     private Integer flushAttemptIntervalMillis;
     private Integer senderMaxRetryCount;
-    private boolean useEventTime; // Flag to enable/disable usage of eventtime
     private boolean sslEnabled;
 
     public RemoteServers getRemoteServers() {
@@ -148,33 +114,13 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         this.remoteServers = remoteServers;
     }
 
-    public String getTag() {
-        return tag;
+    public boolean isSslEnabled() {
+        return sslEnabled;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
+    public void setSslEnabled(boolean useSsl) {
+        this.sslEnabled = useSsl;
     }
-
-    public String getRemoteHost() {
-        return remoteHost;
-    }
-
-    public void setRemoteHost(String remoteHost) {
-        this.remoteHost = remoteHost;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public boolean isSslEnabled() { return sslEnabled; }
-
-    public void setSslEnabled(boolean useSsl) { this.sslEnabled = useSsl; }
 
     public boolean isAckResponseMode() {
         return ackResponseMode;
@@ -272,35 +218,43 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         this.senderMaxRetryCount = senderMaxRetryCount;
     }
 
-    /**
-     * get the value for EventTime usage
-     *
-     * @return true if EventTime is used, false otherwise
-     */
-    public boolean isUseEventTime() { return this.useEventTime; }
-
-    /**
-     * Set the value for EventTime usage
-     *
-     * @param useEventTime the new value
-     */
-    public void setUseEventTime(boolean useEventTime) { this.useEventTime = useEventTime; }
-
     protected FluencyBuilderForFluentd configureFluency() {
         FluencyBuilderForFluentd builder = new FluencyBuilderForFluentd();
 
         builder.setAckResponseMode(ackResponseMode);
-        if (fileBackupDir != null) { builder.setFileBackupDir(fileBackupDir); }
-        if (bufferChunkInitialSize != null) { builder.setBufferChunkInitialSize(bufferChunkInitialSize); }
-        if (bufferChunkRetentionSize != null) { builder.setBufferChunkRetentionSize(bufferChunkRetentionSize); }
-        if (bufferChunkRetentionTimeMillis != null) { builder.setBufferChunkRetentionTimeMillis(bufferChunkRetentionTimeMillis); }
-        if (maxBufferSize != null) { builder.setMaxBufferSize(maxBufferSize); }
-        if (connectionTimeoutMilli != null) { builder.setConnectionTimeoutMilli(connectionTimeoutMilli); }
-        if (readTimeoutMilli != null) { builder.setReadTimeoutMilli(readTimeoutMilli); }
-        if (waitUntilBufferFlushed != null) { builder.setWaitUntilBufferFlushed(waitUntilBufferFlushed); }
-        if (waitUntilFlusherTerminated != null) { builder.setWaitUntilFlusherTerminated(waitUntilFlusherTerminated); }
-        if (flushAttemptIntervalMillis != null) { builder.setFlushAttemptIntervalMillis(flushAttemptIntervalMillis); }
-        if (senderMaxRetryCount != null) { builder.setSenderMaxRetryCount(senderMaxRetryCount); }
+        if (fileBackupDir != null) {
+            builder.setFileBackupDir(fileBackupDir);
+        }
+        if (bufferChunkInitialSize != null) {
+            builder.setBufferChunkInitialSize(bufferChunkInitialSize);
+        }
+        if (bufferChunkRetentionSize != null) {
+            builder.setBufferChunkRetentionSize(bufferChunkRetentionSize);
+        }
+        if (bufferChunkRetentionTimeMillis != null) {
+            builder.setBufferChunkRetentionTimeMillis(bufferChunkRetentionTimeMillis);
+        }
+        if (maxBufferSize != null) {
+            builder.setMaxBufferSize(maxBufferSize);
+        }
+        if (connectionTimeoutMilli != null) {
+            builder.setConnectionTimeoutMilli(connectionTimeoutMilli);
+        }
+        if (readTimeoutMilli != null) {
+            builder.setReadTimeoutMilli(readTimeoutMilli);
+        }
+        if (waitUntilBufferFlushed != null) {
+            builder.setWaitUntilBufferFlushed(waitUntilBufferFlushed);
+        }
+        if (waitUntilFlusherTerminated != null) {
+            builder.setWaitUntilFlusherTerminated(waitUntilFlusherTerminated);
+        }
+        if (flushAttemptIntervalMillis != null) {
+            builder.setFlushAttemptIntervalMillis(flushAttemptIntervalMillis);
+        }
+        if (senderMaxRetryCount != null) {
+            builder.setSenderMaxRetryCount(senderMaxRetryCount);
+        }
         builder.setSslEnabled(sslEnabled);
 
         return builder;
@@ -308,8 +262,8 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
 
     protected List<InetSocketAddress> configureServers() {
         List<InetSocketAddress> dest = new ArrayList<InetSocketAddress>();
-        if (remoteHost != null && port > 0) {
-            dest.add(new InetSocketAddress(remoteHost, port));
+        if (getRemoteHost() != null && getPort() > 0) {
+            dest.add(new InetSocketAddress(getRemoteHost(), getPort()));
         }
         if (remoteServers != null) {
             for (RemoteServer server : remoteServers.getRemoteServers()) {
@@ -358,4 +312,3 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         }
     }
 }
-

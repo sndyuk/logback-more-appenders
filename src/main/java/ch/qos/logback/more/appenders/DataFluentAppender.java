@@ -13,52 +13,19 @@
  */
 package ch.qos.logback.more.appenders;
 
-import ch.qos.logback.core.Layout;
-import ch.qos.logback.core.encoder.Encoder;
-import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
-import org.fluentd.logger.FluentLogger;
-
-import java.util.HashMap;
 import java.util.Map;
 
-import static ch.qos.logback.core.CoreConstants.CODES_URL;
+import org.fluentd.logger.FluentLogger;
 
 public class DataFluentAppender<E> extends FluentdAppenderBase<E> {
     private FluentLogger fluentLogger;
 
-    @Deprecated
-    public void setLayout(Layout<E> layout) {
-        addWarn("This appender no longer admits a layout as a sub-component, set an encoder instead.");
-        addWarn("To ensure compatibility, wrapping your layout in LayoutWrappingEncoder.");
-        addWarn("See also " + CODES_URL + "#layoutInsteadOfEncoder for details");
-        LayoutWrappingEncoder<E> lwe = new LayoutWrappingEncoder<E>();
-        lwe.setLayout(layout);
-        lwe.setContext(context);
-        this.encoder = lwe;
-    }
-
-    public void setEncoder(Encoder<E> encoder) {
-        this.encoder = encoder;
-    }
-
-    public void setMessageFieldKeyName(String messageFieldKeyName) { this.messageFieldKeyName = messageFieldKeyName; }
-
-    public void addAdditionalField(Field field) {
-        if (additionalFields == null) {
-            additionalFields = new HashMap<String, String>();
-        }
-        additionalFields.put(field.getKey(), field.getValue());
-    }
-
-    public boolean isFlattenMapMarker() { return flattenMapMarker; }
-    public void setFlattenMapMarker(boolean flattenMapMarker) { this.flattenMapMarker = flattenMapMarker; }
-
     @Override
     public void start() {
-        fluentLogger = FluentLogger.getLogger(label != null ? tag : null, remoteHost, port, getTimeout(), getBufferCapacity());
+        fluentLogger = FluentLogger.getLogger(getLabel() != null ? getTag() : null, getRemoteHost(), getPort(),
+                getTimeout(), getBufferCapacity());
         super.start();
     }
-
 
     @Override
     public void stop() {
@@ -77,28 +44,16 @@ public class DataFluentAppender<E> extends FluentdAppenderBase<E> {
     protected void append(E event) {
         Map<String, Object> data = createData(event);
 
-        if (useEventTime) {
-            fluentLogger.log(label == null ? tag : label, data, System.currentTimeMillis() / 1000);
+        if (isUseEventTime()) {
+            fluentLogger.log(getLabel() == null ? getTag() : getLabel(), data, System.currentTimeMillis() / 1000);
         } else {
-            fluentLogger.log(label == null ? tag : label, data);
+            fluentLogger.log(getLabel() == null ? getTag() : getLabel(), data);
         }
     }
 
-    private String tag;
-    private String label;
-    private String remoteHost;
-    private int port;
-    private boolean useEventTime;
     private Integer timeout;
     private Integer bufferCapacity;
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
+    private String label;
 
     public String getLabel() {
         return label;
@@ -106,30 +61,6 @@ public class DataFluentAppender<E> extends FluentdAppenderBase<E> {
 
     public void setLabel(String label) {
         this.label = label;
-    }
-
-    public String getRemoteHost() {
-        return remoteHost;
-    }
-
-    public void setRemoteHost(String remoteHost) {
-        this.remoteHost = remoteHost;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public boolean isUseEventTime() {
-        return this.useEventTime;
-    }
-
-    public void setUseEventTime(boolean useEventTime) {
-        this.useEventTime = useEventTime;
     }
 
     public void setTimeout(Integer timeout) {
