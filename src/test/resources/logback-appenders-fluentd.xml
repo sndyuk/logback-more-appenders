@@ -30,6 +30,8 @@
 
     <!--  [Optional] If true, Map Marker is expanded instead of nesting in the marker name -->
     <flattenMapMarker>false</flattenMapMarker>
+    <!--  [Optional] default "marker" -->
+    <markerPrefix></markerPrefix>
 
     <!-- [Optional] Message encoder if you want to customize message -->
     <encoder>
@@ -108,6 +110,8 @@
     <sslEnabled>false</sslEnabled>
     <!-- [Optional] If true, Map Marker is expanded instead of nesting in the marker name -->
     <flattenMapMarker>false</flattenMapMarker>
+    <!--  [Optional] default "marker" -->
+    <markerPrefix></markerPrefix>
 
     <!-- [Optional] Message encoder if you want to customize message -->
     <encoder>
