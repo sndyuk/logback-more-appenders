@@ -11,7 +11,7 @@
     <!-- [Optional] Label for Fluentd. Farther information: http://docs.fluentd.org/articles/config-file -->
     <label>logback</label>
 
-    <!-- Host name/address and port number which Flentd placed -->
+    <!-- Host name/address and port number which Fluentd placed -->
     <remoteHost>localhost</remoteHost>
     <port>24224</port>
     <!-- [Optional] Additional fields(Pairs of key: value) -->
@@ -65,11 +65,11 @@
     <!-- [Optional] Label for Fluentd. Farther information: http://docs.fluentd.org/articles/config-file -->
     <label>logback</label>
 
-    <!-- Host name/address and port number which Flentd placed -->
+    <!-- Host name/address and port number which Fluentd placed -->
     <remoteHost>localhost</remoteHost>
     <port>24224</port>
 
-    <!-- [Optional] Multiple name/addresses and port numbers which Flentd placed
+    <!-- [Optional] Multiple name/addresses and port numbers which Fluentd placed
    <remoteServers>
       <remoteServer>
         <host>primary</host>
