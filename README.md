@@ -24,7 +24,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ##### Gradle
 ```
-  implementation 'com.sndyuk:logback-more-appenders:1.8.3-JAVA9MODULE_SLF4J17'
+  implementation 'com.sndyuk:logback-more-appenders:1.8.4-JAVA9MODULE_SLF4J17'
 ```
 
 ##### Maven
@@ -32,7 +32,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
   <dependency>
     <groupId>ch.qos.logback</groupId>
     <artifactId>logback-classic</artifactId>
-    <version>1.8.3-JAVA9MODULE_SLF4J17</version>
+    <version>1.8.4-JAVA9MODULE_SLF4J17</version>
   </dependency>
 ```
 
@@ -43,6 +43,11 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 
 ### Latest changes
+
+##### Version 1.8.4
+
+* Avoid CloudWatch request limit error
+* Fix issue: https://github.com/sndyuk/logback-more-appenders/issues/60
 
 ##### Version 1.8.3
 
