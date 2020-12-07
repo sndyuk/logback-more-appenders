@@ -18,7 +18,6 @@ import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.more.appenders.IntervalEmitter.EventMapper;
 import ch.qos.logback.more.appenders.IntervalEmitter.IntervalAppender;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.AWSLogsClientBuilder;
 import com.amazonaws.services.logs.model.*;
@@ -150,7 +149,15 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
         public InputLogEvent map(E event) {
             InputLogEvent logEvent = new InputLogEvent();
             logEvent.setTimestamp(System.currentTimeMillis());
-            logEvent.setMessage(new String(encoder.encode(event)));
+            byte[] messageBytes = encoder.encode(event);
+            String message = new String(messageBytes);
+            if (messageBytes.length >= (1048576 - 26)) {
+                // The maximum batch size is 1,048,576 bytes. This size is calculated as the sum of all event messages in UTF-8, plus 26 bytes for each log event.
+                logEvent.setMessage(message.substring(0, 512) + "...(Omitted)");
+                addWarn("Could not send all message to CloudWatch because of the message size limit(<= 1,048,576 bytes). original message = " + message);
+            } else {
+                logEvent.setMessage(message);
+            }
             return logEvent;
         }
     }
@@ -181,18 +188,34 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
                 switchingStream = false;
             }
             try {
-                PutLogEventsRequest request = new PutLogEventsRequest(logGroupName, streamName, events);
-                if (sequenceToken != null) {
-                    request.withSequenceToken(sequenceToken);
+                long size = 0;
+                int putIndex = 0;
+                for (int i = 0, l = events.size(); i < l; i++) {
+                    InputLogEvent event = events.get(i);
+                    String message = event.getMessage();
+                    size += (message.length() * 4); // Approximately 4 times of the length >= bytes size of utf8
+                    if (size > 1048576 || i + 1 == l) {
+                        PutLogEventsRequest request;
+                        if (i + 1 == l) {
+                            request = new PutLogEventsRequest(logGroupName, streamName, events.subList(putIndex, i + 1));
+                        } else {
+                            request = new PutLogEventsRequest(logGroupName, streamName, events.subList(putIndex, i));
+                            i -= 1;
+                        }
+                        size = 0;
+                        putIndex = i;
+                        if (sequenceToken != null) {
+                            request.withSequenceToken(sequenceToken);
+                        }
+                        PutLogEventsResult result = awsLogs.putLogEvents(request);
+                        sequenceToken = result.getNextSequenceToken();
+                    }
                 }
-                PutLogEventsResult result = awsLogs.putLogEvents(request);
-                sequenceToken = result.getNextSequenceToken();
-                return true;
             } catch (RuntimeException e) {
                 sequenceToken = null;
-                e.printStackTrace();
-                throw e;
+                addWarn("Skip sending logs to CloudWatch", e);
             }
+            return true;
         }
     }
 
