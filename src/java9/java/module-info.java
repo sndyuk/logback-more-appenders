@@ -1,5 +1,5 @@
 open module org.slf4j {
-  requires static slf4j.api;
+  requires transitive slf4j.api;
   requires static logback.core;
   requires static logback.classic;
   requires static logback.access;
