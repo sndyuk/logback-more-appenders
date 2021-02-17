@@ -44,6 +44,9 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ### Latest changes
 
+##### unreleased
+* Add option for Fluency appender: `jvmHeapBufferMode`
+
 ##### Version 1.8.4
 
 * Avoid CloudWatch request limit error

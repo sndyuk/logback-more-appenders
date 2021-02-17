@@ -108,6 +108,8 @@
     <!-- [Optional] Enable/Disable use of EventTime to get sub second resolution of log event date-time -->
     <useEventTime>true</useEventTime>
     <sslEnabled>false</sslEnabled>
+    <!-- [Optional] Enable/Disable use the of JVM Heap for buffering -->
+    <jvmHeapBufferMode>false</jvmHeapBufferMode>
     <!-- [Optional] If true, Map Marker is expanded instead of nesting in the marker name -->
     <flattenMapMarker>false</flattenMapMarker>
     <!--  [Optional] default "marker" -->

@@ -105,6 +105,7 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
     private Integer flushAttemptIntervalMillis;
     private Integer senderMaxRetryCount;
     private boolean sslEnabled;
+    private Boolean jvmHeapBufferMode;
 
     public RemoteServers getRemoteServers() {
         return remoteServers;
@@ -218,6 +219,14 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
         this.senderMaxRetryCount = senderMaxRetryCount;
     }
 
+    public Boolean getJvmHeapBufferMode() {
+        return jvmHeapBufferMode;
+    }
+
+    public void setJvmHeapBufferMode(Boolean jvmHeapBufferMode) {
+        this.jvmHeapBufferMode = jvmHeapBufferMode;
+    }
+
     protected FluencyBuilderForFluentd configureFluency() {
         FluencyBuilderForFluentd builder = new FluencyBuilderForFluentd();
 
@@ -256,6 +265,9 @@ public class FluencyLogbackAppender<E> extends FluentdAppenderBase<E> {
             builder.setSenderMaxRetryCount(senderMaxRetryCount);
         }
         builder.setSslEnabled(sslEnabled);
+        if (jvmHeapBufferMode != null) {
+            builder.setJvmHeapBufferMode(jvmHeapBufferMode);
+        }
 
         return builder;
     }
