@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.sndyuk</groupId>
   <artifactId>logback-more-appenders</artifactId>
-  <version>1.8.4</version>
+  <version>1.8.5</version>
   <name>logback-more-appenders</name>
   <description>logback appenders.</description>
   <url>https://github.com/sndyuk/logback-more-appenders</url>
@@ -175,7 +175,7 @@
     <connection>scm:git:git@github.com:sndyuk/logback-more-appenders.git</connection>
     <developerConnection>scm:git:git@github.com:sndyuk/logback-more-appenders.git</developerConnection>
     <url>git@github.com:sndyuk/logback-more-appenders.git</url>
-    <tag>logback-more-appenders-1.5.8</tag>
+    <tag>logback-more-appenders-1.8.5</tag>
   </scm>
 
   <profiles>
