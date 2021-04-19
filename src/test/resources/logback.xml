@@ -2,12 +2,15 @@
 <configuration>
 
   <include resource="logback-appenders-aws.xml" />
+  <include resource="logback-appenders-aws-v2.xml" />
   <include resource="logback-appenders-fluentd.xml" />
   <include resource="logback-appenders-std.xml" />
 
   <logger name="ch.qos.logback.more.appenders.LogbackAppenderTest" level="TRACE" additivity="true">
     <appender-ref ref="KINESIS" />
+    <appender-ref ref="KINESISV2" />
     <appender-ref ref="CLOUDWATCH" />
+    <appender-ref ref="CLOUDWATCHV2" />
     <appender-ref ref="FLUENCY" />
     <appender-ref ref="FLUENT" />
     <appender-ref ref="SECURITY_ALERT" />
