@@ -22,7 +22,7 @@
     <jackson.version>2.12.3</jackson.version>
     <aws.version>1.11.1000</aws.version>
     <aws-v2.version>2.16.43</aws-v2.version>
-    <jdk.version>11</jdk.version>
+    <jdk.version>8</jdk.version>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
   </properties>
 
