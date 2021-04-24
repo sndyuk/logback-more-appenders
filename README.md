@@ -3,11 +3,12 @@ Logback more appenders
 is additional appenders for [Logback](http://logback.qos.ch/) and provide better performance and data consistency without any concern.
 
 ## Appenders
+
 - [CloudWatch](https://aws.amazon.com/cloudwatch/)
-    - depends on [aws-java-sdk-logs](http://aws.amazon.com/sdkforjava/).
+    - depends on [cloudwatchlogs(v2) or aws-java-sdk-logs(v1)](http://aws.amazon.com/sdkforjava/).
 
 - [Kinesis Stream](https://aws.amazon.com/kinesis/data-streams/)
-    - depends on [aws-java-sdk-kinesis](http://aws.amazon.com/sdkforjava/).
+    - depends on [kinesis(v2) or aws-java-sdk-kinesis(v1)](http://aws.amazon.com/sdkforjava/).
 
 - [fluentd](http://fluentd.org/)
     - depends on [fluent-logger for Java](https://github.com/fluent/fluent-logger-java).
@@ -24,7 +25,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ##### Gradle
 ```
-  implementation 'com.sndyuk:logback-more-appenders:1.8.5-JAVA9MODULE_SLF4J17'
+  implementation 'com.sndyuk:logback-more-appenders:1.8.6-JAVA9MODULE_SLF4J17'
 ```
 
 ##### Maven
@@ -32,7 +33,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
   <dependency>
     <groupId>ch.qos.logback</groupId>
     <artifactId>logback-classic</artifactId>
-    <version>1.8.5-JAVA9MODULE_SLF4J17</version>
+    <version>1.8.6-JAVA9MODULE_SLF4J17</version>
   </dependency>
 ```
 
@@ -43,6 +44,9 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 
 ### Latest changes
+
+##### Version 1.8.6
+* Add AWS V2 CloudWatch and Kinesis appenders: https://github.com/sndyuk/logback-more-appenders/pull/64
 
 ##### Version 1.8.5
 * Add option for Fluency appender: `jvmHeapBufferMode`
@@ -69,11 +73,6 @@ Just add it to your dependency then you can use the slf4j module in your applica
 * Add options for Fluency appender: `bufferChunkRetentionTimeMillis`
 * Fix bug: Messages were lost sometimes when the messages had been waiting for flushing on shutting down an application.  
 * Fix bug: Fluent appender: Do not raise an error when a fluentd server is down.
-  
-##### Version 1.8.0
-
-* Upgrade Fluency version from 2.2.1 to 2.4.1 https://github.com/sndyuk/logback-more-appenders/pull/48
-* Remove redundant "msg" field from Fluentd request. Use "message" instead.
 
 ## Installing
 
@@ -91,7 +90,14 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.8.5</version>
+        <version>1.8.6</version>
+      </dependency>
+
+      <!-- [Optional] If you use The CloudWatch V2 appender, You need to add the dependency(cloudwatchlogs). -->
+      <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>cloudwatchlogs</artifactId>
+        <version>${aws-v2.version}</version>
       </dependency>
 
       <!-- [Optional] If you use The CloudWatch appender, You need to add the dependency(aws-java-sdk-logs). -->
@@ -99,6 +105,14 @@ Configure your pom.xml:
         <groupId>com.amazonaws</groupId>
         <artifactId>aws-java-sdk-logs</artifactId>
         <version>${aws.version}</version>
+      </dependency>
+
+      <!-- [Optional] If you use The Kinesis V2 appender, You need to add the dependency(kinesis). -->
+      <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>kinesis</artifactId>
+        <version>${aws-v2.version}</version>
+        <optional>true</optional>
       </dependency>
 
       <!-- [Optional] If you use The Kinesis appender, You need to add the dependency(aws-java-sdk-kinesis). -->
