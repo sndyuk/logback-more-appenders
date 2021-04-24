@@ -17,11 +17,12 @@
 
   <properties>
     <fluentd.logger.version>0.3.4</fluentd.logger.version>
-    <fluency.version>2.4.1</fluency.version>
+    <fluency.version>2.5.1</fluency.version>
     <logback.version>1.2.3</logback.version>
-    <jackson.version>2.9.8</jackson.version>
-    <aws.version>1.11.642</aws.version>
-    <jdk.version>7</jdk.version>
+    <jackson.version>2.12.3</jackson.version>
+    <aws.version>1.11.1000</aws.version>
+    <aws-v2.version>2.16.43</aws-v2.version>
+    <jdk.version>8</jdk.version>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
   </properties>
 
@@ -32,7 +33,7 @@
       <plugin>
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
-        <version>2.11</version>
+        <version>4.0</version>
         <configuration>
           <aggregate>true</aggregate>
           <strictCheck>true</strictCheck>
@@ -46,7 +47,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.7</version>
+        <version>3.2.0</version>
         <configuration>
           <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
@@ -54,6 +55,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
         <configuration>
           <encoding>${project.build.sourceEncoding}</encoding>
           <source>${jdk.version}</source>
@@ -63,7 +65,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.0.1</version>
+        <version>3.2.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -76,7 +78,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.4</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -87,13 +89,13 @@
         </executions>
         <configuration>
           <source>${jdk.version}</source>
-          <additionalparam>-Xdoclint:none</additionalparam>
+          <additionalParam>-Xdoclint:none</additionalParam>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.0.2</version>
+        <version>3.1.2</version>
       </plugin>
     </plugins>
   </build>
@@ -152,6 +154,20 @@
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-kinesis</artifactId>
       <version>${aws.version}</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>cloudwatchlogs</artifactId>
+      <version>${aws-v2.version}</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>kinesis</artifactId>
+      <version>${aws-v2.version}</version>
       <optional>true</optional>
     </dependency>
 
