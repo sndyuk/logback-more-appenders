@@ -15,8 +15,10 @@ package ch.qos.logback.more.appenders;
 
 import static ch.qos.logback.core.CoreConstants.CODES_URL;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Marker;
@@ -29,6 +31,8 @@ import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.more.appenders.marker.MapMarker;
+
+
 
 public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
     private static final String DATA_MESSAGE = "message";
@@ -44,6 +48,7 @@ public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
     private boolean flattenMapMarker;
     private String markerPrefix = DATA_MARKER;
     private String messageFieldKeyName = DATA_MESSAGE;
+    private List<String> ignoredFields;
 
     protected Map<String, Object> createData(E event) {
         Map<String, Object> data = new HashMap<String, Object>();
@@ -87,6 +92,11 @@ public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
         if (additionalFields != null) {
             data.putAll(additionalFields);
         }
+
+        if(ignoredFields != null) {
+            ignoredFields.stream().forEach(data::remove);
+        }
+
         return data;
     }
 
@@ -165,6 +175,13 @@ public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
             additionalFields = new HashMap<String, String>();
         }
         additionalFields.put(field.getKey(), field.getValue());
+    }
+
+    public void addIgnoredField(String fieldName) {
+        if (ignoredFields == null) {
+            ignoredFields = new ArrayList<String>();
+        }
+        ignoredFields.add(fieldName);
     }
 
     @Deprecated
