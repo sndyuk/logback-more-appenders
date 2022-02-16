@@ -327,4 +327,47 @@ public class FluentdAppenderBaseTest {
 
         assertExpectedData(expected, appender, testEvent);
     }
+
+    /**
+     * Test createData with ILoggingEvent argument with Ignored Fields
+     */
+    @Test
+    public void createDataILoggingEventWithIgnoredFields() {
+        TestAppender<Object> appender = new TestAppender<>();
+        appender.addIgnoredField("thread");
+        appender.addIgnoredField("logger");
+
+        TestEvent testEvent = new TestEvent("Test Message");
+        testEvent.setLevel(Level.ERROR);
+
+        Map<String, Object> expected = new HashMap<>();
+        expected.put("message", testEvent.getFormattedMessage());
+        expected.put("level", testEvent.getLevel().toString());
+
+        assertExpectedData(expected, appender, testEvent);
+    }
+
+    /**
+     * Test createData with ILoggingEvent argument with Ignored Flattened Marker Fields
+     */
+    @Test
+    public void createDataILoggingEventWithIgnoredFlattenMarkerFields() {
+        TestAppender<Object> appender = new TestAppender<>();
+        appender.setFlattenMapMarker(true);
+        appender.addIgnoredField("key1");
+
+        MapMarker mapMarker = makeMapMarker("MAP_MARKER");
+
+        TestEvent testEvent = new TestEvent("Test Message");
+        testEvent.setMarker(mapMarker).setLevel(Level.ERROR);
+
+        Map<String, Object> expected = new HashMap<>();
+        expected.put("message", testEvent.getFormattedMessage());
+        expected.put("level", testEvent.getLevel().toString());
+        expected.put("logger", testEvent.getLoggerName());
+        expected.put("thread", testEvent.getThreadName());
+        expected.put("key2", "value2");
+
+        assertExpectedData(expected, appender, testEvent);
+    }
 }
