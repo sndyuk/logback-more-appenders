@@ -14,6 +14,7 @@
     <!-- Host name/address and port number which Fluentd placed -->
     <remoteHost>localhost</remoteHost>
     <port>24224</port>
+
     <!-- [Optional] Additional fields(Pairs of key: value) -->
     <additionalField>
       <key>foo</key>
@@ -23,6 +24,10 @@
       <key>foo2</key>
       <value>bar2</value>
     </additionalField>
+
+    <!-- [Optional] Ignored fields. The fields won't be emitted to Fluentd -->
+    <ignoredField>throwable</ignoredField>
+    <ignoredField>thread</ignoredField>
 
     <!-- [Optional] Configurations to customize Fluent-logger-java's behavior -->
     <bufferCapacity>16777216</bufferCapacity> <!-- in bytes -->
@@ -91,6 +96,10 @@
       <key>foo2</key>
       <value>bar2</value>
     </additionalField>
+
+    <!-- [Optional] Ignored fields. The fields won't be emitted to Fluentd -->
+    <ignoredField>throwable</ignoredField>
+    <ignoredField>thread</ignoredField>
 
     <!-- [Optional] Configurations to customize Fluency's behavior: https://github.com/komamitsu/fluency#usage  -->
     <ackResponseMode>true</ackResponseMode>
