@@ -33,7 +33,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
   <dependency>
     <groupId>ch.qos.logback</groupId>
     <artifactId>logback-classic</artifactId>
-    <version>1.8.6-JAVA9MODULE_SLF4J17</version>
+    <version>1.8.7-JAVA9MODULE_SLF4J17</version>
   </dependency>
 ```
 
@@ -44,6 +44,9 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 
 ### Latest changes
+
+##### Version 1.8.7
+* Add `ignoredField` option: https://github.com/sndyuk/logback-more-appenders/pull/65
 
 ##### Version 1.8.6
 * Add AWS V2 CloudWatch and Kinesis appenders: https://github.com/sndyuk/logback-more-appenders/pull/64
@@ -90,7 +93,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.8.6</version>
+        <version>1.8.7</version>
       </dependency>
 
       <!-- [Optional] If you use The CloudWatch V2 appender, You need to add the dependency(cloudwatchlogs). -->
