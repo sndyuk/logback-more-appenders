@@ -45,6 +45,9 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ### Latest changes
 
+##### Version 1.8.8
+* Fix CloudWatch appenders duplicate logs: https://github.com/sndyuk/logback-more-appenders/pull/71
+
 ##### Version 1.8.7
 * Add `ignoredField` option: https://github.com/sndyuk/logback-more-appenders/pull/65
 
