@@ -200,10 +200,11 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
                             request = new PutLogEventsRequest(logGroupName, streamName, events.subList(putIndex, i + 1));
                         } else {
                             request = new PutLogEventsRequest(logGroupName, streamName, events.subList(putIndex, i));
+                            // Update putIndex before decreasing the event index
+                            putIndex = i;
                             i -= 1;
                         }
                         size = 0;
-                        putIndex = i;
                         if (sequenceToken != null) {
                             request.withSequenceToken(sequenceToken);
                         }

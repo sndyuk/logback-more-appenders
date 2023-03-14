@@ -204,10 +204,11 @@ public class CloudWatchLogbackAppenderV2<E> extends AwsAppenderV2<E> {
                         } else {
                             request = PutLogEventsRequest.builder().logGroupName(logGroupName)
                                 .logStreamName(streamName).logEvents(events.subList(putIndex, i));
+                            // Update putIndex before decreasing the event index
+                            putIndex = i;
                             i -= 1;
                         }
                         size = 0;
-                        putIndex = i;
                         if (sequenceToken != null) {
                             request.sequenceToken(sequenceToken);
                         }
