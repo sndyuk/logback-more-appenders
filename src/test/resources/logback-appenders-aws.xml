@@ -33,6 +33,10 @@
     <!-- The minimum interval millis for each CloudWatch API call. -->
     <emitInterval>100</emitInterval>
 
+    <!-- [Optional] Maximum number of log events for each CloudWatch API call.
+    <maxEventCount>300</maxEventCount>
+    -->
+
     <!-- The FastJsonEncoder treats the log as JSON. -->
     <encoder class="ch.qos.logback.more.appenders.encoder.FastJsonEncoder">
       <pattern><![CDATA[{
