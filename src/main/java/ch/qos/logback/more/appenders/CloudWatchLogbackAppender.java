@@ -40,6 +40,7 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
     private String logGroupName;
     private StreamName logStreamName;
     private boolean createLogDestination;
+    private int maxEventCount = Integer.MAX_VALUE;
     private long emitInterval = 10000;
     private Encoder<E> encoder = new EchoEncoder<E>();
 
@@ -61,6 +62,10 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
 
     public void setCreateLogDestination(boolean createLogDestination) {
         this.createLogDestination = createLogDestination;
+    }
+
+    public void setMaxEventCount(int maxEventCount) {
+        this.maxEventCount = maxEventCount;
     }
 
     public void setEmitInterval(long emitInterval) {
@@ -194,15 +199,22 @@ public class CloudWatchLogbackAppender<E> extends AwsAppender<E> {
                     InputLogEvent event = events.get(i);
                     String message = event.getMessage();
                     size += (message.length() * 4); // Approximately 4 times of the length >= bytes size of utf8
-                    if (size > 1048576 || i + 1 == l) {
+
+                    boolean eventCountLimitExceeded = (i - putIndex) == maxEventCount;
+                    boolean eventSizeLimitExceeded = size > 1048576;
+                    boolean lastRecordReached = i + 1 == l;
+                    if (eventCountLimitExceeded || eventSizeLimitExceeded || lastRecordReached) {
                         PutLogEventsRequest request;
-                        if (i + 1 == l) {
-                            request = new PutLogEventsRequest(logGroupName, streamName, events.subList(putIndex, i + 1));
-                        } else {
+
+                        // When (eventCountLimitExceeded || eventSizeLimitExceeded) && lastRecordReached, give precedence
+                        // to the limits (discard the current event)
+                        if (eventCountLimitExceeded || eventSizeLimitExceeded) {
                             request = new PutLogEventsRequest(logGroupName, streamName, events.subList(putIndex, i));
                             // Update putIndex before decreasing the event index
                             putIndex = i;
                             i -= 1;
+                        } else {
+                            request = new PutLogEventsRequest(logGroupName, streamName, events.subList(putIndex, i + 1));
                         }
                         size = 0;
                         if (sequenceToken != null) {
