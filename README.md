@@ -20,9 +20,9 @@ For questions or support, please use the [GitHub repository Issues](https://gith
 - [Kinesis Stream](https://aws.amazon.com/kinesis/data-streams/)
     - depends on [kinesis(v2) or aws-java-sdk-kinesis(v1)](http://aws.amazon.com/sdkforjava/).
 
-- [fluentd](http://fluentd.org/)
+- [fluentd](http://fluentd.org/) [(DEPRECATED)](https://github.com/fluent/fluent-logger-java/issues/99) use fluency instead
     - depends on [fluent-logger for Java](https://github.com/fluent/fluent-logger-java).
-     - Install fluentd before running logger.
+    - Install fluentd before running logger.
 
 - [fluency](https://github.com/komamitsu/fluency)
     - depends on [fluency](https://github.com/komamitsu/fluency).
@@ -35,7 +35,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ##### Gradle
 ```
-  implementation 'com.sndyuk:logback-more-appenders:1.8.8-JAVA9MODULE_SLF4J17'
+  implementation 'com.sndyuk:logback-more-appenders:1.8.9-JAVA9MODULE_SLF4J17'
 ```
 
 ##### Maven
@@ -43,7 +43,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
   <dependency>
     <groupId>ch.qos.logback</groupId>
     <artifactId>logback-classic</artifactId>
-    <version>1.8.8-JAVA9MODULE_SLF4J17</version>
+    <version>1.8.9-JAVA9MODULE_SLF4J17</version>
   </dependency>
 ```
 
@@ -54,6 +54,16 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 
 ### Latest changes
+
+##### Version 1.8.9
+* Requires Java 8
+* Update fluency to 2.7.3
+* Update logback to 1.2.13
+* Update jackson to 2.15.2
+* Update AWS Java SDK v1 to 1.11.1034
+* Update AWS Java SDK v2 to 2.16.104
+* Update Maven plugins to the latest version
+* Add Enforces and versions maven plugins
 
 ##### Version 1.8.8
 * Fix CloudWatch appenders duplicate logs: https://github.com/sndyuk/logback-more-appenders/pull/71
@@ -106,7 +116,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.8.7</version>
+        <version>1.8.9</version>
       </dependency>
 
       <!-- [Optional] If you use The CloudWatch V2 appender, You need to add the dependency(cloudwatchlogs). -->

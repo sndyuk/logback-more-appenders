@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.pattern.Converter;
-import ch.qos.logback.core.pattern.FormattingConverter;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.pattern.PatternLayoutEncoderBase;
 

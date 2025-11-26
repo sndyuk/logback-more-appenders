@@ -32,8 +32,6 @@ import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.more.appenders.marker.MapMarker;
 
-
-
 public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
     private static final String DATA_MESSAGE = "message";
     private static final String DATA_LOGGER = "logger";
@@ -82,9 +80,7 @@ public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
             if (loggingEvent.getThrowableProxy() != null) {
                 data.put(DATA_THROWABLE, ThrowableProxyUtil.asString(loggingEvent.getThrowableProxy()));
             }
-            for (Map.Entry<String, String> entry : loggingEvent.getMDCPropertyMap().entrySet()) {
-                data.put(entry.getKey(), entry.getValue());
-            }
+            data.putAll(loggingEvent.getMDCPropertyMap());
         } else {
             data.put(messageFieldKeyName, encoder != null ? encoder.encode(event) : event.toString());
         }
@@ -128,9 +124,6 @@ public abstract class FluentdAppenderBase<E> extends AppenderBase<E> {
 
     /**
      * Get map marker name if map is provided
-     * 
-     * @param mapMarker
-     * @return
      */
     protected String mapMarkerName(MapMarker mapMarker) {
         if ((mapMarker == null) || (emptyString(mapMarker.getName()))) {

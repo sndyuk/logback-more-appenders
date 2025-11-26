@@ -17,12 +17,12 @@
 
   <properties>
     <fluentd.logger.version>0.3.4</fluentd.logger.version>
-    <fluency.version>2.5.1</fluency.version>
-    <logback.version>1.2.3</logback.version>
+    <fluency.version>2.7.3</fluency.version>
+    <logback.version>1.2.13</logback.version>
     <slf4j.version>1.7.26</slf4j.version>
-    <jackson.version>2.12.3</jackson.version>
-    <aws.version>1.11.1000</aws.version>
-    <aws-v2.version>2.16.43</aws-v2.version>
+    <jackson.version>2.15.2</jackson.version>
+    <aws.version>1.11.1034</aws.version>
+    <aws-v2.version>2.16.104</aws-v2.version>
     <jdk.version>9</jdk.version>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
   </properties>
@@ -34,7 +34,7 @@
       <plugin>
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
-        <version>4.0</version>
+        <version>5.0.0</version>
         <configuration>
           <aggregate>true</aggregate>
           <strictCheck>true</strictCheck>
@@ -48,7 +48,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.1</version>
         <configuration>
           <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
@@ -56,7 +56,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.6.1</version>
         <executions>
           <execution>
             <id>add-source</id>
@@ -75,7 +75,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>3.14.1</version>
         <configuration>
           <fork>true</fork>
           <release>9</release>
@@ -87,7 +87,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.2.1</version>
+        <version>3.3.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -100,7 +100,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.12.0</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -110,15 +110,43 @@
           </execution>
         </executions>
         <configuration>
-          <source>8</source>
-          <additionalParam>-Xdoclint:none</additionalParam>
+          <source>${jdk.version}</source>
+          <doclint>none</doclint>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.9.0</version>
       </plugin>
+        <plugin>
+         <groupId>org.codehaus.mojo</groupId>
+           <artifactId>versions-maven-plugin</artifactId>
+           <version>2.19.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+            <version>3.6.2</version>
+            <executions>
+                <execution>
+                    <id>enforce-maven</id>
+                    <goals>
+                        <goal>enforce</goal>
+                    </goals>
+                    <configuration>
+                        <rules>
+                            <requireMavenVersion>
+                                <version>3.6.3</version>
+                            </requireMavenVersion>
+                            <requireJavaVersion>
+                                <version>${jdk.version}</version>
+                            </requireJavaVersion>
+                        </rules>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
     </plugins>
   </build>
 
@@ -211,7 +239,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
 
@@ -263,7 +291,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.6</version>
+            <version>3.2.8</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
@@ -277,7 +305,7 @@
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.8</version>
+            <version>1.7.0</version>
             <extensions>true</extensions>
             <configuration>
               <serverId>ossrh</serverId>

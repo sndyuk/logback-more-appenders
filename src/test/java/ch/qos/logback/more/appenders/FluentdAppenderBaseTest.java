@@ -38,7 +38,7 @@ public class FluentdAppenderBaseTest {
     /**
      * Creating a test appender to be a test proxy
      */
-    class TestAppender<E> extends FluentdAppenderBase<E> {
+    static class TestAppender<E> extends FluentdAppenderBase<E> {
         protected List<E> appended = new ArrayList<E>();
 
         @Override
@@ -48,7 +48,7 @@ public class FluentdAppenderBaseTest {
 
     }
 
-    class TestEvent implements ILoggingEvent {
+    static class TestEvent implements ILoggingEvent {
 
         Object[] argumentArray = { "arg1", "arg2" };
         StackTraceElement[] callerData;
