@@ -161,7 +161,7 @@ public class CloudWatchLogbackAppenderV2<E> extends AwsAppenderV2<E> {
             if (messageBytes.length >= (1048576 - 26)) {
                 // The maximum batch size is 1,048,576 bytes. This size is calculated as the sum of all event messages in UTF-8, plus 26 bytes for each log event.
                 logEvent.message(message.substring(0, 512) + "...(Omitted)");
-                addWarn("Could not send all message to CloudWatch because of the message size limit(<= 1,048,576 bytes). original message = " + message);
+                addWarn("Could not send all message to CloudWatch because of the message size limit(<= 1,048,576 bytes).");
             } else {
                 logEvent.message(message);
             }
