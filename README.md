@@ -52,54 +52,6 @@ Just add it to your dependency then you can use the slf4j module in your applica
   requires org.slf4j;
 ```
 
-
-### Latest changes
-
-##### Version 1.8.9
-* Requires Java 8
-* Update fluency to 2.7.3
-* Update logback to 1.2.13
-* Update jackson to 2.15.2
-* Update AWS Java SDK v1 to 1.11.1034
-* Update AWS Java SDK v2 to 2.16.104
-* Update Maven plugins to the latest version
-* Add enforcer and versions maven plugins
-
-##### Version 1.8.8
-* Fix CloudWatch appenders duplicate logs: https://github.com/sndyuk/logback-more-appenders/pull/71
-
-##### Version 1.8.7
-* Add `ignoredField` option: https://github.com/sndyuk/logback-more-appenders/pull/65
-
-##### Version 1.8.6
-* Add AWS V2 CloudWatch and Kinesis appenders: https://github.com/sndyuk/logback-more-appenders/pull/64
-
-##### Version 1.8.5
-* Add option for Fluency appender: `jvmHeapBufferMode`
-
-##### Version 1.8.4
-
-* Avoid CloudWatch request limit error
-* Fix issue: https://github.com/sndyuk/logback-more-appenders/issues/60
-
-##### Version 1.8.3
-
-* Make marker prefix customizable by `markerPrefix` option. https://github.com/sndyuk/logback-more-appenders/issues/51
-* Fix issue: Error creating cloud watch appender with version 1.8.2-JAVA9MODULE_SLF4J17 and 1.8.1-JAVA9MODULE_SLF4J17. https://github.com/sndyuk/logback-more-appenders/issues/60
-
-##### Version 1.8.2
-
-* Fix issue at FastJsonEncoder.
-
-##### Version 1.8.1
-
-* Add options for Fluent / Fluency appenders:
-  * "encoder" option becomes optional. If you don't set encoder, the log message outputs pure message. 
-  * "messageFieldKeyName" option has been added: Set it if you want to change the default message field key name(= "message").
-* Add options for Fluency appender: `bufferChunkRetentionTimeMillis`
-* Fix bug: Messages were lost sometimes when the messages had been waiting for flushing on shutting down an application.  
-* Fix bug: Fluent appender: Do not raise an error when a fluentd server is down.
-
 ## Installing
 
 ### Install jars from Maven2 repository
