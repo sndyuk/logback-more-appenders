@@ -35,7 +35,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
 
 ##### Gradle
 ```
-  implementation 'com.sndyuk:logback-more-appenders:1.8.8-JAVA9MODULE_SLF4J17'
+  implementation 'com.sndyuk:logback-more-appenders:1.8.9-JAVA9MODULE_SLF4J17'
 ```
 
 ##### Maven
@@ -43,7 +43,7 @@ Just add it to your dependency then you can use the slf4j module in your applica
   <dependency>
     <groupId>ch.qos.logback</groupId>
     <artifactId>logback-classic</artifactId>
-    <version>1.8.8-JAVA9MODULE_SLF4J17</version>
+    <version>1.8.9-JAVA9MODULE_SLF4J17</version>
   </dependency>
 ```
 
@@ -51,44 +51,6 @@ Just add it to your dependency then you can use the slf4j module in your applica
 ```
   requires org.slf4j;
 ```
-
-
-### Latest changes
-
-##### Version 1.8.8
-* Fix CloudWatch appenders duplicate logs: https://github.com/sndyuk/logback-more-appenders/pull/71
-
-##### Version 1.8.7
-* Add `ignoredField` option: https://github.com/sndyuk/logback-more-appenders/pull/65
-
-##### Version 1.8.6
-* Add AWS V2 CloudWatch and Kinesis appenders: https://github.com/sndyuk/logback-more-appenders/pull/64
-
-##### Version 1.8.5
-* Add option for Fluency appender: `jvmHeapBufferMode`
-
-##### Version 1.8.4
-
-* Avoid CloudWatch request limit error
-* Fix issue: https://github.com/sndyuk/logback-more-appenders/issues/60
-
-##### Version 1.8.3
-
-* Make marker prefix customizable by `markerPrefix` option. https://github.com/sndyuk/logback-more-appenders/issues/51
-* Fix issue: Error creating cloud watch appender with version 1.8.2-JAVA9MODULE_SLF4J17 and 1.8.1-JAVA9MODULE_SLF4J17. https://github.com/sndyuk/logback-more-appenders/issues/60
-
-##### Version 1.8.2
-
-* Fix issue at FastJsonEncoder.
-
-##### Version 1.8.1
-
-* Add options for Fluent / Fluency appenders:
-  * "encoder" option becomes optional. If you don't set encoder, the log message outputs pure message. 
-  * "messageFieldKeyName" option has been added: Set it if you want to change the default message field key name(= "message").
-* Add options for Fluency appender: `bufferChunkRetentionTimeMillis`
-* Fix bug: Messages were lost sometimes when the messages had been waiting for flushing on shutting down an application.  
-* Fix bug: Fluent appender: Do not raise an error when a fluentd server is down.
 
 ## Installing
 
@@ -106,7 +68,7 @@ Configure your pom.xml:
       <dependency>
         <groupId>com.sndyuk</groupId>
         <artifactId>logback-more-appenders</artifactId>
-        <version>1.8.7</version>
+        <version>1.8.9</version>
       </dependency>
 
       <!-- [Optional] If you use The CloudWatch V2 appender, You need to add the dependency(cloudwatchlogs). -->
