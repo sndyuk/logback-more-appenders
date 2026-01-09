@@ -17,10 +17,10 @@
 
   <properties>
     <fluentd.logger.version>0.3.4</fluentd.logger.version>
-    <fluency.version>2.7.3</fluency.version>
+    <fluency.version>2.6.5</fluency.version>
     <logback.version>1.2.13</logback.version>
-    <slf4j.version>1.7.26</slf4j.version>
-    <jackson.version>2.15.2</jackson.version>
+    <slf4j.version>1.7.36</slf4j.version>
+    <jackson.version>2.10.5</jackson.version>
     <aws.version>1.11.1034</aws.version>
     <aws-v2.version>2.16.104</aws-v2.version>
     <jdk.version>9</jdk.version>
@@ -112,6 +112,10 @@
         <configuration>
           <source>${jdk.version}</source>
           <doclint>none</doclint>
+          <additionalOptions>
+            <additionalOption>--no-module-directories</additionalOption>
+          </additionalOptions>
+          <detectJavaApiLink>false</detectJavaApiLink>
         </configuration>
       </plugin>
       <plugin>
