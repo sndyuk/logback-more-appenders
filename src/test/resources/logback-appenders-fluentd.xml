@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <included>
 
-  <!-- Fluend java -->
+  <!-- Fluend java (DEPRECATED) use Fluency instead -->
 
   <appender name="FLUENT_SYNC"
     class="ch.qos.logback.more.appenders.DataFluentAppender">

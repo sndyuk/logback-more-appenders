@@ -1,6 +1,5 @@
 package ch.qos.logback.more.appenders.encoder;
 
-import ch.qos.logback.classic.pattern.ThrowableHandlingConverter;
 import ch.qos.logback.classic.pattern.ThrowableProxyConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.pattern.Converter;
@@ -8,7 +7,7 @@ import ch.qos.logback.core.pattern.DynamicConverter;
 import ch.qos.logback.core.pattern.LiteralConverter;
 
 /**
- * JSON encoder. It just escape meta characters of JSON not to lose performance. It doesn't handle
+ * JSON encoder. It just escapes meta characters of JSON not to lose performance. It doesn't handle
  * null value.
  *
  * @author sndyuk

@@ -20,9 +20,9 @@ For questions or support, please use the [GitHub repository Issues](https://gith
 - [Kinesis Stream](https://aws.amazon.com/kinesis/data-streams/)
     - depends on [kinesis(v2) or aws-java-sdk-kinesis(v1)](http://aws.amazon.com/sdkforjava/).
 
-- [fluentd](http://fluentd.org/)
+- [fluentd](http://fluentd.org/) [(DEPRECATED)](https://github.com/fluent/fluent-logger-java/issues/99) use fluency instead
     - depends on [fluent-logger for Java](https://github.com/fluent/fluent-logger-java).
-     - Install fluentd before running logger.
+    - Install fluentd before running logger.
 
 - [fluency](https://github.com/komamitsu/fluency)
     - depends on [fluency](https://github.com/komamitsu/fluency).
